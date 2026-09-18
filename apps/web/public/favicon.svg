@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Health Insight Dashboard">
+  <rect width="32" height="32" rx="7" fill="#0e7c6b" />
+  <!--
+    A pulse line, drawn to stay legible at 16px: four segments, no detail
+    finer than one device pixel, and a stroke heavy enough to survive
+    downscaling. The dash above it is the "insight" half of the mark.
+  -->
+  <path
+    d="M6 19.5h4.2l2.4-6.2 3.1 9.4 2.6-6.4 1.7 3.2H26"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="2.4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>

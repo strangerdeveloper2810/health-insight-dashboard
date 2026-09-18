@@ -1,0 +1,209 @@
+@import "tailwindcss";
+
+/*
+ * Dark mode is a class on <html>, not the OS preference alone, because the
+ * header has a toggle. `uiSlice` resolves "system" to a concrete value at boot
+ * so the chart palette and the CSS always agree on which theme is active.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * `@theme inline` makes each utility reference the variable rather than copy
+ * its value, which is what lets one set of utility names serve both themes.
+ * Semantic names, not colour names: `bg-surface` survives a repaint, `bg-white`
+ * does not.
+ */
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-brand: var(--brand);
+  --color-brand-soft: var(--brand-soft);
+  --color-positive: var(--positive);
+  --color-positive-soft: var(--positive-soft);
+  --color-watch: var(--watch);
+  --color-watch-soft: var(--watch-soft);
+  --color-alert: var(--alert);
+  --color-alert-soft: var(--alert-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+}
+
+:root {
+  --canvas: #f3f6fa;
+  --surface: #ffffff;
+  --raised: #f7f9fc;
+  --line: #e2e8f0;
+  --ink: #0d1b2a;
+  --muted: #5b6b7f;
+  --faint: #8fa0b3;
+  --brand: #0e7c6b;
+  --brand-soft: #d9f0eb;
+  --positive: #14805c;
+  --positive-soft: #d9f2e6;
+  --watch: #a86400;
+  --watch-soft: #fdeed3;
+  --alert: #bb3a2c;
+  --alert-soft: #fce4e0;
+  --info: #1c6aa8;
+  --info-soft: #dceaf7;
+
+  color-scheme: light;
+}
+
+.dark {
+  --canvas: #070d16;
+  --surface: #0e1725;
+  --raised: #151f2e;
+  --line: #22303f;
+  --ink: #e9eff6;
+  --muted: #9aabbd;
+  --faint: #6b7d90;
+  --brand: #3ecbae;
+  --brand-soft: #0f2f2a;
+  --positive: #45c795;
+  --positive-soft: #0d2e24;
+  --watch: #e2a83f;
+  --watch-soft: #33260c;
+  --alert: #f0776a;
+  --alert-soft: #351a17;
+  --info: #63aee6;
+  --info-soft: #10283c;
+
+  color-scheme: dark;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--canvas);
+    color: var(--ink);
+    font-family:
+      ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+      sans-serif;
+    /* Tabular figures everywhere: this app is mostly numbers in columns, and
+       proportional digits make a table of them twitch as values change. */
+    font-variant-numeric: tabular-nums;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--brand);
+    outline-offset: 2px;
+  }
+
+  /* A number that changes while the page is open should be legible as it does. */
+  @media (prefers-reduced-motion: no-preference) {
+    .animate-rise {
+      animation: rise 220ms ease-out both;
+    }
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The blinking caret at the end of a streaming answer. */
+@keyframes caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+.stream-caret::after {
+  content: "";
+  display: inline-block;
+  width: 0.5ch;
+  height: 1em;
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  background-color: currentColor;
+  animation: caret 1s step-end infinite;
+}
+
+.scroll-slim {
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+/*
+ * Markdown output in the assistant panel.
+ *
+ * Written as plain CSS rather than pulling in the typography plugin: the
+ * assistant renders a narrow slice of markdown, and a plugin that styles
+ * tables, figures and footnotes for a chat bubble is mostly unused weight.
+ */
+.prose-answer {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.prose-answer > * + * {
+  margin-top: 0.6em;
+}
+
+.prose-answer p {
+  margin: 0;
+}
+
+.prose-answer strong {
+  font-weight: 600;
+}
+
+.prose-answer ul,
+.prose-answer ol {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.prose-answer ul {
+  list-style: disc;
+}
+
+.prose-answer ol {
+  list-style: decimal;
+}
+
+.prose-answer li + li {
+  margin-top: 0.25em;
+}
+
+.prose-answer h3,
+.prose-answer h4 {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.prose-answer code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.8em;
+  background-color: var(--raised);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.05em 0.3em;
+}
+
+.prose-answer blockquote {
+  margin: 0;
+  padding-left: 0.75rem;
+  border-left: 2px solid var(--line);
+  color: var(--muted);
+}
