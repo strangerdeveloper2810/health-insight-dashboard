@@ -29,8 +29,17 @@ import type { EvidenceRef } from "../types";
  * carries `lastIndex` between uses, and a stray state leak here would silently
  * skip citations — the one bug this module exists to prevent.
  */
+/**
+ * A citation token. The id class has to cover every id the reference index can
+ * mint, hyphens included: goal ids are `goal-rhr`, `goal-steps` and friends, so
+ * `{{goal.goal-rhr.current}}` is a real citation. Without the hyphen the token
+ * goes unmatched, which fails twice over — the value is never substituted, so
+ * the raw `{{...}}` reaches the reader, and it is never counted as unknown, so
+ * the grounding check reports a clean bill of health for a figure it never
+ * looked at. A silent false negative is worse than the visible leak.
+ */
 const refTokenPattern = (): RegExp => {
-  return /\{\{\s*([A-Za-z0-9_.]+)\s*\}\}/g;
+  return /\{\{\s*([A-Za-z0-9_.-]+)\s*\}\}/g;
 };
 
 export type GroundedSegment =

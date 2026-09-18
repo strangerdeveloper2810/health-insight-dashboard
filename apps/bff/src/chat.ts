@@ -127,6 +127,11 @@ export const describeError = (
     };
   }
   if (error instanceof Anthropic.APIError) {
+    // The browser gets a status and nothing else, because a raw upstream body
+    // is not something to hand a user. That leaves the status alone as the only
+    // clue on the server side, and "400" names no field — so the upstream
+    // reason is logged here instead of being discarded.
+    console.error(`[chat] upstream ${error.status ?? "?"}: ${error.message}`);
     return {
       code: `api_${error.status ?? "error"}`,
       message: `The model provider returned an error (${error.status ?? "unknown"}). The dashboard itself is unaffected.`,

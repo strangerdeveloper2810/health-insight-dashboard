@@ -43,7 +43,14 @@ export const loadConfig = (): Config => {
     // running this app on a machine set up for something else would silently
     // send requests to a model this app was never tested against. The API key
     // keeps its conventional name because the SDK reads it too.
-    model: process.env.ASSISTANT_MODEL?.trim() || "claude-opus-5",
+    //
+    // Sonnet rather than Opus by default. The work here — pick a tool, read a
+    // snapshot, write three sentences with citation tokens — is not the kind of
+    // task that separates the two, and the dashboard is meant to be opened and
+    // poked at without a thought for the bill. `claude-haiku-4-5-20251001` is
+    // cheaper still; `claude-opus-5` is a one-line change if answer quality
+    // ever turns out to be the constraint.
+    model: process.env.ASSISTANT_MODEL?.trim() || "claude-sonnet-5",
     effort: effortFromEnv(),
     // Generous, because adaptive thinking draws from the same budget as the
     // answer and a truncated reply mid-citation is worse than a slower one.

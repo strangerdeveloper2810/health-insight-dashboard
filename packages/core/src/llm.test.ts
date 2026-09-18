@@ -48,6 +48,23 @@ describe("grounding", () => {
     expect(report.unknown).toEqual(["bloodGlucose.avg7d"]);
   });
 
+  it("resolves citations whose id contains a hyphen", () => {
+    // Goal ids are `goal-rhr` and friends. A token pattern that stops at the
+    // hyphen leaves these unmatched: the raw `{{...}}` reaches the reader and,
+    // worse, the figure is never counted as unknown, so the answer is reported
+    // as fully verified without anything having checked it.
+    const id = "goal.goal-rhr.current";
+    expect(index.refs.has(id)).toBe(true);
+
+    const report = validateCitations(`You are at {{${id}}}.`, index);
+    expect(report.unknown).toEqual([]);
+    expect(report.cited).toEqual([id]);
+
+    const segments = segmentGrounded(`You are at {{${id}}}.`, index);
+    expect(segments.some((s) => s.kind === "ref")).toBe(true);
+    expect(segments.some((s) => s.kind === "unknown")).toBe(false);
+  });
+
   it("marks unknown references visibly instead of dropping them silently", () => {
     // Silently deleting the token would leave a sentence that reads as if the
     // model simply chose not to give a figure. The gap has to be visible.

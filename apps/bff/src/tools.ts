@@ -14,6 +14,7 @@
  */
 
 import { betaZodTool } from "@anthropic-ai/sdk/helpers/beta/zod";
+import type { BetaToolRunnerParams } from "@anthropic-ai/sdk/resources/beta/messages/messages";
 import { z } from "zod";
 
 import {
@@ -44,6 +45,32 @@ const DAYS = z
 const json = (value: unknown): string => {
   return JSON.stringify(value, null, 1);
 };
+
+/** What `toolRunner` accepts for `tools`, taken from the SDK rather than restated. */
+type RunnerTool = NonNullable<BetaToolRunnerParams["tools"]>[number];
+
+/**
+ * Drop the `type: "custom"` tag that `betaZodTool` puts on every tool it builds.
+ *
+ * The Messages API does not accept that variant. A client tool is the one with
+ * no `type` at all — only server tools carry one, which is why the rejection
+ * message helpfully suggests `web_search_20250305`. Left in place, the tag
+ * fails deserialisation and the whole request 400s before the model sees it.
+ *
+ * Nothing is lost by removing it. The tool runner dispatches on `name`, `run`
+ * and `parse`, never on `type`.
+ *
+ * The input stays `unknown` on purpose. `betaZodTool` declares its result as the
+ * SDK's client-tool union — memory, bash, text-editor and the rest — even though
+ * it only ever builds a plain one, and that union does not survive `Omit`. The
+ * type safety that matters is upstream of here: each tool's `run` is checked
+ * against its own Zod schema where the tool is defined.
+ */
+const wireTools = (tools: readonly unknown[]): RunnerTool[] =>
+  tools.map((tool) => {
+    const { type: _discarded, ...rest } = tool as { type?: unknown };
+    return rest as RunnerTool;
+  });
 
 export const createTools = (bundle: MetricsBundle) => {
   const getSeries = betaZodTool({
@@ -96,5 +123,5 @@ Returns an empty list when nothing was recorded in the window. That is a real an
     run: async ({ days, type }) => json(getWorkouts(bundle, days, type)),
   });
 
-  return [getSeries, compare, sleep, workouts] as const;
+  return wireTools([getSeries, compare, sleep, workouts]);
 };

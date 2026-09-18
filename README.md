@@ -68,7 +68,7 @@ server process.
 | Variable | Required | Default | Purpose |
 |---|---|---|---|
 | `ANTHROPIC_API_KEY` | for the assistant | — | Anthropic API key. Without it the server starts and the assistant reports itself as unconfigured. |
-| `ASSISTANT_MODEL` | no | `claude-opus-5` | Model the assistant uses. |
+| `ASSISTANT_MODEL` | no | `claude-sonnet-5` | Model the assistant uses. `claude-haiku-4-5-20251001` is cheaper, `claude-opus-5` stronger. |
 | `ASSISTANT_EFFORT` | no | `medium` | Reasoning effort: `low` \| `medium` \| `high` \| `xhigh` \| `max`. |
 | `ASSISTANT_MAX_TOKENS` | no | `8192` | Ceiling on a single answer. |
 | `PORT` | no | `8787` | Port the BFF listens on. Vite proxies `/api` here. |

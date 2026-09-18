@@ -61,7 +61,7 @@ const finalMessage = (overrides: Record<string, unknown> = {}) => {
     id: "msg_test",
     type: "message",
     role: "assistant",
-    model: "claude-opus-5",
+    model: "claude-sonnet-5",
     content: [],
     stop_reason: "end_turn",
     stop_sequence: null,
