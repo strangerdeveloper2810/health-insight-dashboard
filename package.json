@@ -13,7 +13,7 @@
     "dev": "concurrently -n bff,web -c magenta,cyan \"pnpm dev:bff\" \"pnpm dev:web\"",
     "dev:bff": "pnpm --filter @health/bff dev",
     "dev:web": "pnpm --filter @health/web dev",
-    "build": "pnpm --filter @health/web build && esbuild apps/bff/src/serverless.ts --bundle --platform=node --target=node22 --format=esm --outfile=api/serverless.bundle.js",
+    "build": "pnpm --filter @health/web build && esbuild apps/bff/src/serverless.ts --bundle --platform=node --target=node22 --format=esm \"--banner:js=import { createRequire } from 'node:module'; const require = createRequire(import.meta.url);\" --outfile=api/serverless.bundle.js",
     "start": "pnpm --filter @health/bff start",
     "test": "vitest run",
     "test:watch": "vitest",
