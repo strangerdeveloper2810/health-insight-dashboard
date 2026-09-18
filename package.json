@@ -13,7 +13,7 @@
     "dev": "concurrently -n bff,web -c magenta,cyan \"pnpm dev:bff\" \"pnpm dev:web\"",
     "dev:bff": "pnpm --filter @health/bff dev",
     "dev:web": "pnpm --filter @health/web dev",
-    "build": "pnpm --filter @health/web build",
+    "build": "pnpm --filter @health/web build && esbuild apps/bff/src/serverless.ts --bundle --platform=node --target=node22 --format=esm --outfile=api/serverless.bundle.js",
     "start": "pnpm --filter @health/bff start",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -23,6 +23,7 @@
   "devDependencies": {
     "@types/node": "^26.6.1",
     "concurrently": "^10.0.5",
+    "esbuild": "^0.28.2",
     "tsx": "^4.23.13",
     "typescript": "^7.0.2",
     "vitest": "^5.0.1"
