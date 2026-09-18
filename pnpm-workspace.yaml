@@ -1,0 +1,10 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+# pnpm 10 blocks lifecycle scripts by default. These two ship prebuilt native
+# binaries and only need their install script to select the right one for the
+# host platform — without them the dev server fails to start.
+onlyBuiltDependencies:
+  - esbuild
+  - "@tailwindcss/oxide"

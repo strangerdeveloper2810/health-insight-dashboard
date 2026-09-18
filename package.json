@@ -1,0 +1,27 @@
+{
+  "name": "health-insight-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Health Insight Dashboard — SQREEM frontend technical test",
+  "packageManager": "pnpm@10.30.3",
+  "engines": {
+    "node": ">=22.9",
+    "pnpm": ">=9"
+  },
+  "scripts": {
+    "dev": "concurrently -n bff,web -c magenta,cyan \"pnpm dev:bff\" \"pnpm dev:web\"",
+    "dev:bff": "pnpm --filter @health/bff dev",
+    "dev:web": "pnpm --filter @health/web dev",
+    "build": "pnpm --filter @health/web build",
+    "start": "pnpm --filter @health/bff start",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "pnpm -r --if-present typecheck"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.1"
+  }
+}
