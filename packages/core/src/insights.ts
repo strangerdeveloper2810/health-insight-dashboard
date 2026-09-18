@@ -19,20 +19,20 @@ import type { EvidenceRef, Goal, Insight, InsightSeverity } from "./types";
 import type { GoalProgress, MetricsBundle } from "./metrics";
 
 /** Pull evidence refs, silently dropping any that the index cannot resolve. */
-function evidence(index: RefIndex, refs: string[]): EvidenceRef[] {
+const evidence = (index: RefIndex, refs: string[]): EvidenceRef[] => {
   return refs
     .map((ref) => index.refs.get(ref))
     .filter((ref): ref is EvidenceRef => ref !== undefined);
-}
+};
 
-function fmt(index: RefIndex, ref: string): string {
+const fmt = (index: RefIndex, ref: string): string => {
   const found = index.refs.get(ref);
   return found ? formatEvidenceValue(found) : "—";
-}
+};
 
 // ─── Rules ──────────────────────────────────────────────────────────────────
 
-function sleepHeartRateRule(bundle: MetricsBundle, index: RefIndex): Insight | null {
+const sleepHeartRateRule = (bundle: MetricsBundle, index: RefIndex): Insight | null => {
   const link = bundle.derived.sleepHeartRateLink;
   if (!link) return null;
   if (link.deltaBpm < 2.5 || link.shortSleepNights < 5) return null;
@@ -56,9 +56,9 @@ function sleepHeartRateRule(bundle: MetricsBundle, index: RefIndex): Insight | n
       "derived.shortSleepNights",
     ]),
   };
-}
+};
 
-function sleepDebtRule(bundle: MetricsBundle, index: RefIndex): Insight | null {
+const sleepDebtRule = (bundle: MetricsBundle, index: RefIndex): Insight | null => {
   const debt = bundle.derived.sleepDebt14dMin;
   if (debt < 180) return null;
 
@@ -79,9 +79,9 @@ function sleepDebtRule(bundle: MetricsBundle, index: RefIndex): Insight | null {
       "sleepDurationMin.avg7d",
     ]),
   };
-}
+};
 
-function bedtimeConsistencyRule(bundle: MetricsBundle, index: RefIndex): Insight | null {
+const bedtimeConsistencyRule = (bundle: MetricsBundle, index: RefIndex): Insight | null => {
   const stdDev = bundle.derived.bedtimeStdDevMin;
   if (stdDev < 45) return null;
 
@@ -99,7 +99,7 @@ function bedtimeConsistencyRule(bundle: MetricsBundle, index: RefIndex): Insight
       "sleepEfficiency.avg7d",
     ]),
   };
-}
+};
 
 /**
  * The suggested action has to follow from the goal. Telling someone to "add
@@ -117,7 +117,7 @@ const ACTION_BY_METRIC: Partial<Record<Goal["metric"], string>> = {
     "Add one easy run per week rather than lengthening the ones you already do — your long run is already near its limit.",
 };
 
-function goalAction(progress: GoalProgress, onTrack: boolean): string {
+const goalAction = (progress: GoalProgress, onTrack: boolean): string => {
   if (onTrack) {
     return "Hold the current pattern. At this point the value is in not changing anything.";
   }
@@ -125,13 +125,13 @@ function goalAction(progress: GoalProgress, onTrack: boolean): string {
     ACTION_BY_METRIC[progress.goal.metric] ??
     `You need ${progress.requiredPacePerWeek} ${progress.goal.unit} per week from here, against a current pace of ${progress.actualPacePerWeek}.`
   );
-}
+};
 
-function goalProjectionRule(
+const goalProjectionRule = (
   bundle: MetricsBundle,
   index: RefIndex,
   goalId: string,
-): Insight | null {
+): Insight | null => {
   const progress = bundle.derived.goalProgress.find((p) => p.goal.id === goalId);
   if (!progress) return null;
 
@@ -209,9 +209,9 @@ function goalProjectionRule(
       `${base}.daysRemaining`,
     ]),
   };
-}
+};
 
-function trainingLoadRule(bundle: MetricsBundle, index: RefIndex): Insight | null {
+const trainingLoadRule = (bundle: MetricsBundle, index: RefIndex): Insight | null => {
   const { acwr, acuteLoadMin, chronicWeeklyLoadMin } = bundle.derived;
   if (acwr === null) return null;
 
@@ -249,9 +249,9 @@ function trainingLoadRule(bundle: MetricsBundle, index: RefIndex): Insight | nul
   }
 
   return null;
-}
+};
 
-function nutritionLoggingRule(bundle: MetricsBundle, index: RefIndex): Insight | null {
+const nutritionLoggingRule = (bundle: MetricsBundle, index: RefIndex): Insight | null => {
   const { nutritionDaysLogged30d, nutritionLoggingCompleteness } = bundle.derived;
   if (nutritionLoggingCompleteness >= 0.75) return null;
 
@@ -271,9 +271,9 @@ function nutritionLoggingRule(bundle: MetricsBundle, index: RefIndex): Insight |
     caveat:
       "This insight is about data quality, not diet. Nutrition metrics elsewhere on the dashboard carry the same limitation.",
   };
-}
+};
 
-function cardioTrendRule(bundle: MetricsBundle, index: RefIndex): Insight | null {
+const cardioTrendRule = (bundle: MetricsBundle, index: RefIndex): Insight | null => {
   const summary = bundle.summaries.restingHeartRate;
   const seven = summary?.windows.find((w) => w.window === "7d");
   const ninety = summary?.windows.find((w) => w.window === "90d");
@@ -295,9 +295,9 @@ function cardioTrendRule(bundle: MetricsBundle, index: RefIndex): Insight | null
       "hrvMs.avg7d",
     ]),
   };
-}
+};
 
-function weekendGapRule(bundle: MetricsBundle, index: RefIndex): Insight | null {
+const weekendGapRule = (bundle: MetricsBundle, index: RefIndex): Insight | null => {
   const gap = bundle.derived.weekendStepGap;
   if (Math.abs(gap) < 2500) return null;
 
@@ -317,9 +317,9 @@ function weekendGapRule(bundle: MetricsBundle, index: RefIndex): Insight | null 
       "activeMinutes.avg7d",
     ]),
   };
-}
+};
 
-function stepStreakRule(bundle: MetricsBundle, index: RefIndex): Insight | null {
+const stepStreakRule = (bundle: MetricsBundle, index: RefIndex): Insight | null => {
   const streak = bundle.derived.stepGoalStreakDays;
   if (streak < 3) return null;
 
@@ -336,9 +336,9 @@ function stepStreakRule(bundle: MetricsBundle, index: RefIndex): Insight | null 
       "steps.avg7d",
     ]),
   };
-}
+};
 
-function hrvTrendRule(bundle: MetricsBundle, index: RefIndex): Insight | null {
+const hrvTrendRule = (bundle: MetricsBundle, index: RefIndex): Insight | null => {
   const seven = bundle.summaries.hrvMs?.windows.find((w) => w.window === "7d");
   const thirty = bundle.summaries.hrvMs?.windows.find((w) => w.window === "30d");
   if (!seven || !thirty || thirty.average === 0) return null;
@@ -356,7 +356,7 @@ function hrvTrendRule(bundle: MetricsBundle, index: RefIndex): Insight | null {
       "Treat the next hard session as optional. An easy day now costs less than a forced one later.",
     evidence: evidence(index, ["hrvMs.avg7d", "hrvMs.avg30d", "restingHeartRate.avg7d"]),
   };
-}
+};
 
 // ─── Ranking ────────────────────────────────────────────────────────────────
 
@@ -368,13 +368,13 @@ const SEVERITY_ORDER: Record<InsightSeverity, number> = {
 };
 
 /** Alert first, then watch, then wins, then context. */
-export function rankInsights(insights: Insight[]): Insight[] {
+export const rankInsights = (insights: Insight[]): Insight[] => {
   return [...insights].sort((a, b) => {
     const bySeverity = SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity];
     if (bySeverity !== 0) return bySeverity;
     return a.id.localeCompare(b.id);
   });
-}
+};
 
 // ─── Entry point ────────────────────────────────────────────────────────────
 
@@ -387,7 +387,7 @@ export function rankInsights(insights: Insight[]): Insight[] {
  * more slot, worst first. The rest stay visible in the Goals section, and the
  * assistant still sees all of them in its snapshot.
  */
-function goalInsights(bundle: MetricsBundle, index: RefIndex): Insight[] {
+const goalInsights = (bundle: MetricsBundle, index: RefIndex): Insight[] => {
   const { persona } = bundle.dataset;
   const cards: Insight[] = [];
 
@@ -401,9 +401,9 @@ function goalInsights(bundle: MetricsBundle, index: RefIndex): Insight[] {
   );
 
   return secondary.length > 0 ? [...cards, secondary[0]] : cards;
-}
+};
 
-export function runInsightRules(bundle: MetricsBundle, index: RefIndex): Insight[] {
+export const runInsightRules = (bundle: MetricsBundle, index: RefIndex): Insight[] => {
   const results: (Insight | null)[] = [
     sleepHeartRateRule(bundle, index),
     sleepDebtRule(bundle, index),
@@ -420,9 +420,9 @@ export function runInsightRules(bundle: MetricsBundle, index: RefIndex): Insight
     ...results.filter((insight): insight is Insight => insight !== null),
     ...goalInsights(bundle, index),
   ]);
-}
+};
 
 /** The three cards the dashboard shows before "show all". */
-export function focusInsights(insights: Insight[], limit = 3): Insight[] {
+export const focusInsights = (insights: Insight[], limit = 3): Insight[] => {
   return insights.slice(0, limit);
-}
+};

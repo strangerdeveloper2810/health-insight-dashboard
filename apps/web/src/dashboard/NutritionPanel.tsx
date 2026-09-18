@@ -35,7 +35,7 @@ const MACROS: MacroRow[] = [
   { label: "Sodium", metric: "sodiumMg", pick: (r) => r.sodiumMg },
 ];
 
-export function NutritionPanel() {
+export const NutritionPanel = () => {
   const dataset = useAppSelector(selectDataset);
   const derived = useAppSelector(selectDerived);
 
@@ -161,4 +161,4 @@ export function NutritionPanel() {
       </div>
     </Panel>
   );
-}
+};

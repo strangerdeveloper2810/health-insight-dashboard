@@ -35,16 +35,16 @@ export type ForcedState = "loading" | "error" | "empty" | "partial";
  * runs for `partial`, which blanks a subset of the data so the per-section
  * empty states are exercised while the page as a whole still works.
  */
-export function forcedState(): ForcedState | null {
+export const forcedState = (): ForcedState | null => {
   if (typeof window === "undefined") return null;
   const value = new URLSearchParams(window.location.search).get("state");
   return value === "loading" || value === "error" || value === "empty" || value === "partial"
     ? value
     : null;
-}
+};
 
 /** Strip the recorded data, keeping the persona and configuration. */
-function blankOut(payload: DashboardPayload): DashboardPayload {
+const blankOut = (payload: DashboardPayload): DashboardPayload => {
   return {
     ...payload,
     dataset: {
@@ -65,11 +65,11 @@ function blankOut(payload: DashboardPayload): DashboardPayload {
     summaries: {} as DashboardPayload["summaries"],
     refs: [],
   };
-}
+};
 
 // ─── Dashboard ──────────────────────────────────────────────────────────────
 
-export async function fetchDashboard(signal?: AbortSignal): Promise<DashboardPayload> {
+export const fetchDashboard = async (signal?: AbortSignal): Promise<DashboardPayload> => {
   const forced = forcedState();
 
   // Never resolves. The reducers stay in their loading state, which is what a
@@ -102,7 +102,7 @@ export async function fetchDashboard(signal?: AbortSignal): Promise<DashboardPay
 
   const payload = (await response.json()) as DashboardPayload;
   return forced === "empty" ? blankOut(payload) : payload;
-}
+};
 
 // ─── Chat ───────────────────────────────────────────────────────────────────
 
@@ -113,11 +113,11 @@ export async function fetchDashboard(signal?: AbortSignal): Promise<DashboardPay
  * is read from `fetch` directly. That also makes cancellation a plain
  * `AbortController`, which is what the stop button uses.
  */
-export async function streamChat(options: {
+export const streamChat = async (options: {
   messages: ChatTurn[];
   signal: AbortSignal;
   onEvent: (event: ChatEvent) => void;
-}): Promise<void> {
+}): Promise<void> => {
   const { messages, signal, onEvent } = options;
 
   const response = await fetch("/api/chat", {
@@ -165,9 +165,9 @@ export async function streamChat(options: {
   } finally {
     reader.cancel().catch(() => {});
   }
-}
+};
 
-function parseFrame(frame: string): ChatEvent | null {
+const parseFrame = (frame: string): ChatEvent | null => {
   const data = frame
     .split("\n")
     .filter((line) => line.startsWith("data: "))
@@ -183,4 +183,4 @@ function parseFrame(frame: string): ChatEvent | null {
     // token of a sentence is survivable, losing the sentence is not.
     return null;
   }
-}
+};

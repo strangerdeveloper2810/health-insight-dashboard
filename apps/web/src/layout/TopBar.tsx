@@ -26,7 +26,7 @@ const THEME_LABEL: Record<ThemeChoice, string> = {
   dark: "Dark",
 };
 
-function ThemeToggle() {
+const ThemeToggle = () => {
   const { choice, theme, setChoice } = useTheme();
 
   return (
@@ -53,9 +53,9 @@ function ThemeToggle() {
       ))}
     </div>
   );
-}
+};
 
-export function TopBar() {
+export const TopBar = () => {
   const dispatch = useAppDispatch();
   const dataset = useAppSelector(selectDataset);
   const payload = useAppSelector(selectPayload);
@@ -112,4 +112,4 @@ export function TopBar() {
       </div>
     </header>
   );
-}
+};

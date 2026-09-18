@@ -41,23 +41,23 @@ const uiSlice = createSlice({
   name: "ui",
   initialState,
   reducers: {
-    themeResolved(state, action: PayloadAction<ThemeName>) {
+    themeResolved: (state, action: PayloadAction<ThemeName>) => {
       state.theme = action.payload;
     },
-    themeChosen(state, action: PayloadAction<ThemeChoice>) {
+    themeChosen: (state, action: PayloadAction<ThemeChoice>) => {
       state.themeChoice = action.payload;
     },
-    trendMetricChanged(state, action: PayloadAction<MetricKey>) {
+    trendMetricChanged: (state, action: PayloadAction<MetricKey>) => {
       state.trendMetric = action.payload;
     },
-    trendRangeChanged(state, action: PayloadAction<TrendRange>) {
+    trendRangeChanged: (state, action: PayloadAction<TrendRange>) => {
       state.trendRange = action.payload;
     },
     /** Opening one card closes the other: two open panels is a wall of text. */
-    insightToggled(state, action: PayloadAction<string>) {
+    insightToggled: (state, action: PayloadAction<string>) => {
       state.openInsight = state.openInsight === action.payload ? null : action.payload;
     },
-    eventsToggled(state) {
+    eventsToggled: (state) => {
       state.showEvents = !state.showEvents;
     },
   },

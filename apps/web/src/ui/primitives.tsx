@@ -42,19 +42,19 @@ const TONE_FILL: Record<Tone, string> = {
   neutral: "bg-ink",
 };
 
-export function toneText(tone: Tone): string {
+export const toneText = (tone: Tone): string => {
   return TONE_TEXT[tone];
-}
+};
 
 // ─── Surfaces ───────────────────────────────────────────────────────────────
 
-export function Card({
+export const Card = ({
   children,
   className = "",
 }: {
   children: ReactNode;
   className?: string;
-}) {
+}) => {
   return (
     <section
       className={`rounded-xl border border-line bg-surface shadow-[0_1px_2px_rgba(13,27,42,0.04)] ${className}`}
@@ -62,9 +62,9 @@ export function Card({
       {children}
     </section>
   );
-}
+};
 
-export function Panel({
+export const Panel = ({
   title,
   subtitle,
   action,
@@ -78,7 +78,7 @@ export function Panel({
   children: ReactNode;
   className?: string;
   bodyClassName?: string;
-}) {
+}) => {
   return (
     <Card className={className}>
       <header className="flex flex-wrap items-start justify-between gap-3 border-b border-line px-4 py-3 sm:px-5">
@@ -95,11 +95,11 @@ export function Panel({
       <div className={`px-4 py-4 sm:px-5 ${bodyClassName}`}>{children}</div>
     </Card>
   );
-}
+};
 
 // ─── Labels ─────────────────────────────────────────────────────────────────
 
-export function Badge({
+export const Badge = ({
   tone = "muted",
   children,
   className = "",
@@ -107,7 +107,7 @@ export function Badge({
   tone?: Tone;
   children: ReactNode;
   className?: string;
-}) {
+}) => {
   return (
     <span
       className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium ${TONE_SOFT[tone]} ${className}`}
@@ -115,15 +115,15 @@ export function Badge({
       {children}
     </span>
   );
-}
+};
 
-export function Dot({ tone = "muted" }: { tone?: Tone }) {
+export const Dot = ({ tone = "muted" }: { tone?: Tone }) => {
   return <span className={`size-1.5 rounded-full ${TONE_FILL[tone]}`} aria-hidden />;
-}
+};
 
 // ─── Progress ───────────────────────────────────────────────────────────────
 
-export function Bar({
+export const Bar = ({
   value,
   tone = "brand",
   label,
@@ -134,7 +134,7 @@ export function Bar({
   tone?: Tone;
   label?: string;
   className?: string;
-}) {
+}) => {
   const pct = Math.max(0, Math.min(100, value));
   return (
     <div
@@ -151,7 +151,7 @@ export function Bar({
       />
     </div>
   );
-}
+};
 
 /**
  * The readiness dial.
@@ -160,7 +160,7 @@ export function Bar({
  * that is a judgement about today rather than a measurement, and it should not
  * look like the others.
  */
-export function Ring({
+export const Ring = ({
   value,
   size = 132,
   stroke = 10,
@@ -172,7 +172,7 @@ export function Ring({
   stroke?: number;
   tone?: Tone;
   children?: ReactNode;
-}) {
+}) => {
   const pct = Math.max(0, Math.min(100, value));
   const radius = (size - stroke) / 2;
   const circumference = 2 * Math.PI * radius;
@@ -210,7 +210,7 @@ export function Ring({
       <div className="absolute inset-0 grid place-items-center text-center">{children}</div>
     </div>
   );
-}
+};
 
 // ─── Sparkline ──────────────────────────────────────────────────────────────
 
@@ -221,7 +221,7 @@ export function Ring({
  * costs a responsive container, a resize observer and a tooltip layer for
  * something whose entire job is to say "up" or "down" at a glance.
  */
-export function Sparkline({
+export const Sparkline = ({
   points,
   tone = "brand",
   width = 108,
@@ -233,7 +233,7 @@ export function Sparkline({
   width?: number;
   height?: number;
   className?: string;
-}) {
+}) => {
   if (points.length < 2) return null;
 
   const values = points.map((p) => p.value);
@@ -269,4 +269,4 @@ export function Sparkline({
       />
     </svg>
   );
-}
+};

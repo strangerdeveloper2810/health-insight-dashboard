@@ -39,7 +39,7 @@ interface TooltipEntry {
   payload?: { totalMin: number };
 }
 
-function NightTooltip({
+const NightTooltip = ({
   active,
   payload,
   label,
@@ -47,7 +47,7 @@ function NightTooltip({
   active?: boolean;
   payload?: TooltipEntry[];
   label?: string;
-}) {
+}) => {
   const theme = useAppSelector(selectUi).theme;
   if (!active || !payload?.length) return null;
 
@@ -75,9 +75,9 @@ function NightTooltip({
       </div>
     </div>
   );
-}
+};
 
-function StageBar() {
+const StageBar = () => {
   const dataset = useAppSelector(selectDataset);
   const palette = CHART_PALETTE[useAppSelector(selectUi).theme];
 
@@ -131,9 +131,9 @@ function StageBar() {
       </p>
     </div>
   );
-}
+};
 
-export function SleepPanel() {
+export const SleepPanel = () => {
   const payload = useAppSelector(selectPayload);
   const derived = useAppSelector(selectDerived);
   const series = useAppSelector(selectSeries("sleepDurationMin"));
@@ -271,4 +271,4 @@ export function SleepPanel() {
       )}
     </Panel>
   );
-}
+};

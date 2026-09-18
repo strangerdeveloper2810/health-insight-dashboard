@@ -29,9 +29,9 @@ import type { EvidenceRef } from "../types";
  * carries `lastIndex` between uses, and a stray state leak here would silently
  * skip citations — the one bug this module exists to prevent.
  */
-function refTokenPattern(): RegExp {
+const refTokenPattern = (): RegExp => {
   return /\{\{\s*([A-Za-z0-9_.]+)\s*\}\}/g;
-}
+};
 
 export type GroundedSegment =
   | { kind: "text"; text: string }
@@ -54,7 +54,7 @@ export interface GroundingReport {
  * index. This is what the React layer maps over — there is no second parsing
  * path, so what is validated is exactly what is displayed.
  */
-export function segmentGrounded(text: string, index: RefIndex): GroundedSegment[] {
+export const segmentGrounded = (text: string, index: RefIndex): GroundedSegment[] => {
   const segments: GroundedSegment[] = [];
   let cursor = 0;
 
@@ -74,11 +74,11 @@ export function segmentGrounded(text: string, index: RefIndex): GroundedSegment[
   }
 
   return segments;
-}
+};
 
-function escapeRegExp(literal: string): string {
+const escapeRegExp = (literal: string): string => {
   return literal.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-}
+};
 
 /**
  * Remove a unit the model wrote after a citation, because the citation already
@@ -104,7 +104,7 @@ function escapeRegExp(literal: string): string {
  * nothing), as does a word that merely starts with the unit ("{{w.avg7d}} grams"
  * keeps its "grams" — only the bare unit is a duplicate).
  */
-export function dropRepeatedUnits(text: string, index: RefIndex): string {
+export const dropRepeatedUnits = (text: string, index: RefIndex): string => {
   let out = "";
   let cursor = 0;
 
@@ -135,10 +135,10 @@ export function dropRepeatedUnits(text: string, index: RefIndex): string {
   }
 
   return out + text.slice(cursor);
-}
+};
 
 /** Post-hoc check run on the assembled response before it is stored. */
-export function validateCitations(text: string, index: RefIndex): GroundingReport {
+export const validateCitations = (text: string, index: RefIndex): GroundingReport => {
   const cited: string[] = [];
   const unknown: string[] = [];
 
@@ -151,14 +151,14 @@ export function validateCitations(text: string, index: RefIndex): GroundingRepor
 
   const resolved = cited.filter((id) => !unknown.includes(id));
   return { cited, resolved, unknown, grounded: unknown.length === 0 };
-}
+};
 
 /**
  * Flatten a response to plain text with values substituted. Used for logs and
  * for the copy-to-clipboard action; the UI renders `segmentGrounded` instead
  * so that citations stay interactive.
  */
-export function renderGrounded(text: string, index: RefIndex): string {
+export const renderGrounded = (text: string, index: RefIndex): string => {
   return segmentGrounded(dropRepeatedUnits(text, index), index)
     .map((segment) => {
       if (segment.kind === "text") return segment.text;
@@ -166,9 +166,9 @@ export function renderGrounded(text: string, index: RefIndex): string {
       return `[unverified: ${segment.token}]`;
     })
     .join("");
-}
+};
 
 /** Strip tokens entirely — for previews, titles and anywhere space is tight. */
-export function stripRefTokens(text: string): string {
+export const stripRefTokens = (text: string): string => {
   return text.replace(refTokenPattern(), "").replace(/\s{2,}/g, " ").trim();
-}
+};

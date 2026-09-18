@@ -20,32 +20,32 @@ import type {
 type Bundle = MetricsBundle;
 
 /** Linear map of `value` from [worst, best] onto 0–100, clamped at both ends. */
-function scale(value: number, worst: number, best: number): number {
+const scale = (value: number, worst: number, best: number): number => {
   if (best === worst) return 50;
   const t = (value - worst) / (best - worst);
   return round(clamp(t * 100, 0, 100), 0);
-}
+};
 
-function verdict(score: number): "up" | "down" | "flat" {
+const verdict = (score: number): "up" | "down" | "flat" => {
   if (score >= 70) return "up";
   if (score >= 50) return "flat";
   return "down";
-}
+};
 
 const SLEEP_TARGET_MIN = 420; // 7h — matches the user's stated sleep goal.
 const SLEEP_FLOOR_MIN = 300; // 5h — below this, sleep scores zero.
 
 /** Render a sleep-debt figure with the direction spelled out, not implied. */
-function sleepDebtValue(debtMin: number): string {
+const sleepDebtValue = (debtMin: number): string => {
   const abs = Math.abs(Math.round(debtMin));
   const h = Math.floor(abs / 60);
   const m = String(abs % 60).padStart(2, "0");
   const magnitude = `${h}h ${m}m`;
   if (abs < 15) return "balanced";
   return debtMin > 0 ? `${magnitude} behind` : `${magnitude} ahead`;
-}
+};
 
-function sleepComponent(bundle: Bundle): ReadinessComponent {
+const sleepComponent = (bundle: Bundle): ReadinessComponent => {
   const summary = bundle.summaries.sleepDurationMin;
   const sevenDay = summary?.windows.find((w) => w.window === "7d");
   const durationAvg = sevenDay?.average ?? 0;
@@ -108,9 +108,9 @@ function sleepComponent(bundle: Bundle): ReadinessComponent {
       },
     ],
   };
-}
+};
 
-function recoveryComponent(bundle: Bundle): ReadinessComponent {
+const recoveryComponent = (bundle: Bundle): ReadinessComponent => {
   const hrv7 = bundle.summaries.hrvMs?.windows.find((w) => w.window === "7d");
   const hrv30 = bundle.summaries.hrvMs?.windows.find((w) => w.window === "30d");
   const rhr7 = bundle.summaries.restingHeartRate?.windows.find((w) => w.window === "7d");
@@ -153,9 +153,9 @@ function recoveryComponent(bundle: Bundle): ReadinessComponent {
       },
     ],
   };
-}
+};
 
-function loadComponent(bundle: Bundle): ReadinessComponent {
+const loadComponent = (bundle: Bundle): ReadinessComponent => {
   const { acwr, acuteLoadMin, chronicWeeklyLoadMin } = bundle.derived;
 
   let score: number;
@@ -203,14 +203,14 @@ function loadComponent(bundle: Bundle): ReadinessComponent {
       },
     ],
   };
-}
+};
 
-export function readinessBand(score: number): ReadinessBand {
+export const readinessBand = (score: number): ReadinessBand => {
   if (score >= 85) return "excellent";
   if (score >= 70) return "good";
   if (score >= 55) return "fair";
   return "poor";
-}
+};
 
 const HEADLINES: Record<ReadinessComponent["id"], string> = {
   sleep: "Sleep is the thing holding you back",
@@ -218,7 +218,7 @@ const HEADLINES: Record<ReadinessComponent["id"], string> = {
   load: "Your training load is out of balance",
 };
 
-export function computeReadiness(bundle: Bundle): ReadinessScore {
+export const computeReadiness = (bundle: Bundle): ReadinessScore => {
   const components = [
     sleepComponent(bundle),
     recoveryComponent(bundle),
@@ -244,9 +244,9 @@ export function computeReadiness(bundle: Bundle): ReadinessScore {
         : "Broadly on track, with room to tighten up";
 
   return { score, band, headline, components };
-}
+};
 
 /** Convenience for callers that already have a dataset. */
-export function readinessFor(dataset: Bundle["dataset"]): ReadinessScore {
+export const readinessFor = (dataset: Bundle["dataset"]): ReadinessScore => {
   return computeReadiness(computeMetrics(dataset));
-}
+};

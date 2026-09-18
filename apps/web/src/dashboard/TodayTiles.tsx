@@ -24,7 +24,7 @@ import { Card, Sparkline, toneText } from "@/ui/primitives";
 
 const TILES: MetricKey[] = ["steps", "sleepDurationMin", "restingHeartRate", "hrvMs"];
 
-function Tile({ metric }: { metric: MetricKey }) {
+const Tile = ({ metric }: { metric: MetricKey }) => {
   const meta = METRIC_META[metric];
   const summary = useAppSelector(selectSummary(metric));
   const series = useAppSelector(selectSeries(metric));
@@ -81,9 +81,9 @@ function Tile({ metric }: { metric: MetricKey }) {
       ) : null}
     </Card>
   );
-}
+};
 
-export function TodayTiles() {
+export const TodayTiles = () => {
   const payload = useAppSelector(selectPayload);
   if (!payload) return null;
 
@@ -110,4 +110,4 @@ export function TodayTiles() {
       ))}
     </div>
   );
-}
+};

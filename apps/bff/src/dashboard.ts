@@ -22,7 +22,7 @@ export interface DashboardBundle {
   payload: DashboardPayload;
 }
 
-export function buildPayload(config: Config): DashboardBundle {
+export const buildPayload = (config: Config): DashboardBundle => {
   const dataset = createDefaultDataset({
     seed: config.datasetSeed,
     days: config.datasetDays,
@@ -49,7 +49,7 @@ export function buildPayload(config: Config): DashboardBundle {
       config: publicConfig(config),
     },
   };
-}
+};
 
 /**
  * Memoised for the running server. The dataset is seeded and deterministic,
@@ -62,10 +62,10 @@ export function buildPayload(config: Config): DashboardBundle {
  */
 let cached: { key: string; bundle: DashboardBundle } | null = null;
 
-export function getDashboard(config: Config): DashboardBundle {
+export const getDashboard = (config: Config): DashboardBundle => {
   const key = `${config.datasetSeed}:${config.datasetDays}`;
   if (cached?.key !== key) {
     cached = { key, bundle: buildPayload(config) };
   }
   return cached.bundle;
-}
+};

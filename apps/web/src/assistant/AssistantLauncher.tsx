@@ -10,7 +10,7 @@
 import { useAppDispatch } from "@/app/hooks";
 import { opened } from "@/features/assistantSlice";
 
-export function AssistantLauncher() {
+export const AssistantLauncher = () => {
   const dispatch = useAppDispatch();
 
   return (
@@ -33,4 +33,4 @@ export function AssistantLauncher() {
       Ask about your health
     </button>
   );
-}
+};

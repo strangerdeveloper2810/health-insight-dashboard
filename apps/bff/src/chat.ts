@@ -44,7 +44,7 @@ export type { ChatEvent, ChatTurn };
 const MAX_HISTORY_TURNS = 16;
 const MAX_TURN_CHARS = 4000;
 
-export function sanitiseHistory(turns: ChatTurn[]): Anthropic.MessageParam[] {
+export const sanitiseHistory = (turns: ChatTurn[]): Anthropic.MessageParam[] => {
   return turns
     .filter((turn) => turn.content.trim().length > 0)
     .slice(-MAX_HISTORY_TURNS)
@@ -52,7 +52,7 @@ export function sanitiseHistory(turns: ChatTurn[]): Anthropic.MessageParam[] {
       role: turn.role,
       content: turn.content.slice(0, MAX_TURN_CHARS),
     }));
-}
+};
 
 /**
  * Mark the end of the previous turn as a cache breakpoint.
@@ -62,9 +62,9 @@ export function sanitiseHistory(turns: ChatTurn[]): Anthropic.MessageParam[] {
  * history instead of re-processing it. On a one-message conversation there is
  * nothing to cache yet, and marking it would write a cache entry nobody reads.
  */
-export function withHistoryBreakpoint(
+export const withHistoryBreakpoint = (
   messages: Anthropic.MessageParam[],
-): Anthropic.MessageParam[] {
+): Anthropic.MessageParam[] => {
   if (messages.length < 6) return messages;
 
   const target = messages[messages.length - 2];
@@ -84,7 +84,7 @@ export function withHistoryBreakpoint(
     },
     messages[messages.length - 1]!,
   ];
-}
+};
 
 // ─── Error mapping ──────────────────────────────────────────────────────────
 
@@ -94,7 +94,9 @@ export function withHistoryBreakpoint(
  * The dashboard is a consumer product: "529 overloaded" is a stack trace with
  * a nicer font. Each branch says what happened and what the person can do.
  */
-export function describeError(error: unknown): { code: string; message: string; status: number } {
+export const describeError = (
+  error: unknown,
+): { code: string; message: string; status: number } => {
   if (error instanceof Anthropic.AuthenticationError) {
     return {
       code: "bad_api_key",
@@ -136,7 +138,7 @@ export function describeError(error: unknown): { code: string; message: string; 
     message: "Something went wrong generating that answer. Your data was not affected.",
     status: 500,
   };
-}
+};
 
 // ─── The turn ───────────────────────────────────────────────────────────────
 
@@ -149,7 +151,7 @@ export interface StreamChatOptions {
   emit: (event: ChatEvent) => void;
 }
 
-export async function streamChat(options: StreamChatOptions): Promise<void> {
+export const streamChat = async (options: StreamChatOptions): Promise<void> => {
   const { config, model, client, history, signal, emit } = options;
 
   const system: Anthropic.TextBlockParam[] = [
@@ -229,4 +231,4 @@ export async function streamChat(options: StreamChatOptions): Promise<void> {
     const described = describeError(error);
     emit({ type: "error", code: described.code, message: described.message });
   }
-}
+};

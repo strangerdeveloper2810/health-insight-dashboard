@@ -17,7 +17,7 @@ import { selectDataset } from "@/features/selectors";
 import { Badge, Card, Panel } from "@/ui/primitives";
 import { EmptyState } from "@/ui/states";
 
-function List({ title, items }: { title: string; items: string[] }) {
+const List = ({ title, items }: { title: string; items: string[] }) => {
   if (items.length === 0) return null;
   return (
     <div>
@@ -33,9 +33,9 @@ function List({ title, items }: { title: string; items: string[] }) {
       </ul>
     </div>
   );
-}
+};
 
-function QualityRow({ note }: { note: DataQualityNote }) {
+const QualityRow = ({ note }: { note: DataQualityNote }) => {
   const pct = Math.round(note.completeness * 100);
   const tone = pct >= 85 ? "positive" : pct >= 60 ? "watch" : "alert";
 
@@ -48,9 +48,9 @@ function QualityRow({ note }: { note: DataQualityNote }) {
       <p className="mt-1 text-[11px] leading-relaxed text-muted">{note.note}</p>
     </li>
   );
-}
+};
 
-export function ContextPanel() {
+export const ContextPanel = () => {
   const dataset = useAppSelector(selectDataset);
   const persona = dataset?.persona ?? null;
 
@@ -117,4 +117,4 @@ export function ContextPanel() {
       </Panel>
     </div>
   );
-}
+};

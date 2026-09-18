@@ -38,7 +38,7 @@ const CONTRIBUTION: Record<
   flat: { tone: "muted", glyph: "—", sr: "neutral" },
 };
 
-function ComponentRow({ component }: { component: ReadinessComponent }) {
+const ComponentRow = ({ component }: { component: ReadinessComponent }) => {
   const tone: Tone =
     component.score >= 80 ? "positive" : component.score >= 60 ? "brand" : component.score >= 40 ? "watch" : "alert";
 
@@ -79,9 +79,9 @@ function ComponentRow({ component }: { component: ReadinessComponent }) {
       ) : null}
     </li>
   );
-}
+};
 
-export function ReadinessHero({ readiness }: { readiness: ReadinessScore }) {
+export const ReadinessHero = ({ readiness }: { readiness: ReadinessScore }) => {
   const persona = useAppSelector(selectPersona);
 
   return (
@@ -133,4 +133,4 @@ export function ReadinessHero({ readiness }: { readiness: ReadinessScore }) {
       </footer>
     </Card>
   );
-}
+};

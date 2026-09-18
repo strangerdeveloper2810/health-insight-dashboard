@@ -24,7 +24,7 @@ import Markdown from "react-markdown";
 import { dropRepeatedUnits, formatEvidenceValue, segmentGrounded } from "@health/core";
 import type { RefIndex } from "@health/core";
 
-function CitationChip({ text, label }: { text: string; label: string }) {
+const CitationChip = ({ text, label }: { text: string; label: string }) => {
   return (
     <span
       title={label}
@@ -33,9 +33,9 @@ function CitationChip({ text, label }: { text: string; label: string }) {
       {text}
     </span>
   );
-}
+};
 
-function UnresolvedToken({ token }: { token: string }) {
+const UnresolvedToken = ({ token }: { token: string }) => {
   return (
     <span
       title={`The assistant referred to "${token}", which is not a value in your data. Treat this claim with caution.`}
@@ -46,10 +46,10 @@ function UnresolvedToken({ token }: { token: string }) {
       {token}
     </span>
   );
-}
+};
 
 /** Replace every reference token in one run of plain text. */
-function Grounded({ text, index }: { text: string; index: RefIndex }) {
+const Grounded = ({ text, index }: { text: string; index: RefIndex }) => {
   const segments = segmentGrounded(text, index);
 
   return (
@@ -69,7 +69,7 @@ function Grounded({ text, index }: { text: string; index: RefIndex }) {
       })}
     </>
   );
-}
+};
 
 /**
  * Walk a parsed markdown subtree, grounding every string it contains.
@@ -78,7 +78,7 @@ function Grounded({ text, index }: { text: string; index: RefIndex }) {
  * inline tag means a citation inside a bold phrase or a nested list works
  * without enumerating the markdown vocabulary.
  */
-function groundChildren(children: ReactNode, index: RefIndex): ReactNode {
+const groundChildren = (children: ReactNode, index: RefIndex): ReactNode => {
   return Children.map(children, (child, position) => {
     if (typeof child === "string") {
       return <Grounded key={position} text={child} index={index} />;
@@ -93,9 +93,9 @@ function groundChildren(children: ReactNode, index: RefIndex): ReactNode {
     }
     return child;
   });
-}
+};
 
-export function MarkdownAnswer({ text, index }: { text: string; index: RefIndex | null }) {
+export const MarkdownAnswer = ({ text, index }: { text: string; index: RefIndex | null }) => {
   if (!index) {
     // No index means the dashboard has not loaded, so nothing can be resolved;
     // the answer is shown as prose rather than as a wall of unmarked tokens.
@@ -129,6 +129,6 @@ export function MarkdownAnswer({ text, index }: { text: string; index: RefIndex 
       </Markdown>
     </div>
   );
-}
+};
 
 export { CitationChip, UnresolvedToken };

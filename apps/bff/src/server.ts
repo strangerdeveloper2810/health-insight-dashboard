@@ -48,7 +48,7 @@ export interface BuildServerOptions {
   client?: Anthropic;
 }
 
-export async function buildServer(options: BuildServerOptions = {}): Promise<FastifyInstance> {
+export const buildServer = async (options: BuildServerOptions = {}): Promise<FastifyInstance> => {
   const config = options.config ?? loadConfig();
   const app = Fastify({
     // Silent under test: the request log is useful in a terminal and noise in
@@ -142,12 +142,12 @@ export async function buildServer(options: BuildServerOptions = {}): Promise<Fas
   });
 
   return app;
-}
+};
 
-function createClient(config: Config): Anthropic | null {
+const createClient = (config: Config): Anthropic | null => {
   if (!config.apiKey) return null;
   return new Anthropic({ apiKey: config.apiKey });
-}
+};
 
 // ─── Entry point ────────────────────────────────────────────────────────────
 

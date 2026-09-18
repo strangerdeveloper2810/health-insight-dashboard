@@ -44,7 +44,7 @@ export const SUGGESTED_QUESTIONS = [
 
 // ─── Static system prompt ───────────────────────────────────────────────────
 
-export function buildSystemPrompt(persona: Persona): string {
+export const buildSystemPrompt = (persona: Persona): string => {
   return `You are the health assistant inside Health Insight, a personal health dashboard. You help one person understand their own tracked data and decide what to do next.
 
 ## Who you are talking to
@@ -108,7 +108,7 @@ The snapshot answers most questions. Reach for a tool when the question is about
 ## Boundaries of your role
 
 You are a data interpreter, not a clinician. You can explain what the numbers show and suggest lifestyle changes that follow from them. You cannot assess symptoms, interpret a test result the user mentions, or tell them whether to change a treatment. When a question crosses that line, say so in one sentence and offer the part you can answer.`;
-}
+};
 
 // ─── Live snapshot ──────────────────────────────────────────────────────────
 
@@ -126,7 +126,7 @@ const SEVERITY_MARK: Record<Insight["severity"], string> = {
   info: "i",
 };
 
-export function buildDataSnapshot(input: SnapshotInput): string {
+export const buildDataSnapshot = (input: SnapshotInput): string => {
   const { bundle, readiness, insights, index } = input;
   const { dataset } = bundle;
   const { persona, range } = dataset;
@@ -226,9 +226,9 @@ export function buildDataSnapshot(input: SnapshotInput): string {
   );
 
   return lines.join("\n");
-}
+};
 
 /** Rough token estimate for logging — 4 characters per token is close enough. */
-export function estimateTokens(text: string): number {
+export const estimateTokens = (text: string): number => {
   return Math.ceil(text.length / 4);
-}
+};

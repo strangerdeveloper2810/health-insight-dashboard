@@ -147,6 +147,17 @@ selected trend metric and range, disclosure state) and `assistant` (conversation
 status, grounding verdicts). Derived data goes through `createSelector`, so the reference-index
 `Map` is built once per payload rather than on every render.
 
+### Code style
+
+Functions are arrow functions assigned to `const`, throughout all three packages. The exceptions
+are the two places the language requires a regular function: `ApiError`'s members assign to
+`this`, and the fake stream in the BFF test is an `async function*` — an arrow can neither own a
+`this` binding nor be a generator.
+
+The one consequence worth naming is that `const` is not hoisted, so a definition has to sit above
+any *top-level* call to it. Calls from inside other function bodies are unaffected, which is every
+call in this codebase.
+
 ### Request flow for a chat turn
 
 ```

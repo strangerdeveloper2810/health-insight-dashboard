@@ -15,7 +15,7 @@ import type { ReactNode } from "react";
 
 import { Card } from "./primitives";
 
-export function Skeleton({ className = "" }: { className?: string }) {
+export const Skeleton = ({ className = "" }: { className?: string }) => {
   return (
     <div
       className={`animate-pulse rounded-md bg-raised ${className}`}
@@ -23,9 +23,9 @@ export function Skeleton({ className = "" }: { className?: string }) {
       aria-hidden
     />
   );
-}
+};
 
-export function LoadingState({ label = "Loading your dashboard" }: { label?: string }) {
+export const LoadingState = ({ label = "Loading your dashboard" }: { label?: string }) => {
   return (
     <div className="space-y-5" role="status" aria-live="polite">
       <span className="sr-only">{label}</span>
@@ -56,9 +56,9 @@ export function LoadingState({ label = "Loading your dashboard" }: { label?: str
       </div>
     </div>
   );
-}
+};
 
-export function ErrorState({
+export const ErrorState = ({
   title = "We could not load your dashboard",
   message,
   code,
@@ -68,7 +68,7 @@ export function ErrorState({
   message: string;
   code?: string;
   onRetry?: () => void;
-}) {
+}) => {
   return (
     <Card className="p-8 text-center">
       <div
@@ -97,9 +97,9 @@ export function ErrorState({
       {code ? <p className="mt-4 text-[11px] text-faint">Reference: {code}</p> : null}
     </Card>
   );
-}
+};
 
-export function EmptyState({
+export const EmptyState = ({
   title,
   message,
   action,
@@ -109,7 +109,7 @@ export function EmptyState({
   message: string;
   action?: ReactNode;
   icon?: ReactNode;
-}) {
+}) => {
   return (
     <div className="grid place-items-center rounded-lg border border-dashed border-line bg-raised px-6 py-10 text-center">
       {icon ? <div className="text-faint">{icon}</div> : null}
@@ -118,7 +118,7 @@ export function EmptyState({
       {action ? <div className="mt-4">{action}</div> : null}
     </div>
   );
-}
+};
 
 /**
  * A caveat attached to real data.
@@ -128,7 +128,7 @@ export function EmptyState({
  * around 70% of days, which turns every average into an undercount — and an
  * unlabelled undercount is worse than no number.
  */
-export function CaveatNote({ children }: { children: ReactNode }) {
+export const CaveatNote = ({ children }: { children: ReactNode }) => {
   return (
     <p className="flex items-start gap-2 rounded-lg border border-watch/25 bg-watch-soft px-3 py-2 text-xs leading-relaxed text-watch">
       <svg
@@ -146,4 +146,4 @@ export function CaveatNote({ children }: { children: ReactNode }) {
       <span>{children}</span>
     </p>
   );
-}
+};

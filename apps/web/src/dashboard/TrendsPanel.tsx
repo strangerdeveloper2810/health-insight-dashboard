@@ -51,7 +51,7 @@ interface TooltipEntry {
   value?: number | string;
 }
 
-function ChartTooltip({
+const ChartTooltip = ({
   active,
   payload,
   label,
@@ -65,7 +65,7 @@ function ChartTooltip({
   unit: string;
   precision: number;
   format?: "number" | "duration" | "clock";
-}) {
+}) => {
   // Read before the early return: a hook after a conditional exit is a hook
   // whose call count depends on the data.
   const theme = useAppSelector(selectUi).theme;
@@ -97,14 +97,14 @@ function ChartTooltip({
       </div>
     </div>
   );
-}
+};
 
-function statLine(stat: WindowedStat, unit: string, precision: number): string {
+const statLine = (stat: WindowedStat, unit: string, precision: number): string => {
   const shape = { unit, precision, format: undefined };
   return `avg ${formatBare(stat.average, shape)} · low ${formatBare(stat.min, shape)} · high ${formatBare(stat.max, shape)}`;
-}
+};
 
-export function TrendsPanel() {
+export const TrendsPanel = () => {
   const dispatch = useAppDispatch();
   const payload = useAppSelector(selectPayload);
   const ui = useAppSelector(selectUi);
@@ -305,4 +305,4 @@ export function TrendsPanel() {
       )}
     </Panel>
   );
-}
+};

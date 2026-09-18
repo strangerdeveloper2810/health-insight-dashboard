@@ -109,12 +109,12 @@ export const MAYA: Persona = {
 };
 
 /** Goals with their dates filled in relative to the dataset window. */
-export function personaWithDatedGoals(
+export const personaWithDatedGoals = (
   persona: Persona,
   startDate: string,
   planStartDate: string,
   targetDate: string,
-): Persona {
+): Persona => {
   return {
     ...persona,
     primaryGoal: { ...persona.primaryGoal, startDate: planStartDate, targetDate },
@@ -124,4 +124,4 @@ export function personaWithDatedGoals(
       targetDate,
     })),
   };
-}
+};

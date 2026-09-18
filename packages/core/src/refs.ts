@@ -29,7 +29,7 @@ const NUMBER_FORMAT = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 1,
 });
 
-export function formatEvidenceValue(evidence: EvidenceRef): string {
+export const formatEvidenceValue = (evidence: EvidenceRef): string => {
   const { value, unit, precision, format } = evidence;
 
   if (format === "duration") {
@@ -50,15 +50,15 @@ export function formatEvidenceValue(evidence: EvidenceRef): string {
       : NUMBER_FORMAT.format(Number(value.toFixed(precision)));
 
   return unit === "%" ? `${formatted}%` : `${formatted} ${unit}`;
-}
+};
 
 // ─── Index construction ─────────────────────────────────────────────────────
 
-function windowKey(window: WindowedStat["window"]): string {
+const windowKey = (window: WindowedStat["window"]): string => {
   return window; // "7d" | "30d" | "90d"
-}
+};
 
-function pushRef(
+const pushRef = (
   refs: Map<string, EvidenceRef>,
   ref: string,
   label: string,
@@ -66,14 +66,14 @@ function pushRef(
   unit: string,
   precision: number,
   format: EvidenceRef["format"] = "number",
-): void {
+): void => {
   refs.set(ref, { ref, label, value, unit, precision, format });
-}
+};
 
-export function buildRefIndex(
+export const buildRefIndex = (
   bundle: MetricsBundle,
   readiness?: ReadinessScore,
-): RefIndex {
+): RefIndex => {
   const refs = new Map<string, EvidenceRef>();
 
   for (const key of Object.keys(METRIC_META) as MetricKey[]) {
@@ -391,26 +391,26 @@ export function buildRefIndex(
   }
 
   return { refs };
-}
+};
 
 // ─── Resolution ─────────────────────────────────────────────────────────────
 
-export function resolveRef(index: RefIndex, ref: string): EvidenceRef | null {
+export const resolveRef = (index: RefIndex, ref: string): EvidenceRef | null => {
   return index.refs.get(ref) ?? null;
-}
+};
 
-export function hasRef(index: RefIndex, ref: string): boolean {
+export const hasRef = (index: RefIndex, ref: string): boolean => {
   return index.refs.has(ref);
-}
+};
 
 /**
  * The catalogue handed to the model: ref id, what it means, and its value.
  * Sorted by ref id so the serialised form is byte-stable across requests,
  * which is what lets the prompt cache actually hit.
  */
-export function refCatalogue(index: RefIndex): EvidenceRef[] {
+export const refCatalogue = (index: RefIndex): EvidenceRef[] => {
   return [...index.refs.values()].sort((a, b) => a.ref.localeCompare(b.ref));
-}
+};
 
 /**
  * Rebuild an index from a catalogue that has been through JSON.
@@ -420,6 +420,6 @@ export function refCatalogue(index: RefIndex): EvidenceRef[] {
  * chain: the client renders citations with the same `segmentGrounded` the
  * server used to validate them, over the same values the charts are drawing.
  */
-export function indexFromCatalogue(refs: EvidenceRef[]): RefIndex {
+export const indexFromCatalogue = (refs: EvidenceRef[]): RefIndex => {
   return { refs: new Map(refs.map((entry) => [entry.ref, entry])) };
-}
+};

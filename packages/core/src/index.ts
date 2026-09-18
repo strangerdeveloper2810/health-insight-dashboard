@@ -160,7 +160,7 @@ export interface DashboardModel {
  * downstream consumers need. The UI calls this in a Redux thunk; the BFF calls
  * it per chat request. Same function, same result.
  */
-export function buildDashboard(dataset: HealthDataset): DashboardModel {
+export const buildDashboard = (dataset: HealthDataset): DashboardModel => {
   const bundle = computeMetrics(dataset);
   const readiness = computeReadiness(bundle);
   // Readiness is passed in so its component scores are citable too — the
@@ -168,4 +168,4 @@ export function buildDashboard(dataset: HealthDataset): DashboardModel {
   const index = buildRefIndex(bundle, readiness);
   const insights = runInsightRules(bundle, index);
   return { bundle, readiness, insights, index };
-}
+};

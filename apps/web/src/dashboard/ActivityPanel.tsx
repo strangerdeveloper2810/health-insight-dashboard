@@ -39,7 +39,7 @@ const WORKOUT_LABEL: Record<WorkoutType, string> = {
 };
 
 /** The standard acute:chronic bands, and what each one means in practice. */
-function loadBand(ratio: number | null): { tone: Tone; label: string; note: string } {
+const loadBand = (ratio: number | null): { tone: Tone; label: string; note: string } => {
   if (ratio === null) {
     return { tone: "muted", label: "Not enough history", note: "Four weeks of training gives this a baseline to compare against." };
   }
@@ -53,9 +53,9 @@ function loadBand(ratio: number | null): { tone: Tone; label: string; note: stri
     return { tone: "watch", label: "Ramping up", note: "A meaningful step above your norm. The kind of week that is fine once and costly repeated." };
   }
   return { tone: "alert", label: "Sharp spike", note: "Well above what you have been doing. Injury risk climbs fastest in exactly this range." };
-}
+};
 
-function WorkoutRow({ workout }: { workout: Workout }) {
+const WorkoutRow = ({ workout }: { workout: Workout }) => {
   return (
     <li className="flex items-center gap-3 py-2">
       <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-raised text-[10px] font-semibold uppercase text-muted">
@@ -74,9 +74,9 @@ function WorkoutRow({ workout }: { workout: Workout }) {
       <span className="shrink-0 text-[11px] text-faint">RPE {workout.perceivedEffort}</span>
     </li>
   );
-}
+};
 
-export function ActivityPanel() {
+export const ActivityPanel = () => {
   const dataset = useAppSelector(selectDataset);
   const derived = useAppSelector(selectDerived);
   const weekly = useAppSelector(selectSeries("weeklyRunKm"));
@@ -201,4 +201,4 @@ export function ActivityPanel() {
       </div>
     </Panel>
   );
-}
+};

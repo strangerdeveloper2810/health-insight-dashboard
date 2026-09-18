@@ -18,12 +18,12 @@ import {
   minutesToClock,
 } from "../packages/core/src/index";
 
-function arg(name: string, fallback: number): number {
+const arg = (name: string, fallback: number): number => {
   const index = process.argv.indexOf(`--${name}`);
   if (index === -1) return fallback;
   const parsed = Number(process.argv[index + 1]);
   return Number.isFinite(parsed) ? parsed : fallback;
-}
+};
 
 const seed = arg("seed", 20260918);
 const days = arg("days", 90);

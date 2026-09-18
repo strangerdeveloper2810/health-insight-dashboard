@@ -89,7 +89,7 @@ interface DayContext {
   crunch: boolean;
 }
 
-function buildContexts(days: number, endDate: ISODate): DayContext[] {
+const buildContexts = (days: number, endDate: ISODate): DayContext[] => {
   const dates = dateRange(endDate, days);
   const planStartIndex = days - PLAN_STARTED_DAYS_AGO;
 
@@ -106,14 +106,14 @@ function buildContexts(days: number, endDate: ISODate): DayContext[] {
       crunch: index >= days - CRUNCH.from && index <= days - CRUNCH.to,
     };
   });
-}
+};
 
 // ─── Sleep ──────────────────────────────────────────────────────────────────
 
-function generateSleep(
+const generateSleep = (
   rng: () => number,
   ctx: DayContext,
-): SleepRecord | null {
+): SleepRecord | null => {
   // The watch is not worn every night. Assuming complete sleep data is one of
   // the most common lies a health dashboard tells.
   if (chance(rng, 0.05)) return null;
@@ -170,7 +170,7 @@ function generateSleep(
     lightMin,
     awakeMin,
   };
-}
+};
 
 // ─── Workouts ───────────────────────────────────────────────────────────────
 
@@ -202,13 +202,13 @@ const KCAL_PER_MIN: Record<WorkoutType, number> = {
   swim: 9.8,
 };
 
-function buildWorkout(
+const buildWorkout = (
   rng: () => number,
   ctx: DayContext,
   type: WorkoutType,
   durationMin: number,
   distanceKm: number | null,
-): Workout {
+): Workout => {
   const avgHeartRate = boundedGaussian(rng, BASE_HR[type], 6, 80, 175);
   const maxHeartRate = Math.round(
     clamp(avgHeartRate + gaussian(rng, 22, 6), avgHeartRate + 6, 192),
@@ -239,12 +239,12 @@ function buildWorkout(
       ? { note: "Long run — kept it conversational" }
       : {}),
   };
-}
+};
 
-function generateWorkout(
+const generateWorkout = (
   rng: () => number,
   ctx: DayContext,
-): Workout | null {
+): Workout | null => {
   if (ctx.ill) return null;
 
   const dow = dayOfWeek(ctx.date);
@@ -311,14 +311,14 @@ function generateWorkout(
   }
 
   return null;
-}
+};
 
 // ─── Nutrition ──────────────────────────────────────────────────────────────
 
-function generateNutrition(
+const generateNutrition = (
   rng: () => number,
   ctx: DayContext,
-): NutritionRecord | null {
+): NutritionRecord | null => {
   // Logged on roughly three days in five. The gap is the point: it is the
   // most common real-world data problem and the app has to be honest about it.
   if (!chance(rng, 0.61)) return null;
@@ -340,15 +340,15 @@ function generateNutrition(
     waterMl: Math.round(clamp(gaussian(rng, 1520, 380) * scale, 200, 3200)),
     completeness,
   };
-}
+};
 
 // ─── Daily assembly ─────────────────────────────────────────────────────────
 
-function generateDay(
+const generateDay = (
   rng: () => number,
   ctx: DayContext,
   previousSleep: SleepRecord | null,
-): { record: DailyRecord; workout: Workout | null } {
+): { record: DailyRecord; workout: Workout | null } => {
   const workout = generateWorkout(rng, ctx);
   const sleep = generateSleep(rng, ctx);
   const nutrition = generateNutrition(rng, ctx);
@@ -445,11 +445,11 @@ function generateDay(
       spo2,
     },
   };
-}
+};
 
 // ─── Events and data-quality notes ──────────────────────────────────────────
 
-function buildEvents(contexts: DayContext[]): DatasetEvent[] {
+const buildEvents = (contexts: DayContext[]): DatasetEvent[] => {
   const at = (offsetFromEnd: number) => contexts[contexts.length - 1 - offsetFromEnd];
   const events: DatasetEvent[] = [];
 
@@ -528,12 +528,12 @@ function buildEvents(contexts: DayContext[]): DatasetEvent[] {
   }
 
   return events.sort((a, b) => a.date.localeCompare(b.date));
-}
+};
 
-function buildDataQuality(
+const buildDataQuality = (
   daily: DailyRecord[],
   workouts: Workout[],
-): DataQualityNote[] {
+): DataQualityNote[] => {
   const total = daily.length || 1;
   const nutritionLogged = daily.filter((d) => d.nutrition !== null).length;
   const sleepTracked = daily.filter((d) => d.sleep !== null).length;
@@ -565,14 +565,14 @@ function buildDataQuality(
       note: `${workouts.length} workouts recorded. Sessions are logged automatically by the watch, so this domain is complete.`,
     },
   ];
-}
+};
 
 // ─── Public API ─────────────────────────────────────────────────────────────
 
-export function generateDataset(
+export const generateDataset = (
   persona: Persona = MAYA,
   options: GenerateOptions = {},
-): HealthDataset {
+): HealthDataset => {
   const seed = options.seed ?? DEFAULT_SEED;
   const days = options.days ?? DEFAULT_DAYS;
   const endDate = options.endDate ?? toISODate(new Date());
@@ -605,9 +605,9 @@ export function generateDataset(
     events: buildEvents(contexts),
     dataQuality: buildDataQuality(daily, workouts),
   };
-}
+};
 
 /** Convenience wrapper using the bundled persona and default seed. */
-export function createDefaultDataset(options: GenerateOptions = {}): HealthDataset {
+export const createDefaultDataset = (options: GenerateOptions = {}): HealthDataset => {
   return generateDataset(MAYA, options);
-}
+};

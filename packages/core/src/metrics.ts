@@ -31,7 +31,7 @@ import type {
 // ─── Series construction ────────────────────────────────────────────────────
 
 /** Pull a raw daily value, or `null` when the day has no observation. */
-function rawValue(record: DailyRecord, key: MetricKey): number | null {
+const rawValue = (record: DailyRecord, key: MetricKey): number | null => {
   switch (key) {
     case "steps":
       return record.steps;
@@ -79,16 +79,16 @@ function rawValue(record: DailyRecord, key: MetricKey): number | null {
     case "longestRunKm":
       return null;
   }
-}
+};
 
-function runDistanceByDate(workouts: Workout[]): Map<ISODate, number> {
+const runDistanceByDate = (workouts: Workout[]): Map<ISODate, number> => {
   const byDate = new Map<ISODate, number>();
   for (const workout of workouts) {
     if (workout.type !== "run" || workout.distanceKm === null) continue;
     byDate.set(workout.date, (byDate.get(workout.date) ?? 0) + workout.distanceKm);
   }
   return byDate;
-}
+};
 
 /**
  * Build one metric's daily series.
@@ -97,7 +97,7 @@ function runDistanceByDate(workouts: Workout[]): Map<ISODate, number> {
  * count and a day the phone was not carried are different facts, and a chart
  * that conflates them is worse than one with a gap.
  */
-export function buildSeries(dataset: HealthDataset, key: MetricKey): SeriesPoint[] {
+export const buildSeries = (dataset: HealthDataset, key: MetricKey): SeriesPoint[] => {
   const points: SeriesPoint[] = [];
 
   if (key === "runDistanceKm") {
@@ -141,31 +141,31 @@ export function buildSeries(dataset: HealthDataset, key: MetricKey): SeriesPoint
     }
   }
   return points;
-}
+};
 
 // ─── Windowed statistics ────────────────────────────────────────────────────
 
-function sliceWindow(
+const sliceWindow = (
   points: SeriesPoint[],
   endDate: ISODate,
   days: number,
-): SeriesPoint[] {
+): SeriesPoint[] => {
   const startDate = addDays(endDate, -(days - 1));
   return points.filter((p) => p.date >= startDate && p.date <= endDate);
-}
+};
 
-function mean(values: number[]): number {
+const mean = (values: number[]): number => {
   if (values.length === 0) return 0;
   return values.reduce((sum, v) => sum + v, 0) / values.length;
-}
+};
 
-function statFor(
+const statFor = (
   allPoints: SeriesPoint[],
   endDate: ISODate,
   window: WindowedStat["window"],
   days: number,
   precision: number,
-): WindowedStat {
+): WindowedStat => {
   const current = sliceWindow(allPoints, endDate, days);
   const previous = sliceWindow(allPoints, addDays(endDate, -days), days);
 
@@ -193,13 +193,13 @@ function statFor(
     changePct,
     changeAbs,
   };
-}
+};
 
-function summarise(
+const summarise = (
   dataset: HealthDataset,
   key: MetricKey,
   series: SeriesPoint[],
-): MetricSummary {
+): MetricSummary => {
   const meta = metricMeta(key);
   const endDate = dataset.range.end;
   return {
@@ -212,7 +212,7 @@ function summarise(
     ],
     series,
   };
-}
+};
 
 // ─── Derived analytics ──────────────────────────────────────────────────────
 
@@ -271,10 +271,10 @@ export interface DerivedMetrics {
 const SLEEP_DEBT_TARGET_MIN = 420; // 7h.
 const SHORT_SLEEP_THRESHOLD_MIN = 390; // 6h30.
 
-function computeSleepDebt(daily: DailyRecord[], endDate: ISODate): {
+const computeSleepDebt = (daily: DailyRecord[], endDate: ISODate): {
   debtMin: number;
   nights: number;
-} {
+} => {
   const start = addDays(endDate, -13);
   let debt = 0;
   let nights = 0;
@@ -287,12 +287,12 @@ function computeSleepDebt(daily: DailyRecord[], endDate: ISODate): {
     debt += Math.min(150, SLEEP_DEBT_TARGET_MIN - record.sleep.totalMin);
   }
   return { debtMin: Math.round(debt), nights };
-}
+};
 
-function computeBedtimeStats(
+const computeBedtimeStats = (
   daily: DailyRecord[],
   endDate: ISODate,
-): { avg: number; stdDev: number } {
+): { avg: number; stdDev: number } => {
   const start = addDays(endDate, -13);
   const bedtimes: number[] = [];
   for (const record of daily) {
@@ -304,7 +304,7 @@ function computeBedtimeStats(
   const avg = mean(bedtimes);
   const variance = mean(bedtimes.map((b) => (b - avg) ** 2));
   return { avg: Math.round(avg), stdDev: Math.round(Math.sqrt(variance)) };
-}
+};
 
 /**
  * Compare resting heart rate on the day *after* a short night against the day
@@ -312,11 +312,11 @@ function computeBedtimeStats(
  * scrolling a list of nights, and it is the clearest argument for the
  * dashboard existing at all.
  */
-function computeSleepHeartRateLink(
+const computeSleepHeartRateLink = (
   daily: DailyRecord[],
   endDate: ISODate,
   windowDays = 30,
-): SleepHeartRateLink | null {
+): SleepHeartRateLink | null => {
   const start = addDays(endDate, -(windowDays - 1));
   const afterShort: number[] = [];
   const afterNormal: number[] = [];
@@ -350,7 +350,7 @@ function computeSleepHeartRateLink(
     deltaBpm: round(avgShort - avgNormal, 1),
     windowDays,
   };
-}
+};
 
 /**
  * Acute:chronic workload ratio.
@@ -360,10 +360,10 @@ function computeSleepHeartRateLink(
  * "you increased too fast", and it is a genuinely useful thing to tell
  * someone nine weeks into a running plan.
  */
-function computeAcwr(
+const computeAcwr = (
   workouts: Workout[],
   endDate: ISODate,
-): { acwr: number | null; acute: number; chronicWeekly: number } {
+): { acwr: number | null; acute: number; chronicWeekly: number } => {
   const acuteStart = addDays(endDate, -6);
   const chronicStart = addDays(endDate, -27);
 
@@ -384,12 +384,12 @@ function computeAcwr(
     chronicWeekly: Math.round(chronicWeekly),
     acwr: chronicWeekly > 0 ? round(acute / chronicWeekly, 2) : null,
   };
-}
+};
 
-function computeNutritionCompleteness(
+const computeNutritionCompleteness = (
   daily: DailyRecord[],
   endDate: ISODate,
-): { completeness: number; daysLogged: number } {
+): { completeness: number; daysLogged: number } => {
   const start = addDays(endDate, -29);
   let logged = 0;
   let weighted = 0;
@@ -408,13 +408,13 @@ function computeNutritionCompleteness(
     daysLogged: logged,
     completeness: total > 0 ? round(weighted / total, 2) : 0,
   };
-}
+};
 
-function computeStepStreaks(
+const computeStepStreaks = (
   daily: DailyRecord[],
   endDate: ISODate,
   goalSteps = 8000,
-): { current: number; best30d: number } {
+): { current: number; best30d: number } => {
   let current = 0;
   for (let i = daily.length - 1; i >= 0; i -= 1) {
     const record = daily[i];
@@ -435,9 +435,9 @@ function computeStepStreaks(
     }
   }
   return { current, best30d: best };
-}
+};
 
-function computeWeekendStepGap(daily: DailyRecord[], endDate: ISODate): number {
+const computeWeekendStepGap = (daily: DailyRecord[], endDate: ISODate): number => {
   const start = addDays(endDate, -29);
   const weekday: number[] = [];
   const weekend: number[] = [];
@@ -449,12 +449,12 @@ function computeWeekendStepGap(daily: DailyRecord[], endDate: ISODate): number {
 
   if (weekday.length === 0 || weekend.length === 0) return 0;
   return Math.round(mean(weekend) - mean(weekday));
-}
+};
 
 // ─── Goals ──────────────────────────────────────────────────────────────────
 
 /** Least-squares slope of value against day index. */
-function regressionSlope(points: SeriesPoint[]): number {
+const regressionSlope = (points: SeriesPoint[]): number => {
   if (points.length < 3) return 0;
   const base = points[0]?.date ?? "";
   const xs = points.map((p) => daysBetween(base, p.date));
@@ -471,7 +471,7 @@ function regressionSlope(points: SeriesPoint[]): number {
     denominator += dx * dx;
   }
   return denominator === 0 ? 0 : numerator / denominator;
-}
+};
 
 /**
  * How far back a threshold goal's consistency is measured. Rolling, so the
@@ -480,13 +480,13 @@ function regressionSlope(points: SeriesPoint[]): number {
  */
 const THRESHOLD_WINDOW_DAYS = 30;
 
-function evaluateThresholdGoal(
+const evaluateThresholdGoal = (
   goal: Goal,
   series: SeriesPoint[],
   endDate: ISODate,
   currentValue: number,
   daysRemaining: number,
-): GoalProgress {
+): GoalProgress => {
   const windowStart = addDays(endDate, -(THRESHOLD_WINDOW_DAYS - 1));
   const recent = series.filter((p) => p.date >= windowStart && p.date <= endDate);
 
@@ -528,13 +528,13 @@ function evaluateThresholdGoal(
     daysConsidered,
     summary: "",
   };
-}
+};
 
-function evaluateGoal(
+const evaluateGoal = (
   goal: Goal,
   series: SeriesPoint[],
   endDate: ISODate,
-): GoalProgress {
+): GoalProgress => {
   const inWindow = series.filter(
     (p) => p.date >= goal.startDate && p.date <= endDate,
   );
@@ -608,7 +608,7 @@ function evaluateGoal(
     daysConsidered: null,
     summary: "",
   };
-}
+};
 
 // ─── Bundle ─────────────────────────────────────────────────────────────────
 
@@ -619,7 +619,7 @@ export interface MetricsBundle {
   derived: DerivedMetrics;
 }
 
-export function computeMetrics(dataset: HealthDataset): MetricsBundle {
+export const computeMetrics = (dataset: HealthDataset): MetricsBundle => {
   const keys = Object.keys(METRIC_META) as MetricKey[];
 
   const series = {} as Record<MetricKey, SeriesPoint[]>;
@@ -660,4 +660,4 @@ export function computeMetrics(dataset: HealthDataset): MetricsBundle {
   };
 
   return { dataset, series, summaries, derived };
-}
+};

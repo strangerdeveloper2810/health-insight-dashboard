@@ -19,11 +19,11 @@ import type { ThemeChoice } from "@/features/uiSlice";
 const STORAGE_KEY = "health-dashboard.theme";
 const QUERY = "(prefers-color-scheme: dark)";
 
-function isChoice(value: unknown): value is ThemeChoice {
+const isChoice = (value: unknown): value is ThemeChoice => {
   return value === "light" || value === "dark" || value === "system";
-}
+};
 
-function readStored(): ThemeChoice | null {
+const readStored = (): ThemeChoice | null => {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     return isChoice(raw) ? raw : null;
@@ -32,9 +32,9 @@ function readStored(): ThemeChoice | null {
     // preference is not an error worth surfacing.
     return null;
   }
-}
+};
 
-export function useTheme() {
+export const useTheme = () => {
   const dispatch = useAppDispatch();
   const choice = useAppSelector(selectUi).themeChoice;
   const theme = useAppSelector(selectUi).theme;
@@ -75,4 +75,4 @@ export function useTheme() {
   };
 
   return { choice, theme, setChoice };
-}
+};

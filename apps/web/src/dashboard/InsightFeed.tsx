@@ -24,7 +24,7 @@ import { EmptyState } from "@/ui/states";
 
 const ORDER: InsightSeverity[] = ["alert", "watch", "positive", "info"];
 
-function InsightCard({ insight }: { insight: Insight }) {
+const InsightCard = ({ insight }: { insight: Insight }) => {
   const dispatch = useAppDispatch();
   const open = useAppSelector(selectUi).openInsight === insight.id;
   const style = SEVERITY_STYLE[insight.severity];
@@ -95,9 +95,9 @@ function InsightCard({ insight }: { insight: Insight }) {
       ) : null}
     </Card>
   );
-}
+};
 
-export function InsightFeed() {
+export const InsightFeed = () => {
   const insights = useAppSelector(selectInsights);
 
   const sorted = [...insights].sort(
@@ -120,4 +120,4 @@ export function InsightFeed() {
       ))}
     </div>
   );
-}
+};

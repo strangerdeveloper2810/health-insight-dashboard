@@ -46,13 +46,13 @@ const STATUS_LABEL: Record<GoalProgress["status"], string> = {
  * presentation of a raw series rather than a second analytics implementation —
  * the goal's verdict, pace and projection all come from the server.
  */
-function ThresholdGrid({
+const ThresholdGrid = ({
   goal,
   series,
 }: {
   goal: GoalProgress["goal"];
   series: SeriesPoint[];
-}) {
+}) => {
   const recent = series.slice(-30);
   const meets = (value: number) =>
     goal.direction === "increase" ? value >= goal.targetValue : value <= goal.targetValue;
@@ -70,9 +70,9 @@ function ThresholdGrid({
       ))}
     </ul>
   );
-}
+};
 
-function JourneyCard({ progress }: { progress: GoalProgress }) {
+const JourneyCard = ({ progress }: { progress: GoalProgress }) => {
   const { goal } = progress;
   const shape = shapeOf(METRIC_META[goal.metric]);
   const tone = STATUS_TONE[progress.status];
@@ -139,9 +139,9 @@ function JourneyCard({ progress }: { progress: GoalProgress }) {
       </dl>
     </Card>
   );
-}
+};
 
-function ThresholdCard({ progress, series }: { progress: GoalProgress; series: SeriesPoint[] }) {
+const ThresholdCard = ({ progress, series }: { progress: GoalProgress; series: SeriesPoint[] }) => {
   const { goal } = progress;
   const shape = shapeOf(METRIC_META[goal.metric]);
   const tone = STATUS_TONE[progress.status];
@@ -185,18 +185,18 @@ function ThresholdCard({ progress, series }: { progress: GoalProgress; series: S
       </div>
     </Card>
   );
-}
+};
 
-function GoalCard({ progress }: { progress: GoalProgress }) {
+const GoalCard = ({ progress }: { progress: GoalProgress }) => {
   const series = useAppSelector(selectSeries(progress.goal.metric as MetricKey));
   return progress.goal.kind === "threshold" ? (
     <ThresholdCard progress={progress} series={series} />
   ) : (
     <JourneyCard progress={progress} />
   );
-}
+};
 
-export function GoalsPanel() {
+export const GoalsPanel = () => {
   const derived = useAppSelector(selectDerived);
 
   if (!derived || derived.goalProgress.length === 0) {
@@ -215,4 +215,4 @@ export function GoalsPanel() {
       ))}
     </div>
   );
-}
+};

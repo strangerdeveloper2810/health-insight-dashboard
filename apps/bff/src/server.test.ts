@@ -36,16 +36,16 @@ const CONFIG: Config = {
 type StreamEvent = Record<string, unknown>;
 
 /** A streamed assistant text block, as the SDK's stream events would deliver it. */
-function textEvents(text: string): StreamEvent[] {
+const textEvents = (text: string): StreamEvent[] => {
   return [
     { type: "content_block_start", index: 0, content_block: { type: "text", text: "" } },
     { type: "content_block_delta", index: 0, delta: { type: "text_delta", text } },
     { type: "content_block_stop", index: 0 },
   ];
-}
+};
 
 /** A tool call appearing mid-stream — the runner would execute it after this turn. */
-function toolEvents(name: string): StreamEvent[] {
+const toolEvents = (name: string): StreamEvent[] => {
   return [
     {
       type: "content_block_start",
@@ -54,9 +54,9 @@ function toolEvents(name: string): StreamEvent[] {
     },
     { type: "content_block_stop", index: 0 },
   ];
-}
+};
 
-function finalMessage(overrides: Record<string, unknown> = {}) {
+const finalMessage = (overrides: Record<string, unknown> = {}) => {
   return {
     id: "msg_test",
     type: "message",
@@ -68,7 +68,7 @@ function finalMessage(overrides: Record<string, unknown> = {}) {
     usage: { input_tokens: 6000, output_tokens: 120, cache_read_input_tokens: 5900 },
     ...overrides,
   };
-}
+};
 
 interface FakeOptions {
   iterations: StreamEvent[][];
@@ -77,7 +77,7 @@ interface FakeOptions {
   onCall?: (params: Record<string, unknown>) => void;
 }
 
-function fakeClient(options: FakeOptions): Anthropic {
+const fakeClient = (options: FakeOptions): Anthropic => {
   return {
     beta: {
       messages: {
@@ -97,14 +97,14 @@ function fakeClient(options: FakeOptions): Anthropic {
       },
     },
   } as unknown as Anthropic;
-}
+};
 
 /**
  * Parse an SSE body into `{ event, data }` pairs, typed as the union the
  * server actually emits — so the tests below assert the wire contract rather
  * than whatever shape happens to be in the JSON.
  */
-function parseSse(body: string): { event: string; data: ChatEvent }[] {
+const parseSse = (body: string): { event: string; data: ChatEvent }[] => {
   return body
     .split("\n\n")
     .filter((chunk) => chunk.trim().length > 0)
@@ -114,25 +114,25 @@ function parseSse(body: string): { event: string; data: ChatEvent }[] {
       const raw = lines.find((l) => l.startsWith("data: "))?.slice(6) ?? "{}";
       return { event, data: JSON.parse(raw) as ChatEvent };
     });
-}
+};
 
 type DoneEvent = Extract<ChatEvent, { type: "done" }>;
 
 /** The completion event, narrowed. Throws rather than returning undefined so a
  *  missing event fails the test at the point of the mistake. */
-function doneOf(body: string): DoneEvent {
+const doneOf = (body: string): DoneEvent => {
   const last = parseSse(body).at(-1);
   if (last?.data.type !== "done") {
     throw new Error(`expected a done event, got: ${last?.event ?? "nothing"}`);
   }
   return last.data;
-}
+};
 
-async function chat(
+const chat = async (
   config: Config,
   messages: ChatTurn[],
   client?: Anthropic,
-): Promise<{ status: number; body: string }> {
+): Promise<{ status: number; body: string }> => {
   const app = await buildServer({ config, client });
   await app.ready();
   const response = await app.inject({
@@ -143,7 +143,7 @@ async function chat(
   const body = response.body;
   await app.close();
   return { status: response.statusCode, body };
-}
+};
 
 // ─── Request validation and configuration ───────────────────────────────────
 

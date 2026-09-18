@@ -237,9 +237,9 @@ describe("prompt construction", () => {
   });
 });
 
-function computeAgain() {
+const computeAgain = () => {
   return buildDashboard(createDefaultDataset()).bundle;
-}
+};
 
 describe("assistant queries", () => {
   it("returns a series with the days that were actually recorded", () => {

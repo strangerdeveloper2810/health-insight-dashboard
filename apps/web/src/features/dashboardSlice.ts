@@ -52,7 +52,7 @@ const dashboardSlice = createSlice({
   initialState,
   reducers: {
     /** Used by the retry button, which needs a clean slate before reloading. */
-    reset(state) {
+    reset: (state) => {
       state.status = "idle";
       state.error = null;
     },
@@ -84,8 +84,8 @@ export const { reset: resetDashboard } = dashboardSlice.actions;
 export default dashboardSlice.reducer;
 
 /** Metrics that carry a real series, for the trends switcher. */
-export function availableMetrics(payload: DashboardPayload): MetricKey[] {
+export const availableMetrics = (payload: DashboardPayload): MetricKey[] => {
   return (Object.keys(payload.series) as MetricKey[]).filter(
     (key) => (payload.series[key]?.length ?? 0) > 1,
   );
-}
+};

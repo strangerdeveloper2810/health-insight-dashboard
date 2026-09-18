@@ -261,9 +261,9 @@ export const METRIC_META: Record<MetricKey, MetricMeta> = {
   },
 };
 
-export function metricMeta(key: MetricKey): MetricMeta {
+export const metricMeta = (key: MetricKey): MetricMeta => {
   return METRIC_META[key];
-}
+};
 
 /** Metrics shown as the four headline tiles. */
 export const HEADLINE_METRICS: MetricKey[] = [

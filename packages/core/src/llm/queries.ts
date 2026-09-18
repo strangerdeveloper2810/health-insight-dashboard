@@ -21,14 +21,14 @@ import type { MetricKey, SeriesPoint, Workout, WorkoutType } from "../types";
 
 // ─── Shared helpers ─────────────────────────────────────────────────────────
 
-function sliceWindow(
+const sliceWindow = (
   points: SeriesPoint[],
   endDate: ISODate,
   days: number,
-): SeriesPoint[] {
+): SeriesPoint[] => {
   const start = addDays(endDate, -(days - 1));
   return points.filter((point) => point.date >= start && point.date <= endDate);
-}
+};
 
 export interface WindowStats {
   days: number;
@@ -40,7 +40,7 @@ export interface WindowStats {
   changePct: number | null;
 }
 
-function statsFor(points: SeriesPoint[], days: number): WindowStats {
+const statsFor = (points: SeriesPoint[], days: number): WindowStats => {
   if (points.length === 0) {
     return { days, observed: 0, average: null, min: null, max: null, changePct: null };
   }
@@ -54,9 +54,9 @@ function statsFor(points: SeriesPoint[], days: number): WindowStats {
     max: Math.max(...values),
     changePct: null,
   };
-}
+};
 
-function withChange(current: WindowStats, previous: WindowStats): WindowStats {
+const withChange = (current: WindowStats, previous: WindowStats): WindowStats => {
   if (current.average === null || previous.average === null || previous.average === 0) {
     return current;
   }
@@ -66,9 +66,9 @@ function withChange(current: WindowStats, previous: WindowStats): WindowStats {
       (((current.average - previous.average) / previous.average) * 100).toFixed(1),
     ),
   };
-}
+};
 
-function metricDescription(metric: MetricKey) {
+const metricDescription = (metric: MetricKey) => {
   const meta = METRIC_META[metric];
   return {
     metric,
@@ -78,7 +78,7 @@ function metricDescription(metric: MetricKey) {
     goodDirection: meta.goodDirection,
     description: meta.description,
   };
-}
+};
 
 // ─── get_metric_series ──────────────────────────────────────────────────────
 
@@ -98,11 +98,11 @@ export interface MetricSeriesResult {
   note?: string;
 }
 
-export function getMetricSeries(
+export const getMetricSeries = (
   bundle: MetricsBundle,
   metric: MetricKey,
   days = 30,
-): MetricSeriesResult {
+): MetricSeriesResult => {
   const window = Math.min(Math.max(days, 7), 90);
   const end = bundle.dataset.range.end;
   const points = sliceWindow(bundle.series[metric] ?? [], end, window);
@@ -139,7 +139,7 @@ export function getMetricSeries(
         ? `${missing} of the ${window} days have no recorded value and are omitted — they are gaps in tracking, not zeroes.`
         : undefined,
   };
-}
+};
 
 // ─── compare_periods ────────────────────────────────────────────────────────
 
@@ -157,11 +157,11 @@ export interface ComparePeriodsResult {
   verdict: "improved" | "worsened" | "flat" | "unknown";
 }
 
-export function comparePeriods(
+export const comparePeriods = (
   bundle: MetricsBundle,
   metric: MetricKey,
   days = 7,
-): ComparePeriodsResult {
+): ComparePeriodsResult => {
   const window = Math.min(Math.max(days, 7), 90);
   const end = bundle.dataset.range.end;
   const series = bundle.series[metric] ?? [];
@@ -204,7 +204,7 @@ export function comparePeriods(
     changeAbs,
     verdict,
   };
-}
+};
 
 // ─── get_sleep_breakdown ────────────────────────────────────────────────────
 
@@ -238,10 +238,10 @@ export interface SleepBreakdownResult {
   note?: string;
 }
 
-export function getSleepBreakdown(
+export const getSleepBreakdown = (
   bundle: MetricsBundle,
   days = 14,
-): SleepBreakdownResult {
+): SleepBreakdownResult => {
   const window = Math.min(Math.max(days, 7), 30);
   const end = bundle.dataset.range.end;
   const start = addDays(end, -(window - 1));
@@ -297,7 +297,7 @@ export function getSleepBreakdown(
         ? `${missing} of the ${window} nights have no sleep record — the watch was not worn. Those nights are absent from every average here.`
         : undefined,
   };
-}
+};
 
 // ─── get_workouts ───────────────────────────────────────────────────────────
 
@@ -321,11 +321,11 @@ export interface WorkoutsResult {
   }[];
 }
 
-export function getWorkouts(
+export const getWorkouts = (
   bundle: MetricsBundle,
   days = 14,
   type?: WorkoutType,
-): WorkoutsResult {
+): WorkoutsResult => {
   const window = Math.min(Math.max(days, 7), 90);
   const end = bundle.dataset.range.end;
   const start = addDays(end, -(window - 1));
@@ -373,11 +373,11 @@ export function getWorkouts(
       note: workout.note,
     })),
   };
-}
+};
 
 // ─── Formatting helper shared with the tool layer ───────────────────────────
 
 /** A one-line, human-readable label for a window, used in tool summaries. */
-export function windowLabel(from: ISODate, to: ISODate): string {
+export const windowLabel = (from: ISODate, to: ISODate): string => {
   return `${formatShortDate(from)} – ${formatShortDate(to)}`;
-}
+};

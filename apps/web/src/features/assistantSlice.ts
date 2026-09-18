@@ -156,29 +156,29 @@ export const stopStreaming = createAsyncThunk<void, void>("assistant/stop", asyn
 
 type ReplyPatch = Partial<AssistantMessage> & { id: string };
 
-function patchReply(state: AssistantState, patch: ReplyPatch): AssistantMessage | undefined {
+const patchReply = (state: AssistantState, patch: ReplyPatch): AssistantMessage | undefined => {
   const target = state.messages.find((message) => message.id === patch.id);
   if (target) Object.assign(target, patch);
   return target;
-}
+};
 
 const assistantSlice = createSlice({
   name: "assistant",
   initialState,
   reducers: {
-    opened(state) {
+    opened: (state) => {
       state.open = true;
     },
-    closed(state) {
+    closed: (state) => {
       state.open = false;
     },
-    toggled(state) {
+    toggled: (state) => {
       state.open = !state.open;
     },
-    userMessageAdded(state, action: PayloadAction<AssistantMessage>) {
+    userMessageAdded: (state, action: PayloadAction<AssistantMessage>) => {
       state.messages.push(action.payload);
     },
-    replyStarted(state, action: PayloadAction<string>) {
+    replyStarted: (state, action: PayloadAction<string>) => {
       state.messages.push({
         id: action.payload,
         role: "assistant",
@@ -187,17 +187,17 @@ const assistantSlice = createSlice({
         tools: [],
       });
     },
-    deltaReceived(state, action: PayloadAction<{ id: string; text: string }>) {
+    deltaReceived: (state, action: PayloadAction<{ id: string; text: string }>) => {
       const target = state.messages.find((message) => message.id === action.payload.id);
       if (target) target.content += action.payload.text;
     },
-    toolCalled(state, action: PayloadAction<{ id: string; name: string }>) {
+    toolCalled: (state, action: PayloadAction<{ id: string; name: string }>) => {
       const target = state.messages.find((message) => message.id === action.payload.id);
       if (!target) return;
       target.tools ??= [];
       if (!target.tools.includes(action.payload.name)) target.tools.push(action.payload.name);
     },
-    replyFinished(
+    replyFinished: (
       state,
       action: PayloadAction<{
         id: string;
@@ -205,7 +205,7 @@ const assistantSlice = createSlice({
         usage?: Usage;
         stopped?: boolean;
       }>,
-    ) {
+    ) => {
       const { id, grounding, usage, stopped } = action.payload;
       patchReply(state, { id, status: "complete", grounding, usage });
       if (grounding && !grounding.grounded) state.ungroundedTurns += 1;
@@ -217,10 +217,10 @@ const assistantSlice = createSlice({
         }
       }
     },
-    replyFailed(
+    replyFailed: (
       state,
       action: PayloadAction<{ id: string; code: string; message: string }>,
-    ) {
+    ) => {
       patchReply(state, {
         id: action.payload.id,
         status: "error",
@@ -235,10 +235,10 @@ const assistantSlice = createSlice({
      * matters: a `done` event marks the message complete before the stream
      * itself has closed, and the composer must not re-enable in between.
      */
-    streamingChanged(state, action: PayloadAction<boolean>) {
+    streamingChanged: (state, action: PayloadAction<boolean>) => {
       state.streaming = action.payload;
     },
-    reset(state) {
+    reset: (state) => {
       state.messages = [];
       state.ungroundedTurns = 0;
       state.streaming = false;

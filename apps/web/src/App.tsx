@@ -50,14 +50,14 @@ const AssistantPanel = lazy(() =>
   import("@/assistant/AssistantPanel").then((module) => ({ default: module.AssistantPanel })),
 );
 
-function SectionHeading({ title, note }: { title: string; note?: string }) {
+const SectionHeading = ({ title, note }: { title: string; note?: string }) => {
   return (
     <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-3">
       <h2 className="text-base font-semibold tracking-tight text-ink">{title}</h2>
       {note ? <p className="text-xs text-muted">{note}</p> : null}
     </div>
   );
-}
+};
 
 /**
  * The state simulator, linked rather than hidden.
@@ -65,7 +65,7 @@ function SectionHeading({ title, note }: { title: string; note?: string }) {
  * The brief asks for loading, error and empty states to be handled. Reviewing
  * them should not require editing code, so each one has a URL.
  */
-function ReviewStates() {
+const ReviewStates = () => {
   const states = [
     { query: "", label: "Live" },
     { query: "?state=loading", label: "Loading" },
@@ -87,9 +87,9 @@ function ReviewStates() {
       ))}
     </div>
   );
-}
+};
 
-function Dashboard() {
+const Dashboard = () => {
   const readiness = useAppSelector(selectReadiness);
 
   return (
@@ -131,9 +131,9 @@ function Dashboard() {
       </section>
     </div>
   );
-}
+};
 
-export function App() {
+export const App = () => {
   const dispatch = useAppDispatch();
   const status = useAppSelector(selectStatus);
   const payload = useAppSelector(selectPayload);
@@ -197,4 +197,4 @@ export function App() {
       ) : null}
     </div>
   );
-}
+};

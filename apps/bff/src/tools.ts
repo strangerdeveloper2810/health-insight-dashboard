@@ -41,11 +41,11 @@ const DAYS = z
   .describe("Length of the window in days. Clamped to 7–90; defaults to the tool's own default.");
 
 /** Tool results are JSON text; the model reads structure better than prose. */
-function json(value: unknown): string {
+const json = (value: unknown): string => {
   return JSON.stringify(value, null, 1);
-}
+};
 
-export function createTools(bundle: MetricsBundle) {
+export const createTools = (bundle: MetricsBundle) => {
   const getSeries = betaZodTool({
     name: "get_metric_series",
     description: `Read one metric day by day over a window, with the window's average, low and high, and any life events that fall inside it.
@@ -97,4 +97,4 @@ Returns an empty list when nothing was recorded in the window. That is a real an
   });
 
   return [getSeries, compare, sleep, workouts] as const;
-}
+};

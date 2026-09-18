@@ -34,7 +34,7 @@ import { MarkdownAnswer } from "./GroundedText";
 
 // ─── Pieces ─────────────────────────────────────────────────────────────────
 
-function GroundingBadge({ message }: { message: AssistantMessage }) {
+const GroundingBadge = ({ message }: { message: AssistantMessage }) => {
   if (!message.grounding) return null;
   const { grounded, cited, unknown } = message.grounding;
 
@@ -55,9 +55,9 @@ function GroundingBadge({ message }: { message: AssistantMessage }) {
       be matched to your recorded data ({unknown.join(", ")}). Everything else was checked.
     </p>
   );
-}
+};
 
-function ToolTrace({ tools }: { tools: string[] }) {
+const ToolTrace = ({ tools }: { tools: string[] }) => {
   if (tools.length === 0) return null;
   const LABEL: Record<string, string> = {
     get_metric_series: "Read your metric history",
@@ -77,9 +77,9 @@ function ToolTrace({ tools }: { tools: string[] }) {
       ))}
     </ul>
   );
-}
+};
 
-function Bubble({ message }: { message: AssistantMessage }) {
+const Bubble = ({ message }: { message: AssistantMessage }) => {
   const index = useAppSelector(selectRefIndex);
   const isUser = message.role === "user";
 
@@ -110,9 +110,9 @@ function Bubble({ message }: { message: AssistantMessage }) {
       </div>
     </div>
   );
-}
+};
 
-function SuggestedChips({ onPick }: { onPick: (question: string) => void }) {
+const SuggestedChips = ({ onPick }: { onPick: (question: string) => void }) => {
   return (
     <div className="px-3.5 pb-1">
       <p className="mb-2 text-[11px] text-faint">
@@ -133,11 +133,11 @@ function SuggestedChips({ onPick }: { onPick: (question: string) => void }) {
       </ul>
     </div>
   );
-}
+};
 
 // ─── Panel ──────────────────────────────────────────────────────────────────
 
-export function AssistantPanel() {
+export const AssistantPanel = () => {
   const dispatch = useAppDispatch();
   const assistant = useAppSelector(selectAssistant);
   const configured = useAppSelector(selectAssistantConfigured);
@@ -308,4 +308,4 @@ export function AssistantPanel() {
       </footer>
     </section>
   );
-}
+};

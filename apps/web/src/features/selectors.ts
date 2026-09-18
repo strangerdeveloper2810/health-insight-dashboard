@@ -74,14 +74,14 @@ export const selectAssistantConfigured = createSelector(
 
 // ─── Per-metric reads ───────────────────────────────────────────────────────
 
-export function selectSeries(key: MetricKey) {
+export const selectSeries = (key: MetricKey) => {
   return (state: RootState): SeriesPoint[] =>
     state.dashboard.payload?.series[key] ?? NO_POINTS;
-}
+};
 
-export function selectSummary(key: MetricKey) {
+export const selectSummary = (key: MetricKey) => {
   return (state: RootState) => state.dashboard.payload?.summaries[key] ?? null;
-}
+};
 
 export const selectPersona = createSelector(
   [selectDataset],
@@ -107,11 +107,11 @@ export const selectTrendPoints = createSelector(
   },
 );
 
-function overlaps(event: DatasetEvent, from: ISODate, to: ISODate): boolean {
+const overlaps = (event: DatasetEvent, from: ISODate, to: ISODate): boolean => {
   // A one-day event ends the day it starts; a span uses its own end date.
   const end = event.endDate ?? event.date;
   return event.date <= to && end >= from;
-}
+};
 
 /**
  * Life events that fall inside the visible window.
