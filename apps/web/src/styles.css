@@ -1,6 +1,36 @@
 @import "tailwindcss";
 
 /*
+ * Warm editorial.
+ *
+ * The app is a health diary, not a control panel, so the surface is paper
+ * rather than chrome: a warm off-white canvas, ink-brown text, and a single
+ * terracotta accent for anything the product wants you to *do*. Data keeps its
+ * own colour — a cool petrol teal — so "the app is talking to me" and "here is
+ * a measurement" never look like the same thing.
+ *
+ * Two rules hold the palette together:
+ *
+ *   - Nothing is neutral grey. Every surface, line and shadow is mixed toward
+ *     the same warm hue, which is what stops a light UI from reading as a
+ *     spreadsheet and a dark UI from reading as a terminal.
+ *   - Serif is for judgement, sans is for measurement. Fraunces sets the
+ *     verdicts and the prose; Instrument Sans sets every number, because a
+ *     number needs tabular figures and a serif's are a lottery.
+ */
+
+/*
+ * `opsz.css` rather than the default `index.css`: Fraunces' optical-size axis
+ * defaults to 14, so a weight-only cut renders a 48px headline with the text
+ * design — wide, low-contrast and visibly wrong. The opsz file carries both
+ * axes and is half the size of `full.css`, whose extra SOFT/WONK axes are
+ * pinned to their defaults anyway. Latin subsets only; nothing here is
+ * translated.
+ */
+@import "@fontsource-variable/fraunces/opsz.css";
+@import "@fontsource-variable/instrument-sans/wght.css";
+
+/*
  * Dark mode is a class on <html>, not the OS preference alone, because the
  * header has a toggle. `uiSlice` resolves "system" to a concrete value at boot
  * so the chart palette and the CSS always agree on which theme is active.
@@ -11,18 +41,31 @@
  * `@theme inline` makes each utility reference the variable rather than copy
  * its value, which is what lets one set of utility names serve both themes.
  * Semantic names, not colour names: `bg-surface` survives a repaint, `bg-white`
- * does not.
+ * does not. The shadows are in here for the same reason — an elevation has to
+ * deepen in the dark, and a utility that baked in the light value could not.
  */
 @theme inline {
   --color-canvas: var(--canvas);
   --color-surface: var(--surface);
   --color-raised: var(--raised);
+  --color-sunken: var(--sunken);
   --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
   --color-ink: var(--ink);
   --color-muted: var(--muted);
   --color-faint: var(--faint);
+
+  /* The product's voice. Buttons, links, focus, "do this". */
   --color-brand: var(--brand);
   --color-brand-soft: var(--brand-soft);
+  /* Legible on `bg-brand` in either theme — which is dark ink in the dark
+     theme, because the accent there is a bright orange. Never hardcode white. */
+  --color-brand-ink: var(--brand-ink);
+
+  /* The data's voice. Chart series, dials, bars, sparklines. */
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+
   --color-positive: var(--positive);
   --color-positive-soft: var(--positive-soft);
   --color-watch: var(--watch);
@@ -31,48 +74,102 @@
   --color-alert-soft: var(--alert-soft);
   --color-info: var(--info);
   --color-info-soft: var(--info-soft);
+
+  --shadow-card: var(--elev-card);
+  --shadow-lift: var(--elev-lift);
+  --shadow-float: var(--elev-float);
+}
+
+@theme {
+  --font-sans: "Instrument Sans Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Fraunces Variable", ui-serif, Georgia, "Times New Roman", serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Soft enough to read as friendly, tight enough not to read as a toy. */
+  --radius-control: 10px;
+  --radius-card: 18px;
+  --radius-tile: 24px;
+
+  --animate-rise: rise 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-fade: fade 420ms ease-out both;
+  --animate-slide-in: slide-in 340ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-sweep: sweep 1.6s ease-in-out infinite;
 }
 
 :root {
-  --canvas: #f3f6fa;
+  --canvas: #faf6ef;
   --surface: #ffffff;
-  --raised: #f7f9fc;
-  --line: #e2e8f0;
-  --ink: #0d1b2a;
-  --muted: #5b6b7f;
-  --faint: #8fa0b3;
-  --brand: #0e7c6b;
-  --brand-soft: #d9f0eb;
-  --positive: #14805c;
-  --positive-soft: #d9f2e6;
-  --watch: #a86400;
-  --watch-soft: #fdeed3;
-  --alert: #bb3a2c;
-  --alert-soft: #fce4e0;
-  --info: #1c6aa8;
-  --info-soft: #dceaf7;
+  --raised: #f4efe5;
+  --sunken: #ede7da;
+  --line: #ebe3d6;
+  --line-strong: #d8cbb7;
+  --ink: #1c1815;
+  --muted: #6b6157;
+  --faint: #9b9184;
+
+  --brand: #c2410c;
+  --brand-soft: #fbeadf;
+  --brand-ink: #ffffff;
+
+  --accent: #0f766e;
+  --accent-soft: #d8ede9;
+
+  --positive: #15803d;
+  --positive-soft: #ddefe1;
+  --watch: #a16207;
+  --watch-soft: #f8edd0;
+  --alert: #b3261e;
+  --alert-soft: #f9e3e0;
+  --info: #1e5a8a;
+  --info-soft: #deeaf3;
+
+  /* A warm glow at the top of the paper, so the page has a light source
+     instead of being lit flatly from nowhere. */
+  --canvas-glow: rgba(194, 65, 12, 0.05);
+
+  --elev-card: 0 1px 2px rgba(74, 52, 26, 0.05), 0 2px 10px -3px rgba(74, 52, 26, 0.07);
+  --elev-lift: 0 2px 4px rgba(74, 52, 26, 0.06), 0 14px 30px -10px rgba(74, 52, 26, 0.16);
+  --elev-float: 0 8px 16px -6px rgba(74, 52, 26, 0.12), 0 28px 64px -20px rgba(74, 52, 26, 0.3);
 
   color-scheme: light;
 }
 
 .dark {
-  --canvas: #070d16;
-  --surface: #0e1725;
-  --raised: #151f2e;
-  --line: #22303f;
-  --ink: #e9eff6;
-  --muted: #9aabbd;
-  --faint: #6b7d90;
-  --brand: #3ecbae;
-  --brand-soft: #0f2f2a;
-  --positive: #45c795;
-  --positive-soft: #0d2e24;
-  --watch: #e2a83f;
-  --watch-soft: #33260c;
-  --alert: #f0776a;
-  --alert-soft: #351a17;
-  --info: #63aee6;
-  --info-soft: #10283c;
+  --canvas: #14110d;
+  --surface: #1d1915;
+  --raised: #262119;
+  --sunken: #171310;
+  --line: #332c23;
+  --line-strong: #4a4136;
+  --ink: #f4ede2;
+  --muted: #b3a794;
+  --faint: #8a7e6d;
+
+  --brand: #f97316;
+  --brand-soft: #3a2010;
+  /* The dark accent is bright, so text on it has to be dark. This is the whole
+     reason `brand-ink` exists as a token. */
+  --brand-ink: #1c1815;
+
+  --accent: #5eead4;
+  --accent-soft: #10322e;
+
+  --positive: #4ade80;
+  --positive-soft: #13301d;
+  --watch: #fbbf24;
+  --watch-soft: #3a2d0c;
+  --alert: #f87171;
+  --alert-soft: #3b1a17;
+  --info: #7dd3fc;
+  --info-soft: #12293a;
+
+  --canvas-glow: rgba(249, 115, 22, 0.07);
+
+  /* Shadows barely register against a dark ground, so elevation is carried
+     mostly by surface lightness and only sharpened here. */
+  --elev-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 2px 10px -3px rgba(0, 0, 0, 0.5);
+  --elev-lift: 0 2px 6px rgba(0, 0, 0, 0.45), 0 16px 34px -12px rgba(0, 0, 0, 0.65);
+  --elev-float: 0 10px 20px -8px rgba(0, 0, 0, 0.55), 0 32px 72px -24px rgba(0, 0, 0, 0.8);
 
   color-scheme: dark;
 }
@@ -80,41 +177,111 @@
 @layer base {
   html {
     -webkit-text-size-adjust: 100%;
+    /* The section rail in the masthead jumps to anchors; without this the
+       heading lands underneath the sticky bar and the reader arrives mid-word. */
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 
   body {
     background-color: var(--canvas);
+    background-image: radial-gradient(
+      1100px 520px at 12% -8%,
+      var(--canvas-glow),
+      transparent 70%
+    );
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     color: var(--ink);
-    font-family:
-      ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
-      sans-serif;
+    font-family: var(--font-sans);
     /* Tabular figures everywhere: this app is mostly numbers in columns, and
        proportional digits make a table of them twitch as values change. */
     font-variant-numeric: tabular-nums;
+    line-height: 1.55;
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
+
+  /*
+   * Fraunces is loaded with its optical-size axis, and the browser's default
+   * `font-optical-sizing: auto` maps opsz to the rendered size — so the 44px
+   * masthead gets the display cut and the 15px prose heading gets the text one
+   * without anything here naming a number. Setting `font-variation-settings`
+   * would override that and pin every size to one cut, which is the bug this
+   * comment exists to stop someone reintroducing.
+   */
 
   :focus-visible {
     outline: 2px solid var(--brand);
     outline-offset: 2px;
   }
 
-  /* A number that changes while the page is open should be legible as it does. */
-  @media (prefers-reduced-motion: no-preference) {
-    .animate-rise {
-      animation: rise 220ms ease-out both;
-    }
+  ::selection {
+    background-color: var(--brand-soft);
+    color: var(--ink);
+  }
+}
+
+/*
+ * The page-load stagger.
+ *
+ * Every top-level section rises into place, offset by its index. It is one
+ * orchestrated entrance rather than an animation per component: the eye is
+ * given an order to read the page in, which is the point of the hierarchy
+ * underneath it. `--i` is set inline where the section is rendered.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .stagger {
+    animation: rise 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: calc(var(--i, 0) * 70ms);
   }
 }
 
 @keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(4px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
     transform: none;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The assistant's "thinking" bar: a warm sweep rather than a spinner, because
+   the wait is a sentence being written, not a task being executed. */
+@keyframes sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(320%);
   }
 }
 
@@ -136,9 +303,23 @@
   animation: caret 1s step-end infinite;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise,
+  .animate-fade,
+  .animate-slide-in,
+  .animate-sweep,
+  .stagger {
+    animation: none !important;
+  }
+
+  .stream-caret::after {
+    animation: none;
+  }
+}
+
 .scroll-slim {
   scrollbar-width: thin;
-  scrollbar-color: var(--line) transparent;
+  scrollbar-color: var(--line-strong) transparent;
 }
 
 /*
@@ -149,14 +330,14 @@
  * tables, figures and footnotes for a chat bubble is mostly unused weight.
  */
 .prose-answer {
-  font-size: 0.875rem;
-  line-height: 1.6;
+  font-size: 0.9375rem;
+  line-height: 1.65;
   color: var(--ink);
   overflow-wrap: anywhere;
 }
 
 .prose-answer > * + * {
-  margin-top: 0.6em;
+  margin-top: 0.7em;
 }
 
 .prose-answer p {
@@ -170,7 +351,7 @@
 .prose-answer ul,
 .prose-answer ol {
   margin: 0;
-  padding-left: 1.1rem;
+  padding-left: 1.15rem;
 }
 
 .prose-answer ul {
@@ -182,28 +363,34 @@
 }
 
 .prose-answer li + li {
-  margin-top: 0.25em;
+  margin-top: 0.3em;
+}
+
+.prose-answer li::marker {
+  color: var(--faint);
 }
 
 .prose-answer h3,
 .prose-answer h4 {
   margin: 0;
-  font-size: 0.875rem;
+  font-family: var(--font-display);
+  font-size: 0.9375rem;
   font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 .prose-answer code {
-  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 0.8em;
+  font-family: var(--font-mono);
+  font-size: 0.82em;
   background-color: var(--raised);
   border: 1px solid var(--line);
-  border-radius: 4px;
-  padding: 0.05em 0.3em;
+  border-radius: 6px;
+  padding: 0.05em 0.32em;
 }
 
 .prose-answer blockquote {
   margin: 0;
-  padding-left: 0.75rem;
-  border-left: 2px solid var(--line);
+  padding-left: 0.85rem;
+  border-left: 2px solid var(--line-strong);
   color: var(--muted);
 }

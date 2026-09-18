@@ -17,6 +17,7 @@ import type { MetricKey, NutritionRecord } from "@health/core";
 
 import { useAppSelector } from "@/app/hooks";
 import { selectDataset, selectDerived } from "@/features/selectors";
+import { sectionIndex } from "@/lib/sections";
 import { Bar, Panel, toneText } from "@/ui/primitives";
 import type { Tone } from "@/ui/primitives";
 import { CaveatNote, EmptyState } from "@/ui/states";
@@ -74,6 +75,8 @@ export const NutritionPanel = () => {
 
   return (
     <Panel
+      id="nutrition"
+      index={sectionIndex("nutrition")}
       title="Nutrition"
       subtitle={`Averages across ${logged.length} logged days`}
       action={
@@ -81,7 +84,7 @@ export const NutritionPanel = () => {
           <p className={`text-xs font-semibold ${toneText(tone)}`}>
             {Math.round(completeness * 100)}% of days logged
           </p>
-          <p className="text-[10px] text-faint">last 30 days</p>
+          <p className="text-[0.72rem] text-faint">last 30 days</p>
         </div>
       }
     >
@@ -95,35 +98,35 @@ export const NutritionPanel = () => {
         ) : null}
 
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          <div className="rounded-lg border border-line bg-raised px-3 py-2.5">
-            <p className="text-[10px] uppercase tracking-wide text-faint">Energy</p>
+          <div className="rounded-control bg-raised px-3 py-2.5">
+            <p className="text-[0.72rem] text-faint">Energy</p>
             <p className="mt-0.5 text-lg font-semibold tabular-nums text-ink">
               {Math.round(calories).toLocaleString("en-US")}
-              <span className="ml-1 text-[10px] font-normal text-faint">kcal</span>
+              <span className="ml-1 text-[0.72rem] font-normal text-faint">kcal</span>
             </p>
           </div>
-          <div className="rounded-lg border border-line bg-raised px-3 py-2.5">
-            <p className="text-[10px] uppercase tracking-wide text-faint">Water</p>
+          <div className="rounded-control bg-raised px-3 py-2.5">
+            <p className="text-[0.72rem] text-faint">Water</p>
             <p className="mt-0.5 text-lg font-semibold tabular-nums text-ink">
               {(water / 1000).toFixed(1)}
-              <span className="ml-1 text-[10px] font-normal text-faint">L</span>
+              <span className="ml-1 text-[0.72rem] font-normal text-faint">L</span>
             </p>
           </div>
-          <div className="col-span-2 rounded-lg border border-line bg-raised px-3 py-2.5 sm:col-span-1">
-            <p className="text-[10px] uppercase tracking-wide text-faint">Log detail</p>
+          <div className="col-span-2 rounded-control bg-raised px-3 py-2.5 sm:col-span-1">
+            <p className="text-[0.72rem] text-faint">Log detail</p>
             <p className="mt-0.5 text-lg font-semibold tabular-nums text-ink">
               {Math.round(avgCompleteness * 100)}
-              <span className="ml-1 text-[10px] font-normal text-faint">% per day</span>
+              <span className="ml-1 text-[0.72rem] font-normal text-faint">% per day</span>
             </p>
           </div>
         </div>
 
         <div>
           <div className="flex items-baseline justify-between">
-            <h3 className="text-xs font-semibold uppercase tracking-wide text-muted">
+            <h3 className="text-[0.85rem] font-semibold text-ink">
               Where the energy comes from
             </h3>
-            <span className="text-[10px] text-faint">share of logged calories</span>
+            <span className="text-[0.72rem] text-faint">share of logged calories</span>
           </div>
 
           <div className="mt-2.5 flex h-3 overflow-hidden rounded-full">
@@ -138,10 +141,10 @@ export const NutritionPanel = () => {
               const value = mean(macro.pick);
               return (
                 <div key={macro.metric}>
-                  <dt className="text-[11px] text-faint">{macro.label}</dt>
+                  <dt className="text-[0.75rem] text-faint">{macro.label}</dt>
                   <dd className="text-sm font-semibold tabular-nums text-ink">
                     {value.toFixed(meta.precision)}
-                    <span className="ml-1 text-[10px] font-normal text-faint">{meta.unit}</span>
+                    <span className="ml-1 text-[0.72rem] font-normal text-faint">{meta.unit}</span>
                   </dd>
                   <Bar
                     value={(value / (meta.unit === "mg" ? 3000 : 200)) * 100}
@@ -153,7 +156,7 @@ export const NutritionPanel = () => {
               );
             })}
           </dl>
-          <p className="mt-2 text-[11px] text-faint">
+          <p className="mt-2 text-[0.75rem] text-faint">
             The bars under each figure are a rough sense of proportion between them, not
             targets — this app does not know your energy requirements.
           </p>

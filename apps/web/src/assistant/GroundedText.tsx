@@ -28,7 +28,7 @@ const CitationChip = ({ text, label }: { text: string; label: string }) => {
   return (
     <span
       title={label}
-      className="mx-0.5 inline-flex items-baseline gap-1 rounded-md border border-brand/25 bg-brand-soft px-1.5 py-px align-baseline text-[0.92em] font-medium text-brand"
+      className="mx-0.5 inline-flex items-baseline gap-1 rounded-[6px] bg-brand-soft px-1.5 py-px align-baseline text-[0.92em] font-medium text-brand"
     >
       {text}
     </span>

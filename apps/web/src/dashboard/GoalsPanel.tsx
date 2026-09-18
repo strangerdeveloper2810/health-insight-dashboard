@@ -64,7 +64,7 @@ const ThresholdGrid = ({
           key={point.date}
           title={`${formatDayMonth(point.date)} — ${formatValue(point.value, shapeOf(METRIC_META[goal.metric]))}`}
           className={`size-3 rounded-[3px] ${
-            meets(point.value) ? "bg-positive" : "bg-raised border border-line"
+            meets(point.value) ? "bg-positive" : "bg-raised"
           }`}
         />
       ))}
@@ -106,7 +106,7 @@ const JourneyCard = ({ progress }: { progress: GoalProgress }) => {
         className="mt-2"
       />
 
-      <div className="mt-2 flex items-center justify-between text-[11px] text-faint">
+      <div className="mt-2 flex items-center justify-between text-[0.75rem] text-faint">
         <span>{progress.percentComplete}% of the way</span>
         <span>
           {progress.daysRemaining > 0
@@ -115,7 +115,7 @@ const JourneyCard = ({ progress }: { progress: GoalProgress }) => {
         </span>
       </div>
 
-      <dl className="mt-3 grid grid-cols-2 gap-2 border-t border-line pt-3 text-[11px]">
+      <dl className="mt-3 grid grid-cols-2 gap-2 border-t border-line pt-3 text-[0.75rem]">
         <div>
           <dt className="text-faint">Your pace</dt>
           <dd className={`font-medium ${toneText(paceTone)}`}>
@@ -172,14 +172,14 @@ const ThresholdCard = ({ progress, series }: { progress: GoalProgress; series: S
         label={`${goal.label} consistency`}
         className="mt-2"
       />
-      <p className="mt-1.5 text-[11px] text-faint">
+      <p className="mt-1.5 text-[0.75rem] text-faint">
         A consistency goal, not a distance one — {formatValue(goal.targetValue, shape)} on the
         day is what counts.
       </p>
 
       <div className="mt-3 border-t border-line pt-3">
         <ThresholdGrid goal={goal} series={series} />
-        <p className="mt-2 text-[11px] text-faint">
+        <p className="mt-2 text-[0.75rem] text-faint">
           Filled means the target was met. Each square is one recorded day.
         </p>
       </div>

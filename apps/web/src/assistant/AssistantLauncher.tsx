@@ -17,7 +17,7 @@ export const AssistantLauncher = () => {
     <button
       type="button"
       onClick={() => dispatch(opened())}
-      className="fixed bottom-5 right-5 z-40 flex items-center gap-2 rounded-full bg-brand px-4 py-3 text-sm font-medium text-white shadow-lg transition hover:opacity-90"
+      className="fixed bottom-5 right-5 z-40 flex items-center gap-2 rounded-full bg-brand px-4 py-3 text-sm font-medium text-brand-ink shadow-lg transition hover:opacity-90"
       aria-label="Open the health assistant"
     >
       <svg

@@ -40,7 +40,7 @@ const GroundingBadge = ({ message }: { message: AssistantMessage }) => {
 
   if (grounded) {
     return (
-      <p className="mt-1.5 text-[10px] text-faint">
+      <p className="mt-1.5 text-[0.72rem] text-faint">
         {cited.length > 0
           ? `Every figure checked against your data · ${cited.length} citation${cited.length === 1 ? "" : "s"}`
           : "No figures were cited"}
@@ -49,7 +49,7 @@ const GroundingBadge = ({ message }: { message: AssistantMessage }) => {
   }
 
   return (
-    <p className="mt-2 rounded-lg border border-alert/30 bg-alert-soft px-2.5 py-1.5 text-[11px] leading-relaxed text-alert">
+    <p className="mt-2 rounded-control bg-alert-soft px-2.5 py-1.5 text-[0.75rem] leading-relaxed text-alert">
       <span className="font-semibold">Not fully verified. </span>
       {unknown.length === 1 ? "One value" : `${unknown.length} values`} in this answer could not
       be matched to your recorded data ({unknown.join(", ")}). Everything else was checked.
@@ -86,7 +86,7 @@ const Bubble = ({ message }: { message: AssistantMessage }) => {
   if (isUser) {
     return (
       <div className="flex justify-end">
-        <p className="max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-br-sm bg-brand px-3.5 py-2 text-sm leading-relaxed text-white">
+        <p className="max-w-[85%] whitespace-pre-wrap rounded-2xl rounded-br-sm bg-brand px-3.5 py-2 text-sm leading-relaxed text-brand-ink">
           {message.content}
         </p>
       </div>
@@ -95,7 +95,7 @@ const Bubble = ({ message }: { message: AssistantMessage }) => {
 
   return (
     <div className="flex justify-start">
-      <div className="max-w-[92%] rounded-2xl rounded-bl-sm border border-line bg-surface px-3.5 py-2.5">
+      <div className="max-w-[92%] rounded-2xl rounded-bl-sm bg-raised px-3.5 py-2.5">
         <ToolTrace tools={message.tools ?? []} />
 
         {message.status === "error" ? (
@@ -115,7 +115,7 @@ const Bubble = ({ message }: { message: AssistantMessage }) => {
 const SuggestedChips = ({ onPick }: { onPick: (question: string) => void }) => {
   return (
     <div className="px-3.5 pb-1">
-      <p className="mb-2 text-[11px] text-faint">
+      <p className="mb-2 text-[0.75rem] text-faint">
         Ask about anything on the dashboard. Answers are drawn from your own recordings.
       </p>
       <ul className="flex flex-wrap gap-1.5">
@@ -124,7 +124,7 @@ const SuggestedChips = ({ onPick }: { onPick: (question: string) => void }) => {
             <button
               type="button"
               onClick={() => onPick(question)}
-              className="rounded-full border border-line bg-raised px-2.5 py-1 text-[11px] text-muted transition hover:border-brand/40 hover:text-brand"
+              className="rounded-full bg-raised px-2.5 py-1 text-[0.75rem] text-muted transition hover:bg-brand-soft hover:text-brand"
             >
               {question}
             </button>
@@ -181,12 +181,14 @@ export const AssistantPanel = () => {
     <section
       role="dialog"
       aria-label="Health assistant"
-      className="fixed inset-x-0 bottom-0 z-40 flex h-[85vh] flex-col overflow-hidden rounded-t-2xl border border-line bg-surface shadow-2xl sm:inset-x-auto sm:bottom-5 sm:right-5 sm:h-[min(640px,82vh)] sm:w-[420px] sm:rounded-2xl"
+      className="animate-slide-in fixed inset-x-0 bottom-0 z-40 flex h-[85vh] flex-col overflow-hidden rounded-t-tile bg-surface shadow-float sm:inset-x-auto sm:bottom-5 sm:right-5 sm:h-[min(640px,82vh)] sm:w-[420px] sm:rounded-tile"
     >
-      <header className="flex items-center justify-between gap-2 border-b border-line px-4 py-3">
+      <header className="flex items-center justify-between gap-2 px-4 py-3.5">
         <div className="min-w-0">
-          <h2 className="text-sm font-semibold text-ink">Health assistant</h2>
-          <p className="truncate text-[11px] text-faint">
+          <h2 className="font-display text-[1.05rem] font-semibold tracking-[-0.015em] text-ink">
+            Health assistant
+          </h2>
+          <p className="truncate text-[0.75rem] text-faint">
             {payload
               ? `Reading your ${payload.config.datasetDays} days of data · ${payload.config.model}`
               : "Waiting for your dashboard"}
@@ -197,7 +199,7 @@ export const AssistantPanel = () => {
             <button
               type="button"
               onClick={() => dispatch(resetConversation())}
-              className="rounded-lg px-2 py-1 text-[11px] text-muted transition hover:text-ink"
+              className="rounded-control px-2 py-1 text-[0.78rem] text-muted transition hover:bg-raised hover:text-ink"
             >
               Clear
             </button>
@@ -206,7 +208,7 @@ export const AssistantPanel = () => {
             type="button"
             onClick={() => dispatch(closed())}
             aria-label="Close the assistant"
-            className="rounded-lg p-1.5 text-muted transition hover:text-ink"
+            className="rounded-control p-1.5 text-muted transition hover:bg-raised hover:text-ink"
           >
             <svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth={2} aria-hidden>
               <path d="m6 6 12 12M18 6 6 18" strokeLinecap="round" />
@@ -214,6 +216,17 @@ export const AssistantPanel = () => {
           </button>
         </div>
       </header>
+
+      {/* An indeterminate bar while the answer is being written.
+          The message list already ends in a blinking caret, but the caret is
+          inside the bubble and only appears once the first token lands — this
+          covers the gap between pressing Send and hearing anything back, which
+          is the part that feels broken when nothing happens. */}
+      {assistant.streaming ? (
+        <div className="relative h-0.5 w-full overflow-hidden bg-brand-soft" aria-hidden>
+          <span className="animate-sweep absolute inset-y-0 w-1/3 rounded-full bg-brand" />
+        </div>
+      ) : null}
 
       {/* One polite announcement per state change. Putting aria-live on the
           message list itself would read every token aloud. */}
@@ -227,7 +240,7 @@ export const AssistantPanel = () => {
 
       <div ref={scrollRef} className="scroll-slim flex-1 space-y-3 overflow-y-auto px-3.5 py-4">
         {assistant.messages.length === 0 ? (
-          <div className="rounded-xl border border-line bg-raised p-3.5">
+          <div className="rounded-control bg-raised p-3.5">
             <p className="text-xs leading-relaxed text-muted">
               I can explain what your dashboard is showing, compare periods, and point at what
               has changed. I only see the recordings in this dashboard — I cannot see anything
@@ -245,7 +258,7 @@ export const AssistantPanel = () => {
 
       <footer className="border-t border-line p-3">
         {!configured ? (
-          <p className="rounded-lg border border-watch/30 bg-watch-soft px-3 py-2 text-[11px] leading-relaxed text-watch">
+          <p className="rounded-control bg-watch-soft px-3 py-2 text-[0.75rem] leading-relaxed text-watch">
             The assistant is not connected on this server. Set{" "}
             <code className="font-mono">ANTHROPIC_API_KEY</code> and restart the BFF. Everything
             else on the dashboard works without it.
@@ -277,14 +290,14 @@ export const AssistantPanel = () => {
                 }}
                 rows={1}
                 placeholder="How am I progressing?"
-                className="scroll-slim max-h-32 min-h-[38px] flex-1 resize-none rounded-xl border border-line bg-raised px-3 py-2 text-sm text-ink placeholder:text-faint focus:border-brand/50 focus:outline-none"
+                className="scroll-slim max-h-32 min-h-[38px] flex-1 resize-none rounded-control bg-raised px-3 py-2 text-sm text-ink placeholder:text-faint focus:ring-2 focus:ring-brand/40 focus:outline-none"
               />
 
               {assistant.streaming ? (
                 <button
                   type="button"
                   onClick={() => void dispatch(stopStreaming())}
-                  className="h-[38px] shrink-0 rounded-xl border border-line px-3 text-xs font-medium text-muted transition hover:text-ink"
+                  className="h-[38px] shrink-0 rounded-control bg-raised px-3 text-[0.78rem] font-medium text-muted transition hover:text-ink"
                 >
                   Stop
                 </button>
@@ -292,14 +305,14 @@ export const AssistantPanel = () => {
                 <button
                   type="submit"
                   disabled={draft.trim().length === 0}
-                  className="h-[38px] shrink-0 rounded-xl bg-brand px-3.5 text-sm font-medium text-white transition hover:opacity-90 disabled:opacity-40"
+                  className="h-[38px] shrink-0 rounded-control bg-brand px-3.5 text-sm font-medium text-brand-ink transition hover:opacity-90 disabled:opacity-40"
                 >
                   Send
                 </button>
               )}
             </form>
 
-            <p className="mt-2 text-[10px] leading-relaxed text-faint">
+            <p className="mt-2 text-[0.72rem] leading-relaxed text-faint">
               Not medical advice. This assistant summarises your own recordings and cannot
               diagnose anything — for symptoms or medication changes, talk to your clinician.
             </p>

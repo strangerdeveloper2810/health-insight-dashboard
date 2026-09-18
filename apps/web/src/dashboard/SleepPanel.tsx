@@ -59,16 +59,16 @@ const NightTooltip = ({
 
   return (
     <div
-      className="rounded-lg border px-2.5 py-1.5 text-xs shadow-lg"
+      className="rounded-control border px-2.5 py-1.5 text-[0.8rem] shadow-lift"
       style={{
         background: palette.tooltipBg,
         borderColor: palette.tooltipBorder,
         color: palette.tooltipText,
       }}
     >
-      <div className="text-[10px] opacity-70">{label ? formatAxisDate(label) : ""}</div>
+      <div className="text-[0.72rem] opacity-70">{label ? formatAxisDate(label) : ""}</div>
       <div className="font-semibold tabular-nums">{formatDuration(minutes)}</div>
-      <div className="text-[10px] opacity-70">
+      <div className="text-[0.72rem] opacity-70">
         {short
           ? `${formatDuration(GOAL_MIN - minutes)} short of your goal`
           : `${formatDuration(minutes - GOAL_MIN)} over your goal`}
@@ -113,7 +113,7 @@ const StageBar = () => {
       </div>
       <ul className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1.5 sm:grid-cols-4">
         {stages.map((stage) => (
-          <li key={stage.key} className="flex items-center gap-1.5 text-[11px]">
+          <li key={stage.key} className="flex items-center gap-1.5 text-[0.75rem]">
             <span
               className="size-2 rounded-sm"
               style={{ background: stage.colour }}
@@ -126,7 +126,7 @@ const StageBar = () => {
           </li>
         ))}
       </ul>
-      <p className="mt-2 text-[11px] text-faint">
+      <p className="mt-2 text-[0.75rem] text-faint">
         Average night across {nights.length} recorded nights.
       </p>
     </div>
@@ -157,7 +157,7 @@ export const SleepPanel = () => {
             <p className="text-xs font-semibold text-ink">
               {minutesToClock(derived.avgBedtimeMinutes)}
             </p>
-            <p className="text-[10px] text-faint">average bedtime</p>
+            <p className="text-[0.72rem] text-faint">average bedtime</p>
           </div>
         ) : null
       }
@@ -213,7 +213,7 @@ export const SleepPanel = () => {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-muted">
+              <h3 className="text-[0.85rem] font-semibold text-ink">
                 Where the night goes
               </h3>
               <div className="mt-3">
@@ -222,7 +222,7 @@ export const SleepPanel = () => {
             </div>
 
             <div>
-              <h3 className="text-xs font-semibold uppercase tracking-wide text-muted">
+              <h3 className="text-[0.85rem] font-semibold text-ink">
                 Rhythm and debt
               </h3>
               <dl className="mt-3 space-y-2.5 text-xs">

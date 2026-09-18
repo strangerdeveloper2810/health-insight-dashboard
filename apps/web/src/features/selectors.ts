@@ -14,6 +14,7 @@ import type {
   DailyRecord,
   DatasetEvent,
   HealthDataset,
+  InsightSeverity,
   ISODate,
   MetricKey,
   ReadinessScore,
@@ -49,6 +50,41 @@ export const selectReadiness = createSelector(
 export const selectInsights = createSelector(
   [selectPayload],
   (payload) => payload?.insights ?? NO_INSIGHTS,
+);
+
+/**
+ * Insight severity, most urgent first.
+ *
+ * Declared here rather than inside the feed because two components now rank by
+ * it. The hero promotes the top insight out of the feed and into its own card;
+ * if the two ranked differently, the same insight would appear twice on one
+ * screen — once as today's focus, once as a card below it.
+ */
+const SEVERITY_ORDER: readonly InsightSeverity[] = ["alert", "watch", "positive", "info"];
+
+export const selectSortedInsights = createSelector([selectInsights], (insights) =>
+  [...insights].sort(
+    (a, b) => SEVERITY_ORDER.indexOf(a.severity) - SEVERITY_ORDER.indexOf(b.severity),
+  ),
+);
+
+/**
+ * The single thing the page leads with.
+ *
+ * The dashboard's whole job on load is to answer "what should I do about
+ * today?", and the answer already exists — it is the highest-severity insight's
+ * action. Leaving it third in a grid of cards, at the same weight as the three
+ * below it, is what makes a reader scroll a page looking for something that was
+ * on it the whole time.
+ */
+export const selectTopInsight = createSelector(
+  [selectSortedInsights],
+  (insights) => insights[0] ?? null,
+);
+
+/** Everything the hero has not already shown. */
+export const selectRestInsights = createSelector([selectSortedInsights], (insights) =>
+  insights.slice(1),
 );
 
 export const selectDerived = createSelector(

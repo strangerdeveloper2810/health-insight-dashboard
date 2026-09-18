@@ -58,7 +58,7 @@ const loadBand = (ratio: number | null): { tone: Tone; label: string; note: stri
 const WorkoutRow = ({ workout }: { workout: Workout }) => {
   return (
     <li className="flex items-center gap-3 py-2">
-      <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-raised text-[10px] font-semibold uppercase text-muted">
+      <span className="grid size-8 shrink-0 place-items-center rounded-control bg-raised text-[0.72rem] font-semibold text-muted">
         {workout.type.slice(0, 2)}
       </span>
       <div className="min-w-0 flex-1">
@@ -66,12 +66,12 @@ const WorkoutRow = ({ workout }: { workout: Workout }) => {
           {WORKOUT_LABEL[workout.type]}
           {workout.distanceKm ? ` · ${workout.distanceKm.toFixed(2)} km` : ""}
         </p>
-        <p className="text-[11px] text-faint">
+        <p className="text-[0.75rem] text-faint">
           {formatDayMonth(workout.date)} · {formatDuration(workout.durationMin)} ·{" "}
           {workout.avgHeartRate} bpm avg
         </p>
       </div>
-      <span className="shrink-0 text-[11px] text-faint">RPE {workout.perceivedEffort}</span>
+      <span className="shrink-0 text-[0.75rem] text-faint">RPE {workout.perceivedEffort}</span>
     </li>
   );
 };
@@ -94,7 +94,7 @@ export const ActivityPanel = () => {
       action={
         <div className="text-right">
           <p className={`text-xs font-semibold ${toneText(band.tone)}`}>{band.label}</p>
-          <p className="text-[10px] text-faint">
+          <p className="text-[0.72rem] text-faint">
             {derived.acwr === null ? "load ratio" : `load ratio ${derived.acwr.toFixed(2)}`}
           </p>
         </div>
@@ -145,43 +145,43 @@ export const ActivityPanel = () => {
         )}
 
         <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <div className="rounded-lg border border-line bg-raised px-3 py-2.5">
-            <dt className="text-[10px] uppercase tracking-wide text-faint">This week</dt>
+          <div className="rounded-control bg-raised px-3 py-2.5">
+            <dt className="text-[0.72rem] text-faint">This week</dt>
             <dd className="mt-0.5 text-sm font-semibold text-ink">
               {formatDuration(derived.acuteLoadMin)}
             </dd>
           </div>
-          <div className="rounded-lg border border-line bg-raised px-3 py-2.5">
-            <dt className="text-[10px] uppercase tracking-wide text-faint">4-week norm</dt>
+          <div className="rounded-control bg-raised px-3 py-2.5">
+            <dt className="text-[0.72rem] text-faint">4-week norm</dt>
             <dd className="mt-0.5 text-sm font-semibold text-ink">
               {formatDuration(derived.chronicWeeklyLoadMin)}
-              <span className="ml-1 text-[10px] font-normal text-faint">/week</span>
+              <span className="ml-1 text-[0.72rem] font-normal text-faint">/week</span>
             </dd>
           </div>
-          <div className="rounded-lg border border-line bg-raised px-3 py-2.5">
-            <dt className="text-[10px] uppercase tracking-wide text-faint">Step streak</dt>
+          <div className="rounded-control bg-raised px-3 py-2.5">
+            <dt className="text-[0.72rem] text-faint">Step streak</dt>
             <dd className="mt-0.5 text-sm font-semibold text-ink">
               {derived.stepGoalStreakDays}
-              <span className="ml-1 text-[10px] font-normal text-faint">
+              <span className="ml-1 text-[0.72rem] font-normal text-faint">
                 days · best {derived.bestStepStreak30d}
               </span>
             </dd>
           </div>
-          <div className="rounded-lg border border-line bg-raised px-3 py-2.5">
-            <dt className="text-[10px] uppercase tracking-wide text-faint">Weekend gap</dt>
+          <div className="rounded-control bg-raised px-3 py-2.5">
+            <dt className="text-[0.72rem] text-faint">Weekend gap</dt>
             <dd className="mt-0.5 text-sm font-semibold text-ink">
               {derived.weekendStepGap > 0 ? "+" : "−"}
               {Math.abs(derived.weekendStepGap).toLocaleString("en-US")}
-              <span className="ml-1 text-[10px] font-normal text-faint">steps</span>
+              <span className="ml-1 text-[0.72rem] font-normal text-faint">steps</span>
             </dd>
           </div>
         </dl>
 
-        <p className="text-[11px] leading-relaxed text-muted">{band.note}</p>
+        <p className="text-[0.75rem] leading-relaxed text-muted">{band.note}</p>
 
         {recent.length > 0 ? (
           <div className="border-t border-line pt-3">
-            <h3 className="text-xs font-semibold uppercase tracking-wide text-muted">
+            <h3 className="text-[0.85rem] font-semibold text-ink">
               Recent sessions
             </h3>
             <ul className="mt-1 divide-y divide-line">
@@ -193,7 +193,7 @@ export const ActivityPanel = () => {
         ) : null}
 
         {dataset.workouts.length > 0 ? (
-          <p className="text-[11px] text-faint">
+          <p className="text-[0.75rem] text-faint">
             {dataset.workouts.length} sessions recorded across the last{" "}
             {dataset.range.days} days.
           </p>

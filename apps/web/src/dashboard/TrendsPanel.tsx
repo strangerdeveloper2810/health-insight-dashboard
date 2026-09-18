@@ -37,6 +37,7 @@ import {
 import { eventsToggled, trendMetricChanged, trendRangeChanged } from "@/features/uiSlice";
 import type { TrendRange } from "@/features/uiSlice";
 import { formatAxisDate, formatBare, formatChange, shapeOf, trendOf, unitSuffix } from "@/lib/format";
+import { sectionIndex } from "@/lib/sections";
 import { CHART_PALETTE, EVENT_COLOURS, TREND_TONE } from "@/lib/theme";
 import { Badge, Panel, toneText } from "@/ui/primitives";
 
@@ -79,18 +80,18 @@ const ChartTooltip = ({
 
   return (
     <div
-      className="rounded-lg border px-2.5 py-1.5 text-xs shadow-lg"
+      className="rounded-control border px-2.5 py-1.5 text-[0.8rem] shadow-lift"
       style={{
         background: palette.tooltipBg,
         borderColor: palette.tooltipBorder,
         color: palette.tooltipText,
       }}
     >
-      <div className="text-[10px] opacity-70">{label ? formatAxisDate(label) : ""}</div>
+      <div className="text-[0.72rem] opacity-70">{label ? formatAxisDate(label) : ""}</div>
       <div className="font-semibold tabular-nums">
         {formatBare(value, { unit, precision, format })}
         {unitSuffix({ unit, precision, format }) ? (
-          <span className="ml-1 text-[10px] font-normal opacity-70">
+          <span className="ml-1 text-[0.72rem] font-normal opacity-70">
             {unitSuffix({ unit, precision, format })}
           </span>
         ) : null}
@@ -130,6 +131,8 @@ export const TrendsPanel = () => {
 
   return (
     <Panel
+      id="trends"
+      index={sectionIndex("trends")}
       title="Trends"
       subtitle={summary ? statLine(summary, meta.unit, meta.precision) : meta.description}
       action={
@@ -144,7 +147,7 @@ export const TrendsPanel = () => {
             id="trend-metric"
             value={ui.trendMetric}
             onChange={(event) => dispatch(trendMetricChanged(event.target.value as MetricKey))}
-            className="min-w-0 max-w-[11rem] flex-1 rounded-lg border border-line bg-surface px-2 py-1 text-xs text-ink sm:flex-none"
+            className="min-w-0 max-w-[11rem] flex-1 rounded-control bg-raised px-2 py-1 text-xs text-ink sm:flex-none"
           >
             {choices.map((key) => (
               <option key={key} value={key}>
@@ -154,7 +157,7 @@ export const TrendsPanel = () => {
           </select>
 
           <div
-            className="flex rounded-lg border border-line bg-surface p-0.5"
+            className="flex rounded-control bg-raised p-0.5"
             role="group"
             aria-label="Time range"
           >
@@ -166,7 +169,7 @@ export const TrendsPanel = () => {
                 aria-pressed={ui.trendRange === range}
                 className={`rounded-md px-2 py-1 text-xs font-medium transition ${
                   ui.trendRange === range
-                    ? "bg-brand text-white"
+                    ? "bg-brand text-brand-ink"
                     : "text-muted hover:text-ink"
                 }`}
               >
@@ -273,14 +276,14 @@ export const TrendsPanel = () => {
                 type="button"
                 onClick={() => dispatch(eventsToggled())}
                 aria-pressed={ui.showEvents}
-                className="text-[11px] font-medium text-brand underline-offset-2 hover:underline"
+                className="text-[0.75rem] font-medium text-brand underline-offset-2 hover:underline"
               >
                 {ui.showEvents ? "Hide life events" : "Show life events"}
               </button>
               {ui.showEvents ? (
                 <ul className="flex flex-wrap gap-1.5">
                   {annotations.length === 0 ? (
-                    <li className="text-[11px] text-faint">
+                    <li className="text-[0.75rem] text-faint">
                       none fall inside this window
                     </li>
                   ) : (

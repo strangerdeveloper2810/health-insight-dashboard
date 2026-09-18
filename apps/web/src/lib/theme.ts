@@ -6,6 +6,12 @@
  * literals. They are kept in step with `styles.css` by hand — the alternative
  * is resolving computed styles at runtime, which breaks on first paint and in
  * tests. The duplication is confined to this file.
+ *
+ * The one rule worth knowing when editing: `brand` here is the *data* colour,
+ * not the brand colour. In the stylesheet terracotta means "the product is
+ * asking you to do something"; inside a plot area that would read as a verdict
+ * on the series, so charts draw in the petrol teal instead and the two
+ * vocabularies stay apart. `accent` in the CSS is the same teal.
  */
 
 import type { DatasetEvent, InsightSeverity, ReadinessBand } from "@health/core";
@@ -21,7 +27,7 @@ export interface ChartPalette {
   tooltipBg: string;
   tooltipBorder: string;
   tooltipText: string;
-  /** Primary data colour. */
+  /** Primary data colour. Named `brand` for historical reasons — see the note above. */
   brand: string;
   /** Softer fill under an area or bar. */
   brandFill: string;
@@ -36,34 +42,34 @@ export interface ChartPalette {
 }
 
 const LIGHT: ChartPalette = {
-  grid: "#e6ecf3",
-  axis: "#cbd6e2",
-  axisText: "#71829a",
+  grid: "#ece4d7",
+  axis: "#d8cbb7",
+  axisText: "#8a7e6d",
   tooltipBg: "#ffffff",
-  tooltipBorder: "#dbe3ec",
-  tooltipText: "#0d1b2a",
-  brand: "#0e7c6b",
-  brandFill: "rgba(14, 124, 107, 0.14)",
-  alt: "#1c6aa8",
-  annotation: "rgba(91, 107, 127, 0.16)",
-  annotationText: "#5b6b7f",
-  zones: ["#8fb8ae", "#4f9f8d", "#e0a33a", "#dd7a45", "#c0432f"],
-  sleepStages: { deep: "#2f5d9e", rem: "#6f5aa8", light: "#7fa8cf", awake: "#c9b08a" },
+  tooltipBorder: "#ebe3d6",
+  tooltipText: "#1c1815",
+  brand: "#0f766e",
+  brandFill: "rgba(15, 118, 110, 0.14)",
+  alt: "#1e5a8a",
+  annotation: "rgba(107, 97, 87, 0.15)",
+  annotationText: "#6b6157",
+  zones: ["#7fb3a8", "#4f9d92", "#d9a13a", "#d1743f", "#b33a2b"],
+  sleepStages: { deep: "#2c5f8a", rem: "#6b5aa8", light: "#8fb4d1", awake: "#c9a87c" },
 };
 
 const DARK: ChartPalette = {
-  grid: "#1b2634",
-  axis: "#2c3b4c",
-  axisText: "#8395a8",
-  tooltipBg: "#131e2c",
-  tooltipBorder: "#26374a",
-  tooltipText: "#e9eff6",
-  brand: "#3ecbae",
-  brandFill: "rgba(62, 203, 174, 0.16)",
-  alt: "#63aee6",
-  annotation: "rgba(154, 171, 189, 0.18)",
-  annotationText: "#9aabbd",
-  zones: ["#5c8a80", "#3f8b7a", "#c9922f", "#c46a3a", "#a83a28"],
+  grid: "#2b251d",
+  axis: "#413a30",
+  axisText: "#8a7e6d",
+  tooltipBg: "#241f19",
+  tooltipBorder: "#3a332a",
+  tooltipText: "#f4ede2",
+  brand: "#5eead4",
+  brandFill: "rgba(94, 234, 212, 0.16)",
+  alt: "#7dd3fc",
+  annotation: "rgba(179, 167, 148, 0.18)",
+  annotationText: "#b3a794",
+  zones: ["#4e857c", "#3f8b80", "#c9922f", "#c46a3a", "#a83a28"],
   sleepStages: { deep: "#5b86c9", rem: "#9182cf", light: "#4d7ba8", awake: "#a8946f" },
 };
 
@@ -75,27 +81,31 @@ export const CHART_PALETTE: Record<ThemeName, ChartPalette> = { light: LIGHT, da
  *  sees them — a computed class name would be stripped from the build. */
 export const SEVERITY_STYLE: Record<
   InsightSeverity,
-  { chip: string; dot: string; label: string }
+  { chip: string; dot: string; label: string; edge: string }
 > = {
   alert: {
-    chip: "bg-alert-soft text-alert border-alert/25",
+    chip: "bg-alert-soft text-alert",
     dot: "bg-alert",
     label: "Needs attention",
+    edge: "bg-alert",
   },
   watch: {
-    chip: "bg-watch-soft text-watch border-watch/25",
+    chip: "bg-watch-soft text-watch",
     dot: "bg-watch",
     label: "Worth watching",
+    edge: "bg-watch",
   },
   positive: {
-    chip: "bg-positive-soft text-positive border-positive/25",
+    chip: "bg-positive-soft text-positive",
     dot: "bg-positive",
     label: "Going well",
+    edge: "bg-positive",
   },
   info: {
-    chip: "bg-info-soft text-info border-info/25",
+    chip: "bg-info-soft text-info",
     dot: "bg-info",
     label: "For context",
+    edge: "bg-info",
   },
 };
 
@@ -116,17 +126,17 @@ export const TREND_TONE: Record<"good" | "bad" | "flat", Tone> = {
 
 export const READINESS_STYLE: Record<ReadinessBand, { text: string; ring: string; label: string }> = {
   excellent: { text: "text-positive", ring: "stroke-positive", label: "Excellent" },
-  good: { text: "text-brand", ring: "stroke-brand", label: "Good" },
+  good: { text: "text-accent", ring: "stroke-accent", label: "Good" },
   fair: { text: "text-watch", ring: "stroke-watch", label: "Fair" },
   poor: { text: "text-alert", ring: "stroke-alert", label: "Poor" },
 };
 
 /** Colours for life-event spans on the time axis. */
 export const EVENT_COLOURS: Record<DatasetEvent["kind"], string> = {
-  illness: "#bb3a2c",
-  travel: "#1c6aa8",
-  "plan-start": "#0e7c6b",
-  race: "#a86400",
-  equipment: "#6f5aa8",
-  life: "#5b6b7f",
+  illness: "#b3261e",
+  travel: "#1e5a8a",
+  "plan-start": "#0f766e",
+  race: "#a16207",
+  equipment: "#6b5aa8",
+  life: "#6b6157",
 };

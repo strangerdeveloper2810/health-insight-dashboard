@@ -13,6 +13,12 @@
  *
  * Anything that would go above the readiness score had to justify being more
  * important than "how am I today", and nothing did.
+ *
+ * Sections 3 onwards are wrapped in `<Section>`, which takes its number, its
+ * title and its note from `lib/sections` — the same list the masthead rail
+ * navigates by. Section 1 is not: a numbered heading above the verdict would
+ * push the one thing the reader came for below the fold, so the hero carries
+ * the `today` anchor itself and its headline is its heading.
  */
 
 import { lazy, Suspense, useEffect } from "react";
@@ -36,9 +42,10 @@ import {
   selectReadiness,
   selectStatus,
 } from "@/features/selectors";
+import { ReviewStates } from "@/layout/ReviewStates";
 import { TopBar } from "@/layout/TopBar";
-import { Card } from "@/ui/primitives";
-import { ErrorState, LoadingState } from "@/ui/states";
+import { Section } from "@/ui/Section";
+import { EmptyState, ErrorState, LoadingState } from "@/ui/states";
 
 /**
  * The assistant carries a markdown renderer that nothing else needs, so it is
@@ -50,85 +57,46 @@ const AssistantPanel = lazy(() =>
   import("@/assistant/AssistantPanel").then((module) => ({ default: module.AssistantPanel })),
 );
 
-const SectionHeading = ({ title, note }: { title: string; note?: string }) => {
-  return (
-    <div className="mb-3 flex flex-wrap items-baseline justify-between gap-x-3">
-      <h2 className="text-base font-semibold tracking-tight text-ink">{title}</h2>
-      {note ? <p className="text-xs text-muted">{note}</p> : null}
-    </div>
-  );
-};
-
-/**
- * The state simulator, linked rather than hidden.
- *
- * The brief asks for loading, error and empty states to be handled. Reviewing
- * them should not require editing code, so each one has a URL.
- */
-const ReviewStates = () => {
-  const states = [
-    { query: "", label: "Live" },
-    { query: "?state=loading", label: "Loading" },
-    { query: "?state=error", label: "Error" },
-    { query: "?state=empty", label: "Empty" },
-  ];
-
-  return (
-    <div className="flex flex-wrap items-center gap-2">
-      <span className="text-[11px] text-faint">Review states:</span>
-      {states.map((state) => (
-        <a
-          key={state.label}
-          href={`/${state.query}`}
-          className="rounded-md border border-line bg-surface px-2 py-0.5 text-[11px] text-muted transition hover:text-ink"
-        >
-          {state.label}
-        </a>
-      ))}
-    </div>
-  );
-};
-
 const Dashboard = () => {
   const readiness = useAppSelector(selectReadiness);
 
   return (
-    <div className="space-y-8">
-      {readiness && readiness.components.length > 0 ? (
-        <ReadinessHero readiness={readiness} />
-      ) : null}
-
-      <TodayTiles />
-
-      <section>
-        <SectionHeading
-          title="What we noticed"
-          note="Patterns found in your recordings, each with the figures behind it"
-        />
-        <InsightFeed />
+    <div className="space-y-10">
+      {/* No heading: the hero's own headline is this section's title, and an
+          `01 Today` above it would push the verdict off the first screen. The
+          rail still links here, which is what the anchor is for. */}
+      <section id="today" className="scroll-mt-28 space-y-4">
+        {readiness && readiness.components.length > 0 ? (
+          <ReadinessHero readiness={readiness} />
+        ) : null}
+        <TodayTiles />
       </section>
 
+      <Section id="noticed">
+        <InsightFeed />
+      </Section>
+
+      {/* A single-panel section carries its own heading, so it is not wrapped:
+          a `<Section>` here would print "Trends" twice, once as the section and
+          once as the card. */}
       <TrendsPanel />
 
-      <section>
-        <SectionHeading title="Goals" note="Measured the way each one actually works" />
+      <Section id="goals">
         <GoalsPanel />
-      </section>
+      </Section>
 
-      <div className="grid gap-4 xl:grid-cols-2">
-        <SleepPanel />
-        <ActivityPanel />
-      </div>
+      <Section id="daily">
+        <div className="grid gap-4 xl:grid-cols-2">
+          <SleepPanel />
+          <ActivityPanel />
+        </div>
+      </Section>
 
       <NutritionPanel />
 
-      <section>
-        <SectionHeading
-          title="Context"
-          note="What shapes how everything above should be read"
-        />
+      <Section id="context">
         <ContextPanel />
-      </section>
+      </Section>
     </div>
   );
 };
@@ -152,7 +120,7 @@ export const App = () => {
   const hasNoData = payload !== null && payload.dataset.daily.length === 0;
 
   return (
-    <div className="min-h-dvh">
+    <div id="top" className="min-h-dvh">
       <TopBar />
 
       <main className="mx-auto max-w-[1400px] px-4 py-5 sm:px-6 sm:py-7">
@@ -160,18 +128,10 @@ export const App = () => {
           <ErrorState message={error.message} code={error.code} onRetry={retry} />
         ) : status === "ready" && payload ? (
           hasNoData ? (
-            <Card className="p-10 text-center">
-              <h2 className="text-base font-semibold text-ink">Nothing recorded yet</h2>
-              <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-muted">
-                Your dashboard is ready, but there is no data in it. Once a watch or an app
-                syncs a day of activity, sleep or a meal, this page fills in — the trends,
-                the goals and the assistant all read from the same recordings.
-              </p>
-              <p className="mx-auto mt-4 max-w-md text-xs leading-relaxed text-faint">
-                Nothing is estimated or back-filled. An empty day stays empty rather than
-                becoming a zero, because those mean different things.
-              </p>
-            </Card>
+            <EmptyState
+              title="Nothing recorded yet"
+              message="Your dashboard is ready, but there is no data in it. Once a watch or an app syncs a day of activity, sleep or a meal, this page fills in — the trends, the goals and the assistant all read from the same recordings. Nothing is estimated or back-filled: an empty day stays empty rather than becoming a zero, because those mean different things."
+            />
           ) : (
             <Dashboard />
           )
@@ -181,9 +141,9 @@ export const App = () => {
       </main>
 
       <footer className="mx-auto max-w-[1400px] px-4 pb-24 sm:px-6">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-line pt-4">
+        <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3 border-t border-line pt-4">
           <ReviewStates />
-          <p className="text-[11px] text-faint">
+          <p className="text-[0.72rem] text-faint">
             Generated data for a fictional persona · not medical advice
           </p>
         </div>

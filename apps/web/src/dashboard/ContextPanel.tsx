@@ -21,7 +21,7 @@ const List = ({ title, items }: { title: string; items: string[] }) => {
   if (items.length === 0) return null;
   return (
     <div>
-      <h3 className="text-[10px] font-semibold uppercase tracking-wide text-faint">{title}</h3>
+      <h3 className="text-[0.72rem] font-semibold text-faint">{title}</h3>
       <ul className="mt-1.5 flex flex-wrap gap-1.5">
         {items.map((item) => (
           <li key={item}>
@@ -45,7 +45,7 @@ const QualityRow = ({ note }: { note: DataQualityNote }) => {
         <span className="text-xs font-medium text-ink">{note.scope}</span>
         <Badge tone={tone}>{pct}%</Badge>
       </div>
-      <p className="mt-1 text-[11px] leading-relaxed text-muted">{note.note}</p>
+      <p className="mt-1 text-[0.75rem] leading-relaxed text-muted">{note.note}</p>
     </li>
   );
 };
@@ -71,15 +71,15 @@ export const ContextPanel = () => {
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3 text-xs sm:grid-cols-4">
             <div>
-              <p className="text-[10px] uppercase tracking-wide text-faint">Age</p>
+              <p className="text-[0.72rem] text-faint">Age</p>
               <p className="font-medium text-ink">{persona.age}</p>
             </div>
             <div>
-              <p className="text-[10px] uppercase tracking-wide text-faint">Height</p>
+              <p className="text-[0.72rem] text-faint">Height</p>
               <p className="font-medium text-ink">{persona.heightCm} cm</p>
             </div>
             <div className="col-span-2">
-              <p className="text-[10px] uppercase tracking-wide text-faint">Occupation</p>
+              <p className="text-[0.72rem] text-faint">Occupation</p>
               <p className="font-medium text-ink">{persona.occupation}</p>
             </div>
           </div>
@@ -89,8 +89,8 @@ export const ContextPanel = () => {
           <List title="Conditions" items={persona.conditions} />
           <List title="Medications" items={persona.medications} />
 
-          <div className="rounded-lg border border-brand/20 bg-brand-soft px-3 py-2.5">
-            <h3 className="text-[10px] font-semibold uppercase tracking-wide text-brand">
+          <div className="rounded-control bg-brand-soft px-3 py-2.5">
+            <h3 className="text-[0.72rem] font-semibold text-brand">
               Clinician guidance
             </h3>
             <p className="mt-1 text-xs leading-relaxed text-ink">{persona.clinicianGuidance}</p>
