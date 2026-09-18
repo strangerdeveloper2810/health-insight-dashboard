@@ -29,7 +29,7 @@ export type {
   WindowedStat,
   Workout,
   WorkoutType,
-} from "./types";
+} from "./models/types";
 
 // ─── HTTP contract ──────────────────────────────────────────────────────────
 export type {
@@ -42,7 +42,7 @@ export type {
 } from "./api";
 
 // ─── Utilities ──────────────────────────────────────────────────────────────
-export type { ISODate } from "./dates";
+export type { ISODate } from "./utils/dates";
 export {
   addDays,
   bedtimeToTimeline,
@@ -58,9 +58,9 @@ export {
   parseISODate,
   toISODate,
   today,
-} from "./dates";
+} from "./utils/dates";
 
-export { boundedGaussian, chance, clamp, createRng, gaussian, pick, round } from "./rng";
+export { boundedGaussian, chance, clamp, createRng, gaussian, pick, round } from "./utils/rng";
 
 // ─── Persona and data ───────────────────────────────────────────────────────
 export {
@@ -68,30 +68,30 @@ export {
   PLAN_LENGTH_DAYS,
   PLAN_STARTED_DAYS_AGO,
   personaWithDatedGoals,
-} from "./persona";
+} from "./models/persona";
 export {
   DEFAULT_DAYS,
   DEFAULT_SEED,
   createDefaultDataset,
   generateDataset,
-} from "./dataset";
-export type { GenerateOptions } from "./dataset";
+} from "./analytics/dataset";
+export type { GenerateOptions } from "./analytics/dataset";
 
 // ─── Analytics ──────────────────────────────────────────────────────────────
-export { METRIC_META, HEADLINE_METRICS, CHARTABLE_METRICS, metricMeta } from "./metricMeta";
-export { buildSeries, computeMetrics } from "./metrics";
+export { METRIC_META, HEADLINE_METRICS, CHARTABLE_METRICS, metricMeta } from "./models/metricMeta";
+export { buildSeries, computeMetrics } from "./analytics/metrics";
 export type {
   DerivedMetrics,
   GoalProgress,
   MetricsBundle,
   SleepHeartRateLink,
-} from "./metrics";
+} from "./analytics/metrics";
 export {
   computeReadiness,
   readinessBand,
   readinessFor,
-} from "./readiness";
-export { focusInsights, rankInsights, runInsightRules } from "./insights";
+} from "./analytics/readiness";
+export { focusInsights, rankInsights, runInsightRules } from "./analytics/insights";
 
 // ─── Grounding ──────────────────────────────────────────────────────────────
 export {
@@ -101,8 +101,8 @@ export {
   indexFromCatalogue,
   refCatalogue,
   resolveRef,
-} from "./refs";
-export type { RefIndex } from "./refs";
+} from "./utils/refs";
+export type { RefIndex } from "./utils/refs";
 export {
   dropRepeatedUnits,
   renderGrounded,
@@ -137,13 +137,13 @@ export type {
 
 // ─── One-shot bundle ────────────────────────────────────────────────────────
 
-import { computeMetrics } from "./metrics";
-import type { MetricsBundle } from "./metrics";
-import { buildRefIndex } from "./refs";
-import type { RefIndex } from "./refs";
-import { computeReadiness } from "./readiness";
-import { runInsightRules } from "./insights";
-import type { HealthDataset, Insight, ReadinessScore } from "./types";
+import { computeMetrics } from "./analytics/metrics";
+import type { MetricsBundle } from "./analytics/metrics";
+import { buildRefIndex } from "./utils/refs";
+import type { RefIndex } from "./utils/refs";
+import { computeReadiness } from "./analytics/readiness";
+import { runInsightRules } from "./analytics/insights";
+import type { HealthDataset, Insight, ReadinessScore } from "./models/types";
 
 export interface DashboardModel {
   bundle: MetricsBundle;

@@ -186,5 +186,31 @@ toggle that demonstrates them beats a README sentence claiming they exist.
 - `?state=loading|error|empty|partial` → each state renders correctly.
 - Ask the assistant the brief's five example questions → streamed answers whose citations
   resolve to real metrics; ask something outside the data → it should decline, not invent.
-- `npm test` → rules, readiness, citation validator, context builder.
+- `npm test` → 93 unit and integration tests across core analytics, grounding, Fastify BFF, and assistant multi-session state.
 - Unset `ANTHROPIC_API_KEY` → assistant shows a setup error, dashboard still works.
+
+---
+
+## 9. Advanced Architectural Evolutions & Implemented Enhancements
+
+### 9.1 Multi-Session Assistant Architecture
+- **Session Data Model:** Each session tracks its own `id`, `title`, `createdAt`, `updatedAt`, `messages: AssistantMessage[]`, and `ungroundedTurns`.
+- **Automatic Topic Titling:** Derives a human-friendly title from the first turn of each conversation.
+- **Client-Side Persistence:** Pure browser storage using **IndexedDB** (`HealthAssistantSecureDB`) with synchronous Immer snapshotting (`current()`) to prevent proxy revocation, backed by a resilient `sessionStorage` fallback.
+- **Backward-Compatible Migration:** Auto-migrates any legacy single-session storage into the multi-session model without losing conversation history.
+- **Session Drawer & Switcher:** Users can create new chats (`+ New`), browse past conversations with relative timestamps and message counters, switch conversations instantaneously, and prune individual sessions.
+
+### 9.2 Resilient Error Boundaries & Notifications
+- **React ErrorBoundary:** Catches render anomalies without crashing the whole application, featuring reload triggers and an expandable diagnostic stack trace viewer.
+- **Toast Notifications:** Redux Toolkit-powered notifications in the top-right corner with auto-dismiss timers, countdown progress bars, pause-on-hover, and typed alerts (`success`, `error`, `warning`, `info`).
+
+### 9.3 Two-Tier Security & Prompt Injection Defense
+- **Client-Side Regex Scanner:** Blocks malicious prompt override patterns (`ignore previous instructions`, `bypass`, `system prompt`, `you are now`) before sending, triggering a security toast.
+- **Server-Side Zod Schemas:** Discriminated union message validator with strict length limits (`user`: 1000 chars, `assistant`: 20000 chars) and rejection filters.
+
+### 9.4 Fullstack Observability
+- **Structured Fastify Logging:** Pino logger tracking incoming requests, execution latency, response status codes, and unique correlation `reqId` tags.
+
+### 9.5 Universal Serverless & Cloud Support
+- **Vercel Serverless Adapter:** Fastify instance wrapping Node `IncomingMessage`/`ServerResponse` in `apps/bff/src/serverless.ts`, routing `/api/*` seamlessly with Server-Sent Events (SSE) streaming.
+

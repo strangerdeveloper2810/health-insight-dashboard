@@ -1,0 +1,37 @@
+import { formatEvidenceValue } from "@health/core";
+import type { Insight } from "@health/core";
+
+/**
+ * The full audit trail: which rule fired, and every number it read.
+ *
+ * The reference ids are shown in mono and in full — they look like
+ * `sleep.deep.avg7` because they *are* the key, and a truncated key is useless
+ * for cross-checking against the assistant.
+ */
+export const WorkingPanel = ({ insight }: { insight: Insight }) => {
+  return (
+    <dl className="mt-3 space-y-1.5 rounded-control bg-raised px-3.5 py-3 text-[0.78rem]">
+      <div className="flex gap-2">
+        <dt className="w-20 shrink-0 text-faint">Rule</dt>
+        <dd className="font-mono text-muted">{insight.rule}</dd>
+      </div>
+      {insight.evidence.map((ref) => (
+        <div key={ref.ref} className="flex gap-2">
+          <dt className="w-16 shrink-0 font-medium text-ink">
+            {formatEvidenceValue(ref)}
+          </dt>
+          <dd className="text-muted">
+            {ref.label}
+          </dd>
+        </div>
+      ))}
+      <div className="flex gap-2 border-t border-line pt-2">
+        <dt className="w-20 shrink-0 text-faint">Source</dt>
+        <dd className="text-muted">
+          Computed from your own recordings. The assistant can cite these same values, and
+          cannot state a number that is not among them.
+        </dd>
+      </div>
+    </dl>
+  );
+};

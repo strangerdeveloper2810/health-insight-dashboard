@@ -14,7 +14,7 @@ export default defineConfig({
     },
   },
   server: {
-    port: 5173,
+    port: 4000,
     // The browser only ever talks to the Vite origin. Requests to /api are
     // forwarded to the Fastify BFF, which is the only process holding the key.
     proxy: {

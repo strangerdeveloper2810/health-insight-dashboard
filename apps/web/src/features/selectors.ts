@@ -164,3 +164,23 @@ export const selectTrendSummary = createSelector(
     return windows.find((w) => w.window === ui.trendRange) ?? null;
   },
 );
+
+// ─── Assistant Session Reads ────────────────────────────────────────────────
+
+export const selectAssistantSessions = createSelector(
+  [selectAssistant],
+  (assistant) => assistant.sessions,
+);
+
+export const selectActiveSessionId = createSelector(
+  [selectAssistant],
+  (assistant) => assistant.activeSessionId,
+);
+
+export const selectActiveSession = createSelector(
+  [selectAssistant],
+  (assistant) =>
+    assistant.sessions.find((s) => s.id === assistant.activeSessionId) ??
+    assistant.sessions[0],
+);
+

@@ -9,8 +9,8 @@ import Anthropic from "@anthropic-ai/sdk";
 import { describe, expect, it } from "vitest";
 
 import { buildServer } from "./server";
-import { describeError, sanitiseHistory, withHistoryBreakpoint } from "./chat";
-import type { ChatEvent, ChatTurn } from "./chat";
+import { describeError, sanitiseHistory, withHistoryBreakpoint } from "./services/chat";
+import type { ChatEvent, ChatTurn } from "./services/chat";
 import { loadConfig } from "./config";
 import type { Config } from "./config";
 

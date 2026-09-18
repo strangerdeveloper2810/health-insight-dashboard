@@ -19,3 +19,7 @@ coverage/
 # Logs
 *.log
 npm-debug.log*
+
+# Vercel
+.vercel/
+

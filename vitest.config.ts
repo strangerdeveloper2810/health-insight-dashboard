@@ -1,12 +1,23 @@
 import { defineConfig } from "vitest/config";
+import path from "node:path";
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      "@health/core": path.resolve(import.meta.dirname, "packages/core/src/index.ts"),
+      "@": path.resolve(import.meta.dirname, "apps/web/src"),
+    },
+  },
   test: {
-    // `packages/core` holds the logic that matters most — insight rules,
-    // readiness score, citation validation — as pure TypeScript with no DOM
-    // and no network. `apps/bff` is tested through the same runner: its
-    // Anthropic client is injected, so the suite never makes a real request.
-    include: ["packages/*/src/**/*.test.ts", "apps/bff/src/**/*.test.ts"],
+    // `packages/core` holds pure analytics/grounding logic.
+    // `apps/bff` is tested through Fastify with injected LLM client.
+    // `apps/web` tests features like assistant multi-session state management.
+    include: [
+      "packages/*/src/**/*.test.ts",
+      "apps/bff/src/**/*.test.ts",
+      "apps/web/src/**/*.test.ts",
+    ],
     environment: "node",
   },
 });
+

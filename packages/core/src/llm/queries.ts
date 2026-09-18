@@ -7,11 +7,11 @@
  * the model decides which question to ask, the application what the answer is.
  */
 
-import { addDays, bedtimeToTimeline, formatShortDate, minutesToClock } from "../dates";
-import type { ISODate } from "../dates";
-import { METRIC_META } from "../metricMeta";
-import type { MetricsBundle } from "../metrics";
-import type { MetricKey, SeriesPoint, Workout, WorkoutType } from "../types";
+import { addDays, bedtimeToTimeline, formatShortDate, minutesToClock } from "../utils/dates";
+import type { ISODate } from "../utils/dates";
+import { METRIC_META } from "../models/metricMeta";
+import type { MetricsBundle } from "../analytics/metrics";
+import type { MetricKey, SeriesPoint, Workout, WorkoutType } from "../models/types";
 
 // ─── Shared helpers ─────────────────────────────────────────────────────────
 

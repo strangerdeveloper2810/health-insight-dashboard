@@ -4,7 +4,7 @@
  * drift. Types only — no runtime code, so it costs the browser bundle nothing.
  */
 
-import type { DerivedMetrics } from "./metrics";
+import type { DerivedMetrics } from "./analytics/metrics";
 import type {
   EvidenceRef,
   HealthDataset,
@@ -13,7 +13,7 @@ import type {
   MetricSummary,
   ReadinessScore,
   SeriesPoint,
-} from "./types";
+} from "./models/types";
 
 // ─── Configuration ──────────────────────────────────────────────────────────
 

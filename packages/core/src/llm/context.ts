@@ -6,12 +6,12 @@
  * catalogue affordable on every turn.
  */
 
-import { formatLongDate } from "../dates";
-import { refCatalogue } from "../refs";
-import type { RefIndex } from "../refs";
-import type { MetricsBundle } from "../metrics";
-import type { Insight, Persona, ReadinessScore } from "../types";
-import { formatEvidenceValue } from "../refs";
+import { formatLongDate } from "../utils/dates";
+import { refCatalogue } from "../utils/refs";
+import type { RefIndex } from "../utils/refs";
+import type { MetricsBundle } from "../analytics/metrics";
+import type { Insight, Persona, ReadinessScore } from "../models/types";
+import { formatEvidenceValue } from "../utils/refs";
 
 // ─── Suggested openers ──────────────────────────────────────────────────────
 
@@ -86,6 +86,10 @@ If you cannot answer without inventing a figure, the correct answer is to say wh
 4. If they ask you to decide between things, decide. Say which one and why, and name what you are trading away.
 
 Keep it under about 150 words unless they ask for a summary or a full breakdown. Short paragraphs, no headings for short answers, no emoji. Markdown is supported when structure genuinely helps.
+
+**Important UX Requirement**: If you want to offer the user quick follow-up questions they can ask you, append them at the very end of your response as a markdown list of links, where the URL starts with \`?q=\` and the question text. For example:
+- [Why is my sleep poor?](?q=Why+is+my+sleep+poor?)
+- [How can I improve my resting heart rate?](?q=How+can+I+improve+my+resting+heart+rate?)
 
 ## Your tools
 

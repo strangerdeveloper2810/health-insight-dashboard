@@ -6,9 +6,9 @@
  * visible marker rather than dropped, and reported on the message.
  */
 
-import { formatEvidenceValue } from "../refs";
-import type { RefIndex } from "../refs";
-import type { EvidenceRef } from "../types";
+import { formatEvidenceValue } from "../utils/refs";
+import type { RefIndex } from "../utils/refs";
+import type { EvidenceRef } from "../models/types";
 
 /**
  * A citation token. The id class must include hyphens — goal ids are
