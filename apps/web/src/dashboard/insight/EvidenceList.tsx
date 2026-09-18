@@ -2,16 +2,9 @@ import { formatEvidenceValue } from "@health/core";
 import type { Insight } from "@health/core";
 
 /**
- * The figures this insight was computed from.
- *
- * Shown on the card rather than hidden behind *Why this?*, because the first
- * question a reader has about a claim like "your resting heart rate is up" is
- * "by how much" — and making them press a button to find out is how a
- * dashboard ends up feeling like it is hiding something.
- *
- * Each `ref` is an id in the shared reference index, which is the same index
- * the assistant is restricted to. That is what makes the sentence "the
- * assistant can cite these same values" true rather than aspirational.
+ * The figures this insight was computed from, shown on the card rather than
+ * behind *Why this?*. Each `ref` is an id in the shared reference index — the
+ * same one the assistant is restricted to.
  */
 export const EvidenceList = ({ insight }: { insight: Insight }) => {
   return (

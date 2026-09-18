@@ -1,11 +1,9 @@
 import type { ReactNode } from "react";
 
 /**
- * Nothing to show, and that is a valid answer.
- *
- * Rendered on a `raised` ground rather than a dashed box: a dashed border is
- * the universal shorthand for "something is broken here", which is exactly the
- * wrong message when the app worked and the user simply has no data yet.
+ * Nothing to show, and that is a valid answer. Deliberately not a dashed box —
+ * a dashed border reads as "something is broken here", which is the wrong
+ * message when the app worked and the user simply has no data yet.
  */
 export const EmptyState = ({
   title,

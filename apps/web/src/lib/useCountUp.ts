@@ -1,18 +1,9 @@
 /**
  * Eases a number to its value instead of snapping to it.
  *
- * Only worth doing for the handful of figures at the top of the page — the
- * readiness score and the four tiles — because a number that moves is read,
- * and a number that is simply there is skimmed. Everything below the fold is
- * static prose and gets nothing.
- *
- * Two rules the animation has to keep:
- *
- *   - It must not lie. The value it settles on is exactly the value passed in;
- *     the easing only decides how it gets there.
- *   - It must not run for someone who asked for less motion. That check is
- *     synchronous on the first render, not in an effect, so a reader with
- *     reduced motion never sees a single animated frame.
+ * The reduced-motion check is synchronous on the first render rather than in an
+ * effect, so a reader who asked for less motion never sees a single animated
+ * frame.
  */
 
 import { useEffect, useRef, useState } from "react";

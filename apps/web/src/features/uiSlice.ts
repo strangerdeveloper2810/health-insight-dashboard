@@ -1,7 +1,6 @@
 /**
- * Presentation state: theme, which trend is on screen, and which insight card
- * has its reasoning open. All of it is local to this browser and none of it
- * changes what any number means.
+ * Presentation state: theme, which trend is on screen, which insight card has
+ * its reasoning open. None of it changes what any number means.
  */
 
 import { createSlice } from "@reduxjs/toolkit";
@@ -29,8 +28,8 @@ export interface UiState {
 const initialState: UiState = {
   themeChoice: "system",
   theme: "light",
-  // Resting heart rate leads, because the flagship finding in this dataset is
-  // about sleep and recovery rather than volume.
+  // Resting heart rate leads: the flagship finding in this dataset is about
+  // sleep and recovery rather than volume.
   trendMetric: "restingHeartRate",
   trendRange: "30d",
   openInsight: null,
@@ -53,7 +52,7 @@ const uiSlice = createSlice({
     trendRangeChanged: (state, action: PayloadAction<TrendRange>) => {
       state.trendRange = action.payload;
     },
-    /** Opening one card closes the other: two open panels is a wall of text. */
+    /** One open card at a time — two open panels is a wall of text. */
     insightToggled: (state, action: PayloadAction<string>) => {
       state.openInsight = state.openInsight === action.payload ? null : action.payload;
     },

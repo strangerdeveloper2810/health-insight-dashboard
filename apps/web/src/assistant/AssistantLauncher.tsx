@@ -1,10 +1,7 @@
 /**
- * The launcher button.
- *
- * Deliberately its own file, and deliberately empty of dependencies. The panel
- * behind it pulls in a markdown renderer, which is weight nobody should pay for
- * until they actually open the assistant — so this stays small enough to ship
- * in the initial bundle and the panel arrives on demand.
+ * The launcher button. Deliberately its own file, and deliberately free of
+ * dependencies: the panel behind it pulls in a markdown renderer, so this stays
+ * small enough to ship in the initial bundle and the panel arrives on demand.
  */
 
 import { useAppDispatch } from "@/app/hooks";

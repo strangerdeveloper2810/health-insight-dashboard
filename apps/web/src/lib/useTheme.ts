@@ -1,12 +1,9 @@
 /**
- * Resolving the theme to one concrete value.
- *
- * Three inputs decide what the page looks like — an explicit choice, the OS
- * preference, and the DOM class the CSS reads — and they have to agree. The
- * chart palette is chosen in JavaScript, so a `.dark` class that disagreed
- * with Redux would give a dark page with light-mode gridlines. Resolving to a
- * single `theme` field in the store and driving the class from it removes the
- * chance of that.
+ * Resolving the theme to one concrete value: an explicit choice, the OS
+ * preference and the DOM class the CSS reads all have to agree. The chart
+ * palette is chosen in JavaScript, so a `.dark` class that disagreed with the
+ * store would give a dark page with light-mode gridlines — hence one `theme`
+ * field in the store, with the class driven from it.
  */
 
 import { useEffect } from "react";

@@ -9,13 +9,7 @@ import { WorkingPanel } from "./WorkingPanel";
 import { useInsightDisclosure } from "./useInsightDisclosure";
 
 /**
- * A card in the feed below the hero.
- *
- * Same content as the focus card, less emphasis: no colour edge, a smaller
- * title, and the action tinted rather than raised onto its own surface. The
- * difference between the two variants is deliberately emphasis and nothing
- * else — if the feed cards carried different information, the hero would be
- * promoting one of them at the reader's expense rather than on their behalf.
+ * A feed card: the same content as the focus card, carried with less emphasis.
  */
 export const FeedInsightCard = ({ insight }: { insight: Insight }) => {
   const { open, toggle } = useInsightDisclosure(insight.id);

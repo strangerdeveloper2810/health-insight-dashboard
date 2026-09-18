@@ -1,16 +1,7 @@
 /**
- * Today, in four numbers.
- *
- * Values come from the precomputed series and summary windows rather than
- * being re-derived from the daily records — the server already decided what
- * "latest sleep duration" means (including which nights are gaps), and this
- * screen is not entitled to a second opinion.
- *
- * They share a single card with hairline gaps rather than floating as four
- * separate ones. Four cards of equal size and equal elevation, sitting in a
- * row above four more cards of equal size, is how a page ends up with no
- * hierarchy at all — every element claiming the same importance. A stat strip
- * reads as one fact with four parts, which is what it is.
+ * Today, in four numbers, read from the precomputed series and summary windows
+ * rather than re-derived from the daily records — the server already decided what
+ * "latest sleep duration" means, including which nights are gaps.
  */
 
 import type { MetricKey } from "@health/core";
@@ -26,8 +17,8 @@ export const TodayTiles = () => {
   const payload = useAppSelector(selectPayload);
   if (!payload) return null;
 
-  // A brand-new user has no metric history at all; the tiles would be four
-  // cells reading "not recorded", which is worse than saying it once.
+  // With no history at all the tiles would be four cells reading "not recorded",
+  // which is worse than saying it once.
   const hasAnySeries = TILES.some((metric) => (payload.series[metric]?.length ?? 0) > 0);
   if (!hasAnySeries) {
     return (
@@ -43,9 +34,8 @@ export const TodayTiles = () => {
   }
 
   return (
-    // The gap *is* the divider: a hairline grid shows through where the cells
-    // do not reach, which needs no border logic per cell and cannot leave a
-    // dangling rule at the start of a wrapped row on a phone.
+    // gap-px over bg-line: the hairline is the grid showing through, so no cell
+    // needs its own border.
     <Card className="overflow-hidden">
       <div className="grid grid-cols-2 gap-px bg-line lg:grid-cols-4">
         {TILES.map((metric) => (

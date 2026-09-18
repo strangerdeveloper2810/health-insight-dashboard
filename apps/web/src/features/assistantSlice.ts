@@ -1,14 +1,11 @@
 /**
- * The assistant's slice.
+ * The assistant's slice. An assistant message starts empty with
+ * `status: "streaming"` and fills in as deltas arrive — the placeholder exists
+ * from the first moment so the panel has something to render a caret and a tool
+ * indicator inside.
  *
- * A turn is a user message, then an assistant message that starts empty with
- * `status: "streaming"` and fills in as deltas arrive. The placeholder exists
- * from the first moment so the panel has something to render a caret and a
- * tool indicator inside.
- *
- * The `grounding` field is not decoration. It is the server's verdict on
- * whether every number in the answer resolved against the reference index, and
- * the UI shows it.
+ * `grounding` is the server's verdict on whether every number in the answer
+ * resolved against the reference index.
  */
 
 import { createAsyncThunk, createSlice, nanoid } from "@reduxjs/toolkit";
@@ -61,12 +58,9 @@ const initialState: AssistantState = {
 // ─── Streaming ──────────────────────────────────────────────────────────────
 
 /**
- * The in-flight request, held outside the store.
- *
- * An `AbortController` is not serialisable, and putting it in state would mean
- * turning off the serialisability check for the whole slice to accommodate one
- * field. It is only ever read by the stop button, so a module variable is the
- * right size of solution.
+ * The in-flight request, held outside the store: an `AbortController` is not
+ * serialisable, and putting it in state would mean disabling the serialisability
+ * check for the whole slice to accommodate one field.
  */
 let inFlight: AbortController | null = null;
 
@@ -228,12 +222,10 @@ const assistantSlice = createSlice({
       });
     },
     /**
-     * Whether a turn is in flight.
-     *
      * Kept as its own action rather than derived from `messages.some(m =>
-     * m.status === "streaming")` because the two disagree in the window that
-     * matters: a `done` event marks the message complete before the stream
-     * itself has closed, and the composer must not re-enable in between.
+     * m.status === "streaming")`: a `done` event marks the message complete
+     * before the stream itself has closed, and the composer must not re-enable
+     * in between.
      */
     streamingChanged: (state, action: PayloadAction<boolean>) => {
       state.streaming = action.payload;

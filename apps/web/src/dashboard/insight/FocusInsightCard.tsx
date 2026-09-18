@@ -9,16 +9,9 @@ import { WorkingPanel } from "./WorkingPanel";
 import { useInsightDisclosure } from "./useInsightDisclosure";
 
 /**
- * The one card on the page the reader is meant to act on.
- *
- * It is the only card that carries a colour edge down its left side. Everywhere
- * else the severity chip does the talking, and spending the edge on all of them
- * would flatten the page back to where it started — a grid of equally loud
- * boxes. Exactly one card gets to be loud.
- *
- * It sits on `raised` rather than `surface` so it reads as lifted out of the
- * hero card it lives inside, and its title is serif at a size no feed card
- * reaches, because this is the judgement and the feed is the supporting detail.
+ * The one card the reader is meant to act on — the only one carrying a colour
+ * edge or sitting on `raised`. Spend the edge on the feed cards too and the page
+ * flattens into a grid of equally loud boxes.
  */
 export const FocusInsightCard = ({ insight }: { insight: Insight }) => {
   const { open, toggle } = useInsightDisclosure(insight.id);

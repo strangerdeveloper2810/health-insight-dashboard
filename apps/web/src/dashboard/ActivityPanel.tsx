@@ -1,12 +1,7 @@
 /**
- * Activity and training load.
- *
- * The load ratio is the reason this panel exists. Weekly volume on its own
- * says how much someone ran; the ratio of this week to their own four-week
- * norm says whether that was a sensible amount *for them* — 40km is a quiet
- * week for one runner and a spike for another. The bands are the standard
- * ones, and the panel names them rather than colouring a number and leaving
- * the reader to guess what "1.42" means.
+ * Activity and training load. The acute:chronic ratio is the point — weekly
+ * volume alone says how much someone ran, and the ratio against their own
+ * four-week norm says whether that was sensible *for them*.
  */
 
 import { formatDuration } from "@health/core";

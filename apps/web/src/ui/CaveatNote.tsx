@@ -1,12 +1,9 @@
 import type { ReactNode } from "react";
 
 /**
- * A caveat attached to real data.
- *
- * Distinct from an empty state: there *is* data here, it is just not complete
- * enough to read the way it looks. Nutrition logging in this dataset runs
- * around 70% of days, which turns every average into an undercount — and an
- * unlabelled undercount is worse than no number.
+ * A caveat attached to real data — distinct from an empty state, which says
+ * there is no data at all: here the data exists but is too incomplete to read
+ * the way it looks.
  */
 export const CaveatNote = ({ children }: { children: ReactNode }) => {
   return (

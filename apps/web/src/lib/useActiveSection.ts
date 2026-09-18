@@ -6,18 +6,15 @@
  * on screen at once the "active" one depends on callback ordering — and the
  * rail would flicker between two neighbours as they trade places. Asking
  * "which section's top has passed the masthead?" has exactly one answer at any
- * scroll position, and it is the one the reader would give.
- *
- * The handler is throttled to one measurement per animation frame, so a fast
- * scroll costs one layout read per frame rather than one per event.
+ * scroll position. The handler runs once per animation frame, not per event.
  */
 
 import { useEffect, useState } from "react";
 
 export const useActiveSection = (
   ids: readonly string[],
-  /** Distance below the viewport top at which a section counts as reached.
-   *  Roughly the sticky masthead, so the highlight changes as the heading
+  /** Distance below the viewport top at which a section counts as reached —
+   *  roughly the sticky masthead, so the highlight changes as the heading
    *  slides under it rather than after. */
   offset = 128,
 ): string | null => {
@@ -37,7 +34,7 @@ export const useActiveSection = (
       }
 
       // Above the first section — still in the hero — name the first one, so
-      // the rail is never blank and the reader always has a position.
+      // the rail is never blank.
       setActive(current ?? ids[0] ?? null);
     };
 

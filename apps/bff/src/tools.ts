@@ -1,16 +1,10 @@
 /**
- * The assistant's tools.
+ * The assistant's tools. Pure reads over the computed bundle — no network, no
+ * retryable failures — so a tool call is never the reason a response goes wrong.
  *
- * Each description is written for the model, not for a reader of this file.
- * The most important sentence in each one is the third: when *not* to call it.
- * The snapshot already carries every headline figure, so a tool that gets
- * called for "what is my average sleep" wastes a round trip and adds latency
- * to an answer the model could already give. The descriptions exist to push
- * the model toward the questions only a tool can answer.
- *
- * Tools are pure reads over the computed bundle. They cannot fail in a way
- * that requires a retry and they cannot reach the network, so a tool call is
- * never the reason a response goes wrong.
+ * Each `description` is written for the model, not for a reader of this file.
+ * The snapshot already carries every headline figure, so the third sentence of
+ * each one — when *not* to call it — is the sentence doing the work.
  */
 
 import { betaZodTool } from "@anthropic-ai/sdk/helpers/beta/zod";
@@ -52,19 +46,15 @@ type RunnerTool = NonNullable<BetaToolRunnerParams["tools"]>[number];
 /**
  * Drop the `type: "custom"` tag that `betaZodTool` puts on every tool it builds.
  *
- * The Messages API does not accept that variant. A client tool is the one with
- * no `type` at all — only server tools carry one, which is why the rejection
- * message helpfully suggests `web_search_20250305`. Left in place, the tag
- * fails deserialisation and the whole request 400s before the model sees it.
+ * The Messages API does not accept that variant: a client tool is the one with
+ * no `type` at all — only server tools carry one. Left in place the tag fails
+ * deserialisation and the whole request 400s before the model sees it, and the
+ * runner dispatches on `name`, `run` and `parse`, never on `type`, so nothing
+ * is lost by removing it.
  *
- * Nothing is lost by removing it. The tool runner dispatches on `name`, `run`
- * and `parse`, never on `type`.
- *
- * The input stays `unknown` on purpose. `betaZodTool` declares its result as the
- * SDK's client-tool union — memory, bash, text-editor and the rest — even though
- * it only ever builds a plain one, and that union does not survive `Omit`. The
- * type safety that matters is upstream of here: each tool's `run` is checked
- * against its own Zod schema where the tool is defined.
+ * The input stays `unknown` because `betaZodTool` declares its result as the
+ * SDK's client-tool union, which does not survive `Omit`. The type safety that
+ * matters is upstream: each tool's `run` is checked against its own Zod schema.
  */
 const wireTools = (tools: readonly unknown[]): RunnerTool[] =>
   tools.map((tool) => {

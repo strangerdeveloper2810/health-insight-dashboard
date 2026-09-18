@@ -1,17 +1,11 @@
 /**
- * The BFF.
- *
- * Three routes, and only one of them is interesting:
- *
- *   GET  /api/health     — liveness, and whether the assistant is configured
- *   GET  /api/dashboard  — the whole computed dashboard, as JSON
- *   POST /api/chat       — the assistant, streamed as server-sent events
+ * The BFF: `GET /api/health`, `GET /api/dashboard`, and `POST /api/chat`
+ * (server-sent events).
  *
  * The chat route is why this server exists rather than calling the model from
- * the browser. The API key never leaves this process, the prompt is assembled
+ * the browser — the API key never leaves this process, the prompt is assembled
  * from data the client cannot touch, and the citation check runs where the
- * reference index lives. A browser that has been fully compromised can change
- * what it displays; it cannot change what the model is told.
+ * reference index lives.
  */
 
 import Anthropic from "@anthropic-ai/sdk";
@@ -68,8 +62,8 @@ export const buildServer = async (options: BuildServerOptions = {}): Promise<Fas
 
   app.get("/api/health", async () => ({
     ok: true,
-    // Presence, never the value. This endpoint is unauthenticated, so it must
-    // stay safe to expose — no key material, no prefix, no length.
+    // Presence, never the value: this endpoint is unauthenticated, so no key
+    // material, no prefix, no length.
     assistantConfigured: config.apiKey !== null,
     model: config.model,
     effort: config.effort,
@@ -117,14 +111,13 @@ export const buildServer = async (options: BuildServerOptions = {}): Promise<Fas
       raw.write(`event: ${event.type}\ndata: ${JSON.stringify(event)}\n\n`);
     };
 
-    // If the user closes the tab mid-answer, stop generating. Continuing would
-    // burn tokens for output nobody will ever read.
+    // If the user closes the tab mid-answer, stop generating.
     //
-    // Listen on the *response*. `request.raw` also emits 'close', but it does so
-    // the moment the request body has been read — which is before the model is
-    // even called. Aborting there kills every turn before its first token, and
-    // because `streamChat` stays quiet once the signal is aborted, the caller
-    // gets a 200 and an empty stream rather than an error.
+    // Listen on the *response*, not `request.raw`: that also emits 'close', but
+    // the moment the request body has been read — before the model is called.
+    // Aborting there kills every turn before its first token, and since
+    // `streamChat` stays quiet once aborted, the caller gets a 200 and an empty
+    // stream rather than an error.
     const controller = new AbortController();
     raw.on("close", () => controller.abort());
 

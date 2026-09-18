@@ -1,21 +1,11 @@
 /**
- * Rendering an answer that cites its sources.
+ * Rendering an answer that cites its sources: each `{{restingHeartRate.avg7d}}`
+ * token is replaced with the value behind it, from the same index the server
+ * validated against. A token that does not resolve is marked, not dropped.
  *
- * The model does not write numbers. It writes `{{restingHeartRate.avg7d}}`, and
- * this component replaces each token with the value behind it — the same value
- * the trend chart is drawing, from the same reference index the server used to
- * validate the answer. A hallucinated figure is therefore not merely
- * discouraged, it has nowhere to come from: there is no code path that turns
- * model output into a number.
- *
- * A token that fails to resolve is shown, not hidden. Silently dropping it
- * would leave a sentence that reads as finished prose with a hole in it;
- * marking it tells the reader exactly which claim could not be checked.
- *
- * The awkward part is that answers are markdown and tokens sit inside text
- * nodes that `react-markdown` has already parsed. So the grounding pass walks
- * the rendered tree and rewrites string children, which also handles a citation
- * inside **bold** or a list item without a parser plugin.
+ * The tokens sit inside text nodes `react-markdown` has already parsed, so the
+ * pass walks the rendered tree and rewrites string children — which covers a
+ * citation inside **bold** or a list item without a parser plugin.
  */
 
 import { Children, cloneElement, isValidElement } from "react";
@@ -72,11 +62,9 @@ const Grounded = ({ text, index }: { text: string; index: RefIndex }) => {
 };
 
 /**
- * Walk a parsed markdown subtree, grounding every string it contains.
- *
- * Recursing into element children rather than overriding a component for each
- * inline tag means a citation inside a bold phrase or a nested list works
- * without enumerating the markdown vocabulary.
+ * Walk a parsed markdown subtree, grounding every string it contains. Recursing
+ * rather than overriding a component per inline tag means a citation inside a
+ * bold phrase or a nested list works without enumerating the vocabulary.
  */
 const groundChildren = (children: ReactNode, index: RefIndex): ReactNode => {
   return Children.map(children, (child, position) => {
@@ -123,8 +111,8 @@ export const MarkdownAnswer = ({ text, index }: { text: string; index: RefIndex 
         }}
       >
         {/* Before parsing, not after: the model's own unit often sits outside
-            the emphasis wrapping the token, so by render time the two are in
-            separate nodes and no longer adjacent. */}
+            the emphasis wrapping the token, so by render time the two are no
+            longer adjacent. */}
         {dropRepeatedUnits(text, index)}
       </Markdown>
     </div>

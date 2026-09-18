@@ -1,11 +1,8 @@
 /**
- * @health/core — the domain layer.
- *
- * Everything the product knows about health data lives here, with no React,
- * no network and no runtime dependencies. Both the browser bundle and the BFF
- * import this same package, which is what lets the dashboard and the assistant
- * be provably looking at the same numbers: there is one implementation of
- * "what is the 7-day average resting heart rate", not two.
+ * @health/core — the domain layer, with no React, no network and no runtime
+ * dependencies. Both the browser bundle and the BFF import it, which is what
+ * lets the dashboard and the assistant look at the same numbers by
+ * construction rather than by discipline.
  */
 
 // ─── Domain types ───────────────────────────────────────────────────────────
@@ -156,9 +153,8 @@ export interface DashboardModel {
 }
 
 /**
- * Compute the dashboard once, in dependency order, and hand back everything
- * downstream consumers need. The UI calls this in a Redux thunk; the BFF calls
- * it per chat request. Same function, same result.
+ * Compute the dashboard once, in dependency order. The BFF calls this at boot
+ * and again per chat request; both sides get the same result.
  */
 export const buildDashboard = (dataset: HealthDataset): DashboardModel => {
   const bundle = computeMetrics(dataset);

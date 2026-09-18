@@ -1,9 +1,6 @@
 /**
- * The design-system surface.
- *
- * Every component lives in its own file next to this one; this barrel exists so
- * call sites import from one name and a component can be moved or split without
- * touching them. It re-exports only — no logic belongs here.
+ * The design-system surface: components and tone helpers, re-exported so call
+ * sites import from one name. Re-exports only — no logic belongs here.
  */
 
 export { Badge } from "./Badge";

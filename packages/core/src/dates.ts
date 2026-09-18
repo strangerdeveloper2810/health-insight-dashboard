@@ -1,10 +1,8 @@
 /**
- * Date helpers.
- *
- * Everything in this app speaks `ISODate` (`YYYY-MM-DD`) rather than `Date`,
- * because a health record is a *calendar* day, not an instant. Dates are
- * parsed at local noon so that daylight-saving shifts can never move a
- * record into the neighbouring day.
+ * Date helpers. Everything speaks `ISODate` (`YYYY-MM-DD`) rather than `Date`,
+ * because a health record is a calendar day, not an instant. Dates are parsed
+ * at local noon so a daylight-saving shift can never move a record into the
+ * neighbouring day.
  */
 
 export type ISODate = string;
@@ -68,10 +66,7 @@ export const formatLongDate = (iso: ISODate): string => {
   });
 };
 
-/**
- * The last `days` dates ending at `end`, oldest first.
- * Returned as a plain array so callers can `map`/`filter` without index math.
- */
+/** The last `days` dates ending at `end`, oldest first. */
 export const dateRange = (end: ISODate, days: number): ISODate[] => {
   const out: ISODate[] = [];
   for (let i = days - 1; i >= 0; i -= 1) out.push(addDays(end, -i));
@@ -93,8 +88,7 @@ export const minutesToClock = (minutes: number): string => {
 
 /**
  * Bedtimes straddle midnight (23:10 and 00:40 are 90 minutes apart, not 22
- * hours). Mapping them onto a continuous timeline anchored at 18:00 makes
- * averages, variance and consistency scores behave correctly.
+ * hours), so they are mapped onto a continuous timeline before averaging.
  */
 export const bedtimeToTimeline = (hhmm: string): number => {
   const minutes = clockToMinutes(hhmm);

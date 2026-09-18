@@ -1,14 +1,8 @@
 /**
- * BFF tests.
- *
- * Nothing here touches the network. The Anthropic client is injected through
- * `buildServer({ client })`, and the fake below replays a scripted stream — so
- * these tests exercise the real orchestration (prompt assembly, SSE framing,
- * citation validation, history capping) rather than a mock of it.
- *
- * The grounding tests are the ones worth reading. They assert the property the
- * whole design rests on: a number the model invents cannot reach the user
- * looking like a fact.
+ * BFF tests. Nothing here touches the network — the Anthropic client is
+ * injected through `buildServer({ client })` and the fake replays a scripted
+ * stream, so these exercise the real orchestration (prompt assembly, SSE
+ * framing, citation validation, history capping) rather than a mock of it.
  */
 
 import Anthropic from "@anthropic-ai/sdk";
@@ -23,8 +17,8 @@ import type { Config } from "./config";
 // ─── Fixtures ───────────────────────────────────────────────────────────────
 
 /**
- * One config for the whole file. The dashboard is memoised per seed and days,
- * so varying it here would only rebuild the same person repeatedly.
+ * One config for the whole file: the dashboard is memoised per seed and days,
+ * so varying it would only rebuild the same person repeatedly.
  */
 const CONFIG: Config = {
   ...loadConfig(),
@@ -100,9 +94,8 @@ const fakeClient = (options: FakeOptions): Anthropic => {
 };
 
 /**
- * Parse an SSE body into `{ event, data }` pairs, typed as the union the
- * server actually emits — so the tests below assert the wire contract rather
- * than whatever shape happens to be in the JSON.
+ * Parse an SSE body into `{ event, data }` pairs, typed as the union the server
+ * emits — so the tests assert the wire contract, not the JSON's current shape.
  */
 const parseSse = (body: string): { event: string; data: ChatEvent }[] => {
   return body
@@ -130,11 +123,11 @@ const doneOf = (body: string): DoneEvent => {
 
 /**
  * A client whose model call fails the way a real one does: asynchronously, once
- * the turn is already under way.
+ * the turn is under way.
  *
- * The delay is the point. A synchronous throw finishes in the same tick as the
- * route handler, so the request lifecycle never gets to run — which is exactly
- * why the bug below survived a suite that already had an error-mapping test.
+ * The delay is the point — a synchronous throw finishes in the same tick as the
+ * route handler, so the request lifecycle never runs, which is why the bug below
+ * survived a suite that already had an error-mapping test.
  */
 const failingClient = (delayMs = 20): Anthropic => {
   const fail = async (): Promise<never> => {
@@ -348,12 +341,12 @@ describe("POST /api/chat — streaming", () => {
 /**
  * One turn over a real HTTP socket, rather than through `app.inject()`.
  *
- * The distinction matters: the request lifecycle only exists on a socket, and
- * `request.raw` emits 'close' the moment the body has been read — which is
- * *before* the route handler calls the model. Wiring the abort to that made
- * `signal.aborted` true on every turn, so `streamChat` swallowed every error
- * and the caller got a 200 with no events at all. `inject()` never reproduced
- * it, which is why the whole file above passed while the assistant was broken.
+ * The distinction matters: `request.raw` emits 'close' the moment the body has
+ * been read, which is *before* the route handler calls the model. Wiring the
+ * abort to that made `signal.aborted` true on every turn, so `streamChat`
+ * swallowed every error and the caller got a 200 with no events. `inject()`
+ * never reproduced it — which is why this file passed while the assistant was
+ * broken.
  */
 const chatOverSocket = async (client: Anthropic): Promise<{ status: number; body: string }> => {
   const app = await buildServer({ config: CONFIG, client });

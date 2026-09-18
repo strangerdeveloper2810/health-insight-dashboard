@@ -1,14 +1,10 @@
 /**
- * The masthead: whose dashboard this is, how to get anywhere in it, and
- * whether the assistant is connected.
+ * The masthead: whose dashboard this is, how to get anywhere in it, and whether
+ * the assistant is connected. Composition only — the rail and the theme control
+ * each live in their own module.
  *
- * The date range is not here. It moved into the hero, because it is a claim
- * about what the reader is looking at and so belongs beside the headline it
- * qualifies — pinned to the chrome it competes with the controls for attention
- * while telling the reader nothing they can act on.
- *
- * This file is composition only; the rail and the theme control each live in
- * their own module.
+ * The date range is deliberately not here; it sits in the hero, beside the
+ * headline it qualifies.
  */
 
 import { useAppDispatch, useAppSelector } from "@/app/hooks";

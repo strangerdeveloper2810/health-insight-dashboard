@@ -8,12 +8,9 @@ import type { Tone } from "./tone";
 /**
  * A 30-point trend in about 100 pixels.
  *
- * Hand-drawn rather than a Recharts instance: a charting library per tile
- * costs a responsive container, a resize observer and a tooltip layer for
- * something whose entire job is to say "up" or "down" at a glance.
- *
- * The area beneath the line is filled with a fade of the line's own colour,
- * which is most of what makes a tile feel considered rather than stamped.
+ * Hand-drawn rather than a Recharts instance: a charting library per tile costs
+ * a responsive container, a resize observer and a tooltip layer for something
+ * whose entire job is to say "up" or "down" at a glance.
  */
 export const Sparkline = ({
   points,
@@ -31,8 +28,8 @@ export const Sparkline = ({
   filled?: boolean;
 }) => {
   // `useId` so two sparklines in different tones cannot share a gradient. The
-  // colons React generates are legal in a fragment reference but not worth the
-  // argument, so they come out.
+  // colons React generates are legal in a fragment reference but come out
+  // anyway, as they are not worth the argument.
   const gradientId = `spark-${useId().replace(/:/g, "")}`;
 
   if (points.length < 2) return null;

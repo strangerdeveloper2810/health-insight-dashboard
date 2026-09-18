@@ -1,12 +1,8 @@
 /**
- * The reference index — the single list of numbers this app is allowed to
- * talk about.
- *
- * Every value the UI renders and every value the assistant may cite resolves
- * through this index. Insight cards build their evidence from it; the BFF
- * validates the model's citations against it after each stream. Because there
- * is exactly one index, "the model must not invent numbers" stops being an
- * instruction in a prompt and becomes a check that either passes or fails.
+ * The reference index — the single list of numbers this app is allowed to talk
+ * about. Insight cards build their evidence from it and the BFF validates the
+ * model's citations against it, so "the model must not invent numbers" is a
+ * check that passes or fails rather than an instruction in a prompt.
  */
 
 import { daysBetween, minutesToClock } from "./dates";
@@ -334,8 +330,8 @@ export const buildRefIndex = (
       0,
     );
 
-    // Threshold goals are judged by consistency, not by a projected date, so
-    // the hit rate is the number the assistant will actually need.
+    // Threshold goals are judged by consistency, not a projected date, so the
+    // hit rate is the number the assistant actually needs.
     if (progress.daysMet !== null && progress.daysConsidered !== null) {
       pushRef(
         refs,
@@ -356,8 +352,8 @@ export const buildRefIndex = (
     }
   }
 
-  // Where the user is inside their own training plan. Referenced often enough
-  // in conversation ("how far into the plan am I?") to deserve stable ids.
+  // Where the user is inside their training plan — asked often enough in
+  // conversation to deserve stable ids.
   const primary = derived.goalProgress.find(
     (p) => p.goal.id === bundle.dataset.persona.primaryGoal.id,
   );
@@ -404,21 +400,18 @@ export const hasRef = (index: RefIndex, ref: string): boolean => {
 };
 
 /**
- * The catalogue handed to the model: ref id, what it means, and its value.
- * Sorted by ref id so the serialised form is byte-stable across requests,
- * which is what lets the prompt cache actually hit.
+ * The catalogue handed to the model: ref id, meaning, value. Sorted by id so
+ * the serialised form is byte-stable across requests, which is what lets the
+ * prompt cache hit.
  */
 export const refCatalogue = (index: RefIndex): EvidenceRef[] => {
   return [...index.refs.values()].sort((a, b) => a.ref.localeCompare(b.ref));
 };
 
 /**
- * Rebuild an index from a catalogue that has been through JSON.
- *
- * A `Map` does not survive serialisation, so the browser receives the flat
- * list and reconstructs the lookup. This is the last link in the grounding
- * chain: the client renders citations with the same `segmentGrounded` the
- * server used to validate them, over the same values the charts are drawing.
+ * Rebuild an index from a catalogue that has been through JSON — a `Map` does
+ * not survive serialisation, so the browser reconstructs the lookup from the
+ * flat list. Last link in the grounding chain.
  */
 export const indexFromCatalogue = (refs: EvidenceRef[]): RefIndex => {
   return { refs: new Map(refs.map((entry) => [entry.ref, entry])) };

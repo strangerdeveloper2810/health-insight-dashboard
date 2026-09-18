@@ -6,9 +6,8 @@ import ui from "@/features/uiSlice";
 
 export const store = configureStore({
   reducer: { dashboard, assistant, ui },
-  // The serialisability check stays on. It is what stops someone putting an
-  // AbortController or a Map into state six months from now and discovering
-  // the problem only when time-travel debugging silently stops working.
+  // The serialisability check stays on: it is what stops an AbortController or
+  // a Map reaching state and surfacing only when devtools silently stop working.
   devTools: import.meta.env.DEV,
 });
 

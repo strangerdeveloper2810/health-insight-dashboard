@@ -1,20 +1,12 @@
 /**
  * The assistant turn: prompt assembly, streaming, and the grounding check.
  *
- * The order of operations here is the whole point of the BFF existing.
- *
- *   1. Build the prompt from computed data — never from the client's copy of
- *      it. A client that has been tampered with can change what is displayed,
- *      but it cannot change what the model is told or which references exist.
- *   2. Validate the client's history and cap it.
- *   3. Stream the model's answer through the tool runner.
- *   4. Check every citation in the finished text against the reference index
- *      and report the result alongside the answer.
- *
- * Step 4 is what makes the anti-hallucination claim testable. The model cannot
- * type a number — it can only emit a reference token, which the client renders
- * from the same index the charts use. A token that does not resolve is
- * reported to the user rather than quietly dropped.
+ * The order of operations is the point of the BFF existing: the prompt is built
+ * from computed data rather than the client's copy of it (a tampered client can
+ * change what is displayed, not what the model is told or which references
+ * exist), the history is validated and capped, the answer streams through the
+ * tool runner, and the finished text has every citation checked against the
+ * reference index — which is what makes the anti-hallucination claim testable.
  */
 
 import Anthropic from "@anthropic-ai/sdk";
@@ -37,9 +29,8 @@ export type { ChatEvent, ChatTurn };
 // ─── History handling ───────────────────────────────────────────────────────
 
 /**
- * How many prior turns to keep. Long conversations cost more and drift; the
- * dashboard snapshot is resent in full every time, so the model never loses
- * the data it needs even when early small talk is dropped.
+ * Long conversations cost more and drift; the snapshot is resent in full every
+ * time, so the model never loses the data it needs when early turns are dropped.
  */
 const MAX_HISTORY_TURNS = 16;
 const MAX_TURN_CHARS = 4000;
@@ -55,12 +46,10 @@ export const sanitiseHistory = (turns: ChatTurn[]): Anthropic.MessageParam[] => 
 };
 
 /**
- * Mark the end of the previous turn as a cache breakpoint.
- *
- * The system blocks are cached by their own marker; this one extends the
- * cached prefix over the conversation so far, so each new turn re-reads the
- * history instead of re-processing it. On a one-message conversation there is
- * nothing to cache yet, and marking it would write a cache entry nobody reads.
+ * Mark the end of the previous turn as a cache breakpoint, so each new turn
+ * re-reads the conversation instead of re-processing it. On a short
+ * conversation there is nothing to cache yet, and marking it would write a
+ * cache entry nobody reads.
  */
 export const withHistoryBreakpoint = (
   messages: Anthropic.MessageParam[],
@@ -89,10 +78,9 @@ export const withHistoryBreakpoint = (
 // ─── Error mapping ──────────────────────────────────────────────────────────
 
 /**
- * Turn an SDK error into something worth showing a user.
- *
- * The dashboard is a consumer product: "529 overloaded" is a stack trace with
- * a nicer font. Each branch says what happened and what the person can do.
+ * Turn an SDK error into something worth showing a user: "529 overloaded" is a
+ * stack trace with a nicer font, so each branch says what happened and what the
+ * person can do about it.
  */
 export const describeError = (
   error: unknown,
@@ -169,9 +157,8 @@ export const streamChat = async (options: StreamChatOptions): Promise<void> => {
         insights: model.insights,
         index: model.index,
       }),
-      // One breakpoint covers the tool definitions and both system blocks,
-      // which together are the entire expensive prefix. Everything up to here
-      // is byte-identical on every request, which is what makes it cacheable.
+      // One breakpoint covers the tool definitions and both system blocks —
+      // the entire expensive prefix, and byte-identical on every request.
       cache_control: { type: "ephemeral" },
     },
   ];
@@ -190,8 +177,8 @@ export const streamChat = async (options: StreamChatOptions): Promise<void> => {
         thinking: { type: "adaptive" },
         output_config: { effort: config.effort },
         // A health question that trips a safety classifier should still get an
-        // answer rather than an empty bubble. The API re-runs the request on a
-        // substitute model inside the same call, and reports which model served.
+        // answer rather than an empty bubble — the API re-runs it on a
+        // substitute model inside the same call.
         betas: ["server-side-fallback-2026-07-01"],
         fallbacks: "default",
         stream: true,

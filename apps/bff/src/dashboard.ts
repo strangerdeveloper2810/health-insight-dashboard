@@ -1,14 +1,9 @@
 /**
- * The dashboard payload.
- *
- * Everything the browser renders is computed here, once, at boot. The client
- * is a renderer: it holds no analytics of its own, so there is exactly one
- * implementation of "what is the seven-day average" in the running system.
- *
- * The reference index travels with the payload because the browser needs it
- * to render citations. When the assistant writes {{restingHeartRate.avg7d}},
- * the client looks the token up in this list and prints the value — the same
- * value, from the same computation, that the trend chart is drawing.
+ * The dashboard payload, computed once at boot. The client is a renderer and
+ * holds no analytics of its own, so there is exactly one implementation of
+ * "what is the seven-day average" in the running system. The reference index
+ * travels with it so the browser can resolve citation tokens against the same
+ * values the charts are drawing.
  */
 
 import { buildDashboard, createDefaultDataset, refCatalogue } from "@health/core";
@@ -52,13 +47,10 @@ export const buildPayload = (config: Config): DashboardBundle => {
 };
 
 /**
- * Memoised for the running server. The dataset is seeded and deterministic,
- * so recomputing it per request would only add latency and a chance of the
- * dashboard and the assistant drifting onto different numbers.
- *
- * Keyed on the two fields that actually change the data rather than held in a
- * single slot: a long-lived process that is restarted with a different seed
- * should not keep serving the previous person.
+ * Memoised: the dataset is deterministic, so recomputing it per request would
+ * only add latency. Keyed on the two fields that change the data rather than
+ * held in a single slot, so a process restarted with a different seed does not
+ * keep serving the previous person.
  */
 let cached: { key: string; bundle: DashboardBundle } | null = null;
 

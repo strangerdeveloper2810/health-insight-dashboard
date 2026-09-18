@@ -1,10 +1,7 @@
 /**
- * Domain model.
- *
- * This module is the contract between every other part of the app: the
- * dataset generator produces these shapes, the metrics layer derives from
- * them, the React UI renders them, and the BFF serialises them into LLM
- * context. Nothing here imports React, fetch or any runtime dependency.
+ * Domain model — the contract between the generator, the metrics layer, the
+ * UI and the LLM context. Nothing here imports React, fetch or any other
+ * runtime dependency.
  */
 
 import type { ISODate } from "./dates";
@@ -15,17 +12,10 @@ export interface Goal {
   id: string;
   label: string;
   /**
-   * How progress is measured, which is not the same question for every goal.
-   *
-   * `"journey"` — a value that travels from where you started to a target,
-   * like running further. Progress is the fraction of that distance covered.
-   *
-   * `"threshold"` — a level you either meet on a given day or do not, like
-   * 8,000 steps or seven hours of sleep. There is no meaningful "42% of the
-   * way to sleeping seven hours"; the honest measure is how many days out of
-   * the last thirty you actually did it. Treating these as journeys produces
-   * numbers that are arithmetically correct and useless — the user is at 89%
-   * of their sleep target and the card says 12%.
+   * `"journey"` — a value travelling from a start to a target, where progress
+   * is the fraction of the distance covered. `"threshold"` — a level met on a
+   * given day or not, measured as days met out of thirty. Treating a threshold
+   * as a journey produces numbers that are arithmetically correct and useless.
    */
   kind: "journey" | "threshold";
   /** Which metric the goal tracks, e.g. `"steps"`. */
@@ -83,11 +73,8 @@ export interface NutritionRecord {
   fatG: number;
   sodiumMg: number;
   waterMl: number;
-  /**
-   * Share of the day the user actually logged, 0–1. Values below ~0.8 mean
-   * totals are undercounts, not measurements — the UI and the assistant both
-   * have to say so rather than treating them as truth.
-   */
+  /** Share of the day actually logged, 0–1. Below ~0.8 the totals are
+   *  undercounts, not measurements. */
   completeness: number;
 }
 
@@ -260,9 +247,8 @@ export interface ReadinessScore {
 // ─── Insights ───────────────────────────────────────────────────────────────
 
 /**
- * A reference to a computed value. Both the UI and the LLM use these as the
- * only legal way to point at a number, which is what makes grounding
- * checkable rather than aspirational.
+ * A reference to a computed value — the only legal way for the UI or the LLM
+ * to point at a number, which is what makes grounding checkable.
  */
 export interface EvidenceRef {
   /** Stable dotted id, e.g. `"restingHeartRate.avg7d"`. */

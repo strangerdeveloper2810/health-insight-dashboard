@@ -1,11 +1,7 @@
 /**
- * The analytics layer.
- *
- * Everything downstream — the charts, the tiles, the insight cards, and the
- * LLM's context — is built from the `MetricsBundle` this module produces. The
- * UI and the assistant therefore read identical numbers by construction; the
- * model cannot cite a value the dashboard does not have, because there is no
- * second place for a value to come from.
+ * The analytics layer. Everything downstream — charts, tiles, insight cards and
+ * the LLM's context — is built from the `MetricsBundle` this module produces,
+ * so the model cannot cite a value the dashboard does not have.
  */
 
 import {
@@ -91,11 +87,9 @@ const runDistanceByDate = (workouts: Workout[]): Map<ISODate, number> => {
 };
 
 /**
- * Build one metric's daily series.
- *
- * Days with no observation are *omitted* rather than zero-filled. A zero step
- * count and a day the phone was not carried are different facts, and a chart
- * that conflates them is worse than one with a gap.
+ * Build one metric's daily series. Days with no observation are omitted rather
+ * than zero-filled — a zero step count and a day the phone was not carried are
+ * different facts.
  */
 export const buildSeries = (dataset: HealthDataset, key: MetricKey): SeriesPoint[] => {
   const points: SeriesPoint[] = [];
@@ -266,8 +260,7 @@ export interface DerivedMetrics {
   weekendStepGap: number;
 }
 
-// The user's own sleep goal, not a population ideal — the debt figure is only
-// meaningful against the target they actually committed to.
+// The user's own sleep goal, not a population ideal.
 const SLEEP_DEBT_TARGET_MIN = 420; // 7h.
 const SHORT_SLEEP_THRESHOLD_MIN = 390; // 6h30.
 
@@ -307,10 +300,8 @@ const computeBedtimeStats = (
 };
 
 /**
- * Compare resting heart rate on the day *after* a short night against the day
- * after a normal one. This is the kind of relationship a person cannot see by
- * scrolling a list of nights, and it is the clearest argument for the
- * dashboard existing at all.
+ * Resting heart rate on the day *after* a short night, against the day after a
+ * normal one — a relationship nobody can see by scrolling a list of nights.
  */
 const computeSleepHeartRateLink = (
   daily: DailyRecord[],
@@ -353,12 +344,8 @@ const computeSleepHeartRateLink = (
 };
 
 /**
- * Acute:chronic workload ratio.
- *
- * Acute load is the last 7 days of training minutes; chronic load is the
- * 28-day weekly average. A ratio above ~1.5 is the widely used flag for
- * "you increased too fast", and it is a genuinely useful thing to tell
- * someone nine weeks into a running plan.
+ * Acute:chronic workload ratio — the last 7 days of training minutes over the
+ * 28-day weekly average. Above ~1.5 is the usual flag for "increased too fast".
  */
 const computeAcwr = (
   workouts: Workout[],
@@ -474,9 +461,9 @@ const regressionSlope = (points: SeriesPoint[]): number => {
 };
 
 /**
- * How far back a threshold goal's consistency is measured. Rolling, so the
- * figure responds when the habit changes rather than being anchored to the
- * day the goal was created.
+ * How far back a threshold goal's consistency is measured — rolling, so it
+ * responds when the habit changes rather than being anchored to the day the
+ * goal was created.
  */
 const THRESHOLD_WINDOW_DAYS = 30;
 

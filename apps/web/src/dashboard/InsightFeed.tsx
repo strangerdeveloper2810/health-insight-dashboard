@@ -1,13 +1,6 @@
 /**
- * "What we noticed" — everything except the one the hero already showed.
- *
- * The most urgent observation is promoted to the top of the page and is not
- * repeated here. That leaves this section as a genuine list: the second,
- * third and fourth things worth knowing, each with the figures behind it, for
- * a reader who has already dealt with the first.
- *
- * The card itself lives in `InsightCard`, shared with the hero, so the two can
- * never disagree about how an insight is rendered.
+ * "What we noticed" — everything except the one the hero already showed, which
+ * would otherwise appear twice on the page.
  */
 
 import { useAppSelector } from "@/app/hooks";
@@ -29,8 +22,8 @@ export const InsightFeed = () => {
     );
   }
 
-  // One insight total, and the hero has it. Saying "nothing stands out yet"
-  // under a card that stands out would read as a bug.
+  // There is one insight in total and the hero has it, so the empty state would
+  // contradict the card directly above it.
   if (rest.length === 0) {
     return (
       <Card className="px-5 py-5">

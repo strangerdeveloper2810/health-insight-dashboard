@@ -1,16 +1,10 @@
 /**
- * Sleep.
+ * Sleep. Night length is shown against the user's own 7-hour goal rather than a
+ * population average, since the only meaningful question is whether they hit the
+ * target they set.
  *
- * Night length is shown against the user's own 7-hour goal rather than a
- * population average, because the only meaningful question is whether they hit
- * the target they set. Nights the watch was not worn are absent from the
- * series and therefore absent from the chart — a missing night drawn as a
- * zero-height bar would read as "slept nothing", which is a worse error than
- * an empty slot.
- *
- * Stage composition is shown as proportions of an average night. Deep and REM
- * are the parts worth protecting; total time in bed is the part people
- * overcount.
+ * Nights the watch was not worn are absent from the series rather than drawn as
+ * zero-height bars, which would read as "slept nothing".
  */
 
 import { formatDuration, METRIC_META, minutesToClock } from "@health/core";

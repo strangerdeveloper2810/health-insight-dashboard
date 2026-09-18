@@ -1,10 +1,7 @@
 /**
- * Opens the working.
- *
- * The label changes with the state rather than staying fixed, so the button
- * always says what pressing it will do next rather than what it did last time.
- * `aria-expanded` carries the same information to a screen reader, which
- * cannot see the label swap happen.
+ * Opens the working. The label names what pressing it will do next rather than
+ * what it did last time, with `aria-expanded` carrying the same state to a screen
+ * reader that cannot see the label swap.
  */
 export const WhyThisButton = ({
   open,

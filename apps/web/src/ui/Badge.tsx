@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { toneSoft } from "./tone";
 import type { Tone } from "./tone";
 
-/** A small tinted label. No border — the tint alone separates it from paper. */
+/** A small tinted label. The tint alone separates it from paper — no border. */
 export const Badge = ({
   tone = "muted",
   children,

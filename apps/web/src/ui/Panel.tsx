@@ -5,19 +5,11 @@ import { Card } from "./Card";
 /**
  * A card with a titled header and an optional control on the right.
  *
- * The header is the only place on the page that draws a rule under itself.
- * Every other divider is a gap in a hairline grid or a section heading's own
- * line, so this one reads as "this panel is a document with a title" rather
- * than as one more box in a wall of boxes.
- *
- * Two roles, told apart by whether it carries an `id`:
- *
- *   - **With an `id`** it *is* a section — the rail links to it, it opens with
- *     the same editorial numeral the composite sections use, and its title is
- *     an `h2`. A single-panel section gets its heading from the panel rather
- *     than from a wrapper, so the page never says "Trends" twice in a row.
- *   - **Without one** it is a panel inside a section, so its title steps down
- *     to `h3` and it takes no numeral. The section already numbered it.
+ * Whether it carries an `id` decides what it is. With one it *is* a section —
+ * the rail links to it and its title is an `h2`, so a single-panel section gets
+ * its heading from the panel rather than a wrapper that would say the same
+ * thing twice. Without one it is a panel inside a section, so the title steps
+ * down to `h3` and takes no numeral; the section already numbered it.
  */
 export const Panel = ({
   id,
@@ -68,9 +60,8 @@ export const Panel = ({
           {subtitle ? <p className="mt-1.5 text-[0.8rem] text-muted">{subtitle}</p> : null}
         </div>
         {/* Full-width on a phone so controls get a row of their own to wrap
-            inside, and their natural size from `sm` up. A plain `shrink-0` here
-            leaves a wide control — a native select, say — with nowhere to go,
-            and it pushes the whole page sideways. */}
+            inside. A plain `shrink-0` leaves a wide control — a native select,
+            say — with nowhere to go, and it pushes the page sideways. */}
         {action ? <div className="w-full min-w-0 sm:w-auto sm:shrink-0">{action}</div> : null}
       </header>
       <div className={`px-5 py-5 sm:px-6 ${bodyClassName}`}>{children}</div>

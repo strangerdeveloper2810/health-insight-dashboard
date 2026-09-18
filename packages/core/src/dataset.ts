@@ -1,18 +1,13 @@
 /**
  * Synthetic dataset generator.
  *
- * The values are invented; the *relationships* between them are not. Resting
- * heart rate responds to the previous night's sleep. HRV falls when resting
- * heart rate rises. Illness raises both. A training block lowers resting
- * heart rate slowly, over weeks. Food logging is incomplete on roughly 40% of
- * days, and an incomplete log shows up as a *lower* total rather than a
- * missing one — which is exactly how under-reporting behaves in reality.
+ * The values are invented; the relationships between them are not — resting
+ * heart rate responds to the previous night's sleep, illness raises it, a
+ * training block lowers it over weeks. Those relationships are what the insight
+ * rules later discover, and a generator emitting independent noise would make
+ * every rule fire on coincidence.
  *
- * Those relationships are what the insight rules later discover. A generator
- * that emitted independent noise would make every rule fire on coincidence.
- *
- * Everything is seeded, so a given (seed, endDate) pair always produces the
- * same dataset — which is what makes the rules unit-testable.
+ * Seeded, so a given (seed, end date) pair always produces the same dataset.
  */
 
 import {
@@ -63,15 +58,13 @@ export const DEFAULT_SEED = 20260918;
 export const DEFAULT_DAYS = 90;
 
 // ─── Narrative beats ────────────────────────────────────────────────────────
-// Fixed offsets from the end of the window so the story lands in the same
+// Fixed offsets from the end of the window, so the story lands in the same
 // place regardless of when the app is run.
 //
-// These are counted in *days ago*, which runs backwards relative to the
-// calendar: `from` is always the larger number, because the oldest day of a
-// window is the one furthest in the past. Naming them start/end invited exactly
-// the mistake of writing them into an event in the wrong order, which silently
-// inverted the span on the chart — an event with `date` after `endDate` draws
-// as a zero-width band, so the shading simply never appeared.
+// Counted in *days ago*, which runs backwards relative to the calendar: `from`
+// is always the larger number. Naming them start/end invited writing them in
+// the wrong order, which inverts the span silently — an event with `date` after
+// `endDate` draws as a zero-width band, so the shading never appears.
 const TRAVEL = { from: 13, to: 10, label: "Conference in Tokyo" };
 const ILLNESS = { from: 35, to: 32, label: "Head cold" };
 const NEW_SHOES = 62;
@@ -114,14 +107,13 @@ const generateSleep = (
   rng: () => number,
   ctx: DayContext,
 ): SleepRecord | null => {
-  // The watch is not worn every night. Assuming complete sleep data is one of
-  // the most common lies a health dashboard tells.
+  // The watch is not worn every night, and assuming complete sleep data is one
+  // of the most common lies a health dashboard tells.
   if (chance(rng, 0.05)) return null;
 
   let targetMin = ctx.weekend ? 400 : 372;
 
-  // The training plan nudges bedtime earlier — slowly, and not in a straight
-  // line. Improvement that arrives instantly would not look like a person.
+  // The plan nudges sleep up slowly and not in a straight line.
   if (ctx.planDay !== null) {
     targetMin += Math.min(22, ctx.planDay * 0.45);
   }
@@ -142,8 +134,8 @@ const generateSleep = (
   const timeInBed = Math.round(totalMin / efficiency);
   const awakeMin = Math.max(4, timeInBed - totalMin);
 
-  // Late bedtimes suppress deep sleep, which is why deep share is tied to the
-  // clock rather than drawn independently.
+  // Late bedtimes suppress deep sleep, so deep share is tied to the clock
+  // rather than drawn independently.
   const wakeTarget = ctx.ill ? 480 : ctx.weekend ? 460 : 390;
   const wakeMinutes = Math.round(clamp(gaussian(rng, wakeTarget, 26), 300, 620));
   const bedtimeMinutes = wakeMinutes - timeInBed;
@@ -250,7 +242,7 @@ const generateWorkout = (
   const dow = dayOfWeek(ctx.date);
 
   if (ctx.planDay === null) {
-    // Before the plan: unstructured, roughly twice a week, and it shows.
+    // Before the plan: unstructured, roughly twice a week.
     if (ctx.traveling) return null;
     if (!chance(rng, 0.29)) return null;
 
@@ -273,7 +265,7 @@ const generateWorkout = (
     return buildWorkout(rng, ctx, type, durationMin, distanceKm);
   }
 
-  // On the plan: a fixed weekly shape she can actually keep.
+  // On the plan: a fixed weekly shape.
   if (ctx.traveling || ctx.crunch) return null;
 
   const planWeek = ctx.planWeek ?? 1;
@@ -319,8 +311,7 @@ const generateNutrition = (
   rng: () => number,
   ctx: DayContext,
 ): NutritionRecord | null => {
-  // Logged on roughly three days in five. The gap is the point: it is the
-  // most common real-world data problem and the app has to be honest about it.
+  // Logged on roughly three days in five — the gap is the point.
   if (!chance(rng, 0.61)) return null;
 
   const completeness = round(clamp(gaussian(rng, 0.82, 0.13), 0.45, 1), 2);
@@ -354,8 +345,7 @@ const generateDay = (
   const nutrition = generateNutrition(rng, ctx);
 
   // ── Resting heart rate ──
-  // Reacts to the night that just ended, which is why this is generated after
-  // sleep and reads `previousSleep`.
+  // Reacts to the night that just ended, hence the `previousSleep` read.
   let restingHeartRate = 62;
   if (ctx.planDay !== null) restingHeartRate -= Math.min(2.6, ctx.planDay * 0.055);
   if (ctx.ill) restingHeartRate += 6.2;
@@ -363,10 +353,8 @@ const generateDay = (
   else if (ctx.crunch) restingHeartRate += 1.9;
 
   if (previousSleep) {
-    // 400 minutes is the pivot rather than a clinical threshold: below it the
-    // penalty climbs steeply enough that a night of 6h20 and a night of 5h30
-    // are meaningfully different, which is what the app then reports back as
-    // a discovered pattern rather than an assumption.
+    // 400 minutes is a pivot, not a clinical threshold: below it the penalty
+    // climbs steeply enough that 6h20 and 5h30 nights differ meaningfully.
     const shortfall = Math.max(0, 400 - previousSleep.totalMin);
     restingHeartRate += Math.min(7, shortfall * 0.09);
     if (previousSleep.efficiency < 0.85) restingHeartRate += 1.4;
@@ -454,13 +442,11 @@ const buildEvents = (contexts: DayContext[]): DatasetEvent[] => {
   const events: DatasetEvent[] = [];
 
   /**
-   * Turn a days-ago window into a dated span, oldest end first.
-   *
-   * One helper rather than three inline pairs of `at(...)` calls, because
-   * getting the order wrong here fails silently: an event whose `date` is later
-   * than its `endDate` does not throw, it draws as a zero-width band, so the
-   * shading quietly never appears. Returns `null` when the generated window is
-   * too short to contain the beat.
+   * Turn a days-ago window into a dated span, oldest end first. One helper
+   * rather than three inline pairs of `at(...)` calls: getting the order wrong
+   * fails silently — an event whose `date` is later than its `endDate` draws as
+   * a zero-width band rather than throwing. Returns `null` when the generated
+   * window is too short to contain the beat.
    */
   const span = (window: { from: number; to: number }) => {
     const older = at(window.from);

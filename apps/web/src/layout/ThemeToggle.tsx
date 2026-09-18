@@ -9,12 +9,8 @@ const THEME_LABEL: Record<ThemeChoice, string> = {
 
 /**
  * Three pills rather than a switch, because "follow the system" is a real third
- * state and a two-position control cannot express it — a reader whose laptop
- * switches at sunset would have to keep re-choosing.
- *
- * The active pill is `surface` on a `raised` track, so which one is selected is
- * legible without relying on the label alone. The tooltip on *System* names the
- * theme it is currently resolving to, which is the question that state raises.
+ * state that a two-position control cannot express. The tooltip on *System*
+ * names the theme it is currently resolving to.
  */
 export const ThemeToggle = () => {
   const { choice, theme, setChoice } = useTheme();

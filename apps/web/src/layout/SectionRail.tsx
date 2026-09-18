@@ -2,22 +2,13 @@ import { SECTIONS, SECTION_IDS } from "@/lib/sections";
 import { useActiveSection } from "@/lib/useActiveSection";
 
 /**
- * The index of the page, always on screen.
+ * The index of the page, always on screen. The list comes from `lib/sections`
+ * — the same module the sections render their anchors and numerals from — so a
+ * section cannot exist in the page without appearing here.
  *
- * This is the part of the masthead that earns its height. The page is long by
- * necessity — a verdict, its evidence, and six domains of detail — and the
- * failure mode of a long page is that the reader scrolls past the thing they
- * came for and never finds out it was there. A rail that is permanently
- * visible, and that always says which section you are in, turns "somewhere
- * below" into one click.
- *
- * The list itself comes from `lib/sections`, the same module the sections
- * render their anchors and numerals from, so a section cannot exist in the
- * page without appearing here.
- *
- * Full-bleed on a phone: the rail scrolls under the page gutter rather than
- * stopping short of it, which is what makes the row read as scrollable rather
- * than as a row that happens to be cut off.
+ * The negative margins are deliberate: on a phone the rail scrolls under the
+ * page gutter rather than stopping short of it, which is what makes the row
+ * read as scrollable rather than as a row that happens to be cut off.
  */
 export const SectionRail = () => {
   const active = useActiveSection(SECTION_IDS);

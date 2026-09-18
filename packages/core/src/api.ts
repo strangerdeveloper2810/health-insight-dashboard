@@ -1,13 +1,7 @@
 /**
- * The HTTP contract between the BFF and the browser.
- *
- * Declared here, in the package both sides already depend on, rather than in
- * either app. A payload shape written twice is a payload shape that drifts,
- * and the failure mode is silent: the server renames a field, the client reads
- * `undefined`, and a chart quietly renders zeroes.
- *
- * Types only — this module emits no runtime code, so it costs the browser
- * bundle nothing.
+ * The HTTP contract between the BFF and the browser, declared in the package
+ * both sides already depend on so a payload shape cannot be written twice and
+ * drift. Types only — no runtime code, so it costs the browser bundle nothing.
  */
 
 import type { DerivedMetrics } from "./metrics";
@@ -27,9 +21,8 @@ import type {
 export type Effort = "low" | "medium" | "high" | "xhigh" | "max";
 
 /**
- * The slice of server configuration that is safe to publish. Derived by
- * listing fields explicitly on the server, so a new secret cannot leak by
- * being forgotten.
+ * The slice of server configuration that is safe to publish — listed field by
+ * field on the server so a new secret cannot leak by being forgotten.
  */
 export interface PublicConfig {
   model: string;
@@ -57,10 +50,8 @@ export interface DashboardPayload {
   readiness: ReadinessScore;
   insights: Insight[];
   series: Record<MetricKey, SeriesPoint[]>;
-  /**
-   * Per-metric summary windows. The per-summary series is omitted: it is
-   * byte-identical to `series` above and would double the payload.
-   */
+  /** Per-metric summary windows, with the per-summary series omitted — it is
+   *  byte-identical to `series` above and would double the payload. */
   summaries: Record<MetricKey, Omit<MetricSummary, "series">>;
   derived: DerivedMetrics;
   /** Every citable value, so the browser can resolve citation tokens. */
@@ -77,10 +68,8 @@ export interface ChatTurn {
 
 /**
  * Events the browser receives on the chat stream, discriminated on `type`.
- *
- * `delta` appends text; `done` closes the turn with the grounding verdict.
- * Errors arrive as an event rather than an HTTP status, because by the time
- * the model is called the response headers are already on the wire.
+ * Errors arrive as an event rather than an HTTP status: by the time the model
+ * is called the response headers are already on the wire.
  */
 export type ChatEvent =
   | { type: "tool"; name: string; status: "running" | "done" }

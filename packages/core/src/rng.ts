@@ -1,17 +1,11 @@
 /**
- * Seeded pseudo-random number generation.
- *
- * The dataset is synthetic, but it must not *look* synthetic: charts need
- * day-to-day noise, weekly rhythm, slow drifts and the occasional outlier.
- * A seeded generator gives us all of that while keeping every run
- * reproducible — which is also what makes the insight rules unit-testable.
+ * Seeded pseudo-random number generation. Seeding keeps every run
+ * reproducible, which is what makes the insight rules unit-testable.
  */
 
 /** mulberry32 — small, fast, good enough distribution for synthetic data. */
 export const createRng = (seed: number): () => number => {
   let a = seed >>> 0;
-  // Named so it still shows up as `next` in a stack trace; a `const` binding
-  // gets that name for free, so nothing is lost by dropping the expression form.
   const next = (): number => {
     a = (a + 0x6d2b79f5) >>> 0;
     let t = a;
@@ -22,11 +16,7 @@ export const createRng = (seed: number): () => number => {
   return next;
 };
 
-/**
- * Box–Muller transform. Health metrics cluster around a personal baseline
- * rather than spreading uniformly, so almost every value we generate is
- * drawn from a normal distribution.
- */
+/** Box–Muller transform. */
 export const gaussian = (rng: () => number, mean: number, stdDev: number): number => {
   // Guard against log(0), which returns -Infinity.
   const u1 = Math.max(rng(), Number.EPSILON);
@@ -35,15 +25,11 @@ export const gaussian = (rng: () => number, mean: number, stdDev: number): numbe
   return mean + z * stdDev;
 };
 
-/** Clamp a value into an inclusive range. */
 export const clamp = (value: number, min: number, max: number): number => {
   return Math.min(max, Math.max(min, value));
 };
 
-/**
- * Gaussian draw clamped to a range and rounded — the shape almost every
- * metric in this app wants (steps, heart rate, sodium…).
- */
+/** Gaussian draw clamped to a range and rounded — the shape most metrics want. */
 export const boundedGaussian = (
   rng: () => number,
   mean: number,
@@ -54,12 +40,11 @@ export const boundedGaussian = (
   return Math.round(clamp(gaussian(rng, mean, stdDev), min, max));
 };
 
-/** True with probability `p`. */
 export const chance = (rng: () => number, p: number): boolean => {
   return rng() < p;
 };
 
-/** Pick one element, uniformly. Returns `undefined` only for an empty list. */
+/** Uniform. Returns `undefined` only for an empty list. */
 export const pick = <T>(rng: () => number, items: readonly T[]): T | undefined => {
   if (items.length === 0) return undefined;
   return items[Math.floor(rng() * items.length)];

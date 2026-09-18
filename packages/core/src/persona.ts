@@ -1,15 +1,6 @@
 /**
- * The user.
- *
- * The brief says a persona and dataset would be supplied; none was attached,
- * so this is ours. Keeping it in one module means that if SQREEM's real
- * persona arrives, swapping it is a single-file change — nothing downstream
- * knows where the persona came from.
- *
- * The persona is deliberately *specific*. "34-year-old who wants to be
- * healthier" gives a dashboard nothing to prioritise; a desk-bound designer
- * with a family history of type-2 diabetes, a 10K in nine weeks and a
- * half-finished food diary gives it a point of view.
+ * The user. No persona was supplied with the brief, so this is ours — kept in
+ * one module so that swapping in a real one is a single-file change.
  */
 
 import type { Persona } from "./types";
@@ -88,9 +79,9 @@ export const MAYA: Persona = {
     },
     {
       id: "goal-rhr",
-      // A level, not a habit: resting heart rate drifts by a beat or two
-      // around its baseline, so counting "days under 60" would report the
-      // noise, not the progress. It moves from 64 toward 60 like a journey.
+      // A level, not a habit: resting heart rate drifts by a beat or two around
+      // its baseline, so counting "days under 60" would report noise rather
+      // than progress. It moves from 64 toward 60 like a journey.
       kind: "journey",
       label: "Resting heart rate under 60 bpm",
       metric: "restingHeartRate",

@@ -1,20 +1,7 @@
 /**
- * The page's sections, in the order they are read.
- *
- * One list, four consumers: the masthead rail navigates by it, each section
- * takes its number and its note from its position in it, and the scroll spy
- * matches against its ids. Keeping them in one place is what stops the rail
- * from offering a destination the page does not have — which is the failure
- * mode of a hand-written table of contents, and the reason a long dashboard
- * needs one at all.
- *
- * The note is here rather than at the call site for the same reason the label
- * is: it is the one-line answer to "what is in this section", and it should say
- * the same thing whether the reader meets it as a heading, as a tooltip on the
- * rail, or as a link someone sent them.
- *
- * The order is the product argument, restated from `App`: how am I, why, what
- * should I do, and then everything that explains it.
+ * The page's sections, in reading order — the single source for the masthead
+ * rail, each section's number and note, and the scroll spy's ids. One list is
+ * what stops the rail offering a destination the page does not have.
  */
 
 export const SECTIONS = [
@@ -27,8 +14,8 @@ export const SECTIONS = [
   { id: "trends", label: "Trends", note: "Where each measurement is heading" },
   { id: "goals", label: "Goals", note: "Measured the way each one actually works" },
   // Sleep and activity sit side by side on a wide screen, so they share one
-  // entry: two rail items pointing at the same scroll position would leave one
-  // of them permanently un-highlighted.
+  // entry: two rail items at the same scroll position leave one permanently
+  // un-highlighted.
   { id: "daily", label: "Sleep & activity", note: "The detail behind today's score" },
   { id: "nutrition", label: "Nutrition", note: "Intake from your food log" },
   {
@@ -50,10 +37,8 @@ export interface SectionMeta {
 export const SECTION_IDS: readonly string[] = SECTIONS.map((section) => section.id);
 
 /**
- * Position in the reading order, 1-based, rendered as `01`.
- *
- * Derived from the array rather than written down, so inserting a section
- * renumbers the ones after it instead of leaving two of them claiming `04`.
+ * Position in the reading order, 1-based, rendered as `01`. Derived from the
+ * array so inserting a section renumbers the ones after it.
  */
 export const sectionIndex = (id: SectionId): number =>
   SECTIONS.findIndex((section) => section.id === id) + 1;

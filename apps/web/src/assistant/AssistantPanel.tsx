@@ -1,14 +1,11 @@
 /**
- * The assistant panel.
+ * The assistant panel. Every answer ends with a verdict on whether its
+ * citations resolved — when one did not, the panel says so rather than letting
+ * a confident sentence stand unqualified.
  *
- * Its job is to be quotable. Every figure in an answer is a chip that carries
- * the value it stands for, and every answer ends with a verdict on whether all
- * of its citations resolved. When one does not, the panel says so plainly
- * rather than letting a confident sentence stand unqualified.
- *
- * The disclaimer is not boilerplate. This is a health product: an assistant
- * that answers "what should I focus on?" in a warm, certain voice will be read
- * as advice, and the one thing it must never be mistaken for is a clinician.
+ * The disclaimer is not boilerplate: an assistant that answers "what should I
+ * focus on?" in a warm, certain voice will be read as advice, and must not be
+ * mistaken for a clinician.
  */
 
 import { useEffect, useRef, useState } from "react";
@@ -217,11 +214,8 @@ export const AssistantPanel = () => {
         </div>
       </header>
 
-      {/* An indeterminate bar while the answer is being written.
-          The message list already ends in a blinking caret, but the caret is
-          inside the bubble and only appears once the first token lands — this
-          covers the gap between pressing Send and hearing anything back, which
-          is the part that feels broken when nothing happens. */}
+      {/* The message list's caret only appears once the first token lands; this
+          covers the gap between pressing Send and hearing anything back. */}
       {assistant.streaming ? (
         <div className="relative h-0.5 w-full overflow-hidden bg-brand-soft" aria-hidden>
           <span className="animate-sweep absolute inset-y-0 w-1/3 rounded-full bg-brand" />

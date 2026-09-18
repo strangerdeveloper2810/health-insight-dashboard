@@ -2,10 +2,8 @@ import { toneFill } from "./tone";
 import type { Tone } from "./tone";
 
 /**
- * A horizontal progress bar.
- *
- * Defaults to `accent`, not `brand`: a bar reports a measurement, and
- * terracotta on this page means the product is asking for something.
+ * A horizontal progress bar. Defaults to `accent`, not `brand`: a bar reports a
+ * measurement, and terracotta means the product is asking for something.
  */
 export const Bar = ({
   value,

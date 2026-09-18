@@ -1,11 +1,8 @@
 /**
- * Value formatting.
- *
- * Every number the user reads is rendered by `formatEvidenceValue` from
- * `@health/core` — the same function the assistant's citations go through.
- * That is deliberate: a tile reading "7h 12m" and a cited
- * `{{sleepDurationMin.avg7d}}` reading "7h 12m" come from one formatter, so
- * they cannot disagree about rounding or unit placement.
+ * Value formatting. Every number the user reads goes through
+ * `formatEvidenceValue` from `@health/core` — the same formatter the
+ * assistant's citations use, so a tile and a cited reference cannot disagree
+ * about rounding or unit placement.
  */
 
 import { formatEvidenceValue } from "@health/core";
@@ -29,7 +26,7 @@ export const formatValue = (value: number, shape: ValueShape): string => {
 
 /**
  * The figure alone, for tiles that set the unit in smaller type beside it.
- * Durations and clock times are returned whole — splitting "7h 12m" across two
+ * Durations and clock times come back whole — splitting "7h 12m" across two
  * elements would break the pairing the formatter chose.
  */
 export const formatBare = (value: number, shape: ValueShape): string => {
@@ -55,12 +52,10 @@ export const directionOf = (change: number | null, epsilon = 0.05): Direction =>
 };
 
 /**
- * Whether a change is good news.
- *
- * A rising resting heart rate and a rising step count point opposite ways, so
- * the verdict is resolved against the metric's own `goodDirection` rather than
- * assumed from the sign. `neutral` metrics — blood pressure, weight — are
- * never coloured: this app has no opinion about which way they should move.
+ * Whether a change is good news. Resolved against the metric's own
+ * `goodDirection` rather than the sign: a rising resting heart rate and a
+ * rising step count point opposite ways. `neutral` metrics are never coloured —
+ * this app has no opinion about which way they should move.
  */
 export const trendOf = (
   change: number | null,

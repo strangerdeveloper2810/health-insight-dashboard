@@ -2,11 +2,9 @@ import { Card } from "./Card";
 import { Skeleton } from "./Skeleton";
 
 /**
- * The dashboard, before it arrives.
- *
- * The skeleton mirrors the real layout rather than being a generic grey block:
- * the page settles into place instead of jumping, and on a slow connection the
- * reader can already see what they are about to get.
+ * The dashboard, before it arrives. The skeleton mirrors the real layout rather
+ * than being a generic grey block, so the page settles into place instead of
+ * jumping.
  */
 export const LoadingState = ({ label = "Loading your dashboard" }: { label?: string }) => {
   return (

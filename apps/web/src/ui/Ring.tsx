@@ -6,14 +6,10 @@ import type { Tone } from "./tone";
 /**
  * The readiness dial.
  *
- * A ring rather than a bar because the score is the one number on the page
- * that is a judgement about today rather than a measurement, and it should not
- * look like the others.
- *
  * `size` and `stroke` are numbers rather than classes because the geometry is
- * arithmetic on the radius — `strokeDasharray` is a circumference. Callers
- * that need a different size at a different breakpoint pass one in; the dial
- * cannot be resized by CSS the way the rest of the page can.
+ * arithmetic on the radius — `strokeDasharray` is a circumference. The dial
+ * cannot be resized by CSS the way the rest of the page can, so a caller that
+ * needs a different size at a breakpoint has to pass one in.
  */
 export const Ring = ({
   value,

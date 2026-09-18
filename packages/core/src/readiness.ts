@@ -1,11 +1,7 @@
 /**
- * Readiness score.
- *
- * A single number is only useful if the user can see what produced it, so the
- * composite is never returned alone: each component carries its own score,
- * its weight, the raw inputs behind it, and a sentence explaining what moved
- * it. The same breakdown is handed to the assistant, so when it says "your
- * readiness is 68" it can also say which of the three parts is dragging.
+ * Readiness score. The composite is never returned alone: each component
+ * carries its own score, weight, raw inputs and an explanation of what moved
+ * it, so the assistant can say which of the three parts is dragging.
  */
 
 import { computeMetrics } from "./metrics";
@@ -67,8 +63,8 @@ const sleepComponent = (bundle: Bundle): ReadinessComponent => {
     0,
   );
 
-  // Duration is named first whenever it is not close to target; only a night
-  // length that is genuinely near the goal lets the other factors lead.
+  // Duration is named first unless it is close to target; only then do the
+  // other factors get to lead.
   const explanation =
     durationScore < 75
       ? `Averaging ${Math.floor(durationAvg / 60)}h ${String(Math.round(durationAvg % 60)).padStart(2, "0")}m asleep against your 7-hour goal, which is ${Math.round(Math.abs(sleepDebt14dMin))} minutes short across the last two weeks.`
@@ -231,9 +227,9 @@ export const computeReadiness = (bundle: Bundle): ReadinessScore => {
   );
   const band = readinessBand(score);
 
-  // The limiting factor is the component furthest below its own potential,
-  // not simply the lowest raw score — Load is naturally a wider range than
-  // Recovery, so comparing raw scores would always blame Load.
+  // The limiting factor is the component furthest below its own potential, not
+  // simply the lowest raw score: Load spans a wider range than Recovery, so raw
+  // scores would always blame Load.
   const limiting = [...components].sort((a, b) => a.score - b.score)[0];
 
   const headline =

@@ -1,16 +1,10 @@
 /**
- * Deterministic queries the assistant can run.
+ * Deterministic queries the assistant can run, for the questions the snapshot
+ * cannot answer: "what did last Tuesday look like", "compare this month to
+ * last", "show me the runs".
  *
- * The dashboard snapshot in the system prompt answers most questions on its
- * own, because it already contains every headline figure. These exist for the
- * questions it cannot: "what did last Tuesday look like", "compare this month
- * to last", "show me the runs". Each one is a pure read over the same computed
- * bundle the UI renders, so an answer built from a tool call and an answer
- * built from the snapshot cannot disagree.
- *
- * None of them call a model, and none of them can fail in a way that requires
- * a retry — which is the point. The model decides *which* question to ask; the
- * application decides what the answer is.
+ * Each is a pure read over the bundle the UI renders, and none calls a model —
+ * the model decides which question to ask, the application what the answer is.
  */
 
 import { addDays, bedtimeToTimeline, formatShortDate, minutesToClock } from "../dates";

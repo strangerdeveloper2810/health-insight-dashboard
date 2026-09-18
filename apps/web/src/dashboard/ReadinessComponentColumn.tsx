@@ -4,17 +4,9 @@ import { Bar, toneText } from "@/ui/primitives";
 import { CONTRIBUTION, componentTone } from "./readiness";
 
 /**
- * One component of the score, and the inputs that produced it.
- *
- * A column rather than a row. Three stacked rows beside a 168px dial leave the
- * dial floating in a third of a screen of empty card, which is what the page
- * looked like before — the layout was telling the reader that the number was
- * small and the evidence was large. Side by side, the dial and the evidence
- * are the same height and the reader gets the whole hero in one look.
- *
- * The inputs are the point of the component. Someone who disagrees with a 72
- * cannot argue with a 72; they can argue with the resting heart rate that
- * produced it, and that is the number shown underneath.
+ * One component of the score, and the inputs that produced it. The inputs are
+ * the point: a reader who disagrees with a 72 can only argue with the resting
+ * heart rate underneath it.
  */
 export const ReadinessComponentColumn = ({ component }: { component: ReadinessComponent }) => {
   const tone = componentTone(component.score);

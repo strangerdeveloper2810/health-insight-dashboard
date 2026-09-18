@@ -1,16 +1,6 @@
 /**
- * The trend chart.
- *
- * Two decisions worth naming.
- *
- * The shaded spans are life events, not decorations. A resting heart rate that
- * climbed eight beats over a week is alarming on its own and obvious once the
- * flu is shaded underneath it. Most of what looks like a health trend is a
- * life event, and a chart that hides them is a chart that misleads.
- *
- * Gaps stay gaps. Days with no recording are absent from the series, and the
- * line breaks rather than dropping to zero — a zero would read as "you walked
- * nowhere", which is a different and false claim from "the watch was charging".
+ * The trend chart, with life events shaded behind the line — most of what looks
+ * like a health trend is a life event, and a chart that hides them misleads.
  */
 
 import { addDays, METRIC_META } from "@health/core";
@@ -67,8 +57,8 @@ const ChartTooltip = ({
   precision: number;
   format?: "number" | "duration" | "clock";
 }) => {
-  // Read before the early return: a hook after a conditional exit is a hook
-  // whose call count depends on the data.
+  // Read before the early return: a hook after a conditional exit is a hook whose
+  // call count depends on the data.
   const theme = useAppSelector(selectUi).theme;
   if (!active || !payload?.length) return null;
 
@@ -121,8 +111,8 @@ export const TrendsPanel = () => {
   const trend = trendOf(summary?.changePct ?? null, meta.goodDirection);
   const tone = TREND_TONE[trend];
 
-  // Only offer metrics that have something to draw, so the picker never
-  // presents a choice that leads to an empty chart.
+  // Only metrics with something to draw, so the picker never offers a choice that
+  // leads to an empty chart.
   const choices = (Object.keys(payload.series) as MetricKey[]).filter(
     (key) => (payload.series[key]?.length ?? 0) > 1,
   );
@@ -141,8 +131,7 @@ export const TrendsPanel = () => {
             Metric
           </label>
           {/* A native select sizes itself to its longest option — "Resting heart
-              rate" — which is wider than a phone. Capping it keeps the header
-              row inside the panel instead of pushing the page sideways. */}
+              rate" — which is wider than a phone, so it is capped here. */}
           <select
             id="trend-metric"
             value={ui.trendMetric}

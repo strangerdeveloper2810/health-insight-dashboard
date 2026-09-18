@@ -1,15 +1,10 @@
 /**
- * The insight rule engine.
+ * The insight rule engine. Each rule is a pure function of the computed
+ * metrics, and each carries the evidence that produced it so the claim can be
+ * checked rather than trusted.
  *
- * These rules are the product's opinion. A health dashboard that shows
- * fourteen charts and no conclusions has outsourced the hard part — deciding
- * what matters — to the user. Each rule below encodes a judgement about what
- * is worth interrupting someone for, and each carries the evidence that
- * produced it so the claim can be checked rather than trusted.
- *
- * Every rule is a pure function of the computed metrics. The same `Insight`
- * objects render as cards on the dashboard and are serialised into the
- * assistant's context, so the two can never disagree about what is going on.
+ * The same `Insight` objects render as cards and are serialised into the
+ * assistant's context, so the two cannot disagree about what is going on.
  */
 
 import { daysBetween, formatShortDate } from "./dates";
@@ -102,9 +97,9 @@ const bedtimeConsistencyRule = (bundle: MetricsBundle, index: RefIndex): Insight
 };
 
 /**
- * The suggested action has to follow from the goal. Telling someone to "add
- * one session" to fix their sleep is worse than saying nothing — it reads as
- * a machine that has not understood the question.
+ * The suggested action has to follow from the goal — telling someone to "add
+ * one session" to fix their sleep reads as a machine that has not understood
+ * the question.
  */
 const ACTION_BY_METRIC: Partial<Record<Goal["metric"], string>> = {
   sleepDurationMin:
@@ -379,12 +374,9 @@ export const rankInsights = (insights: Insight[]): Insight[] => {
 // ─── Entry point ────────────────────────────────────────────────────────────
 
 /**
- * Goal cards, capped.
- *
- * With four goals, three of them lagging, the feed fills with goal cards and
- * stops being a feed. The primary goal always gets a card — it is the thing
- * the user actually chose — and the secondary goals compete for at most one
- * more slot, worst first. The rest stay visible in the Goals section, and the
+ * Goal cards, capped: with four goals, three lagging, the feed stops being a
+ * feed. The primary goal always gets a card; the secondary goals compete for at
+ * most one more slot, worst first. The rest stay in the Goals section, and the
  * assistant still sees all of them in its snapshot.
  */
 const goalInsights = (bundle: MetricsBundle, index: RefIndex): Insight[] => {

@@ -1,11 +1,9 @@
 /**
- * The metric registry.
- *
- * Every metric the app can chart, summarise, cite or reason about is declared
- * here exactly once: label, unit, precision, which direction counts as an
- * improvement, and what the number actually means. The UI reads this for
- * formatting, the insight rules read it for phrasing, and the LLM context
- * builder reads it so the model is told the units rather than guessing them.
+ * The metric registry — every metric the app can chart, summarise, cite or
+ * reason about, declared once: label, unit, precision, which direction is an
+ * improvement, and what the number means. Read by the UI for formatting, the
+ * insight rules for phrasing, and the LLM context so the model is told the
+ * units rather than guessing them.
  */
 
 import type { MetricKey, MetricMeta } from "./types";

@@ -4,14 +4,9 @@ import type { Insight } from "@health/core";
 /**
  * The full audit trail: which rule fired, and every number it read.
  *
- * This exists because the alternative is asking to be trusted. A reader who
- * disagrees with a card can find the exact value they disagree with here, and
- * a reader who wants to know where any of it comes from gets a straight
- * answer rather than a marketing one.
- *
  * The reference ids are shown in mono and in full — they look like
- * `sleep.deep.avg7` because they *are* the key, and truncating a key so it
- * looks tidier would make it useless for cross-checking against the assistant.
+ * `sleep.deep.avg7` because they *are* the key, and a truncated key is useless
+ * for cross-checking against the assistant.
  */
 export const WorkingPanel = ({ insight }: { insight: Insight }) => {
   return (

@@ -1,11 +1,9 @@
 import { Card } from "./Card";
 
 /**
- * The app could not do its job.
- *
- * Distinct from an empty state, which says the app did its job and the answer
- * is "there is nothing here yet". Showing this for that case teaches people to
- * distrust the screen, so the two never share a component.
+ * The app could not do its job — distinct from an empty state, which says the
+ * app did its job and the answer is "there is nothing here yet". The two never
+ * share a component.
  */
 export const ErrorState = ({
   title = "We could not load your dashboard",

@@ -3,15 +3,12 @@
  *
  * Recharts draws to SVG attributes, which cannot read CSS custom properties
  * reliably across browsers, so the chart colours are duplicated here as
- * literals. They are kept in step with `styles.css` by hand — the alternative
- * is resolving computed styles at runtime, which breaks on first paint and in
- * tests. The duplication is confined to this file.
+ * literals and kept in step with `styles.css` by hand. The duplication is
+ * confined to this file.
  *
- * The one rule worth knowing when editing: `brand` here is the *data* colour,
- * not the brand colour. In the stylesheet terracotta means "the product is
- * asking you to do something"; inside a plot area that would read as a verdict
- * on the series, so charts draw in the petrol teal instead and the two
- * vocabularies stay apart. `accent` in the CSS is the same teal.
+ * When editing: `brand` here is the *data* colour, not the brand colour. Inside
+ * a plot area terracotta would read as a verdict on the series, so charts draw
+ * in the petrol teal instead — the same teal the stylesheet calls `accent`.
  */
 
 import type { DatasetEvent, InsightSeverity, ReadinessBand } from "@health/core";
@@ -110,13 +107,9 @@ export const SEVERITY_STYLE: Record<
 };
 
 /**
- * A trend verdict, as a tone.
- *
- * `trendOf` answers "is this movement good or bad for the user?" — a question
- * about the metric, not about colour. The two vocabularies stay separate so a
- * metric whose good direction is *down* (resting heart rate, resting HRV's
- * inverse) can never be coloured by the raw sign of the change. Every call site
- * goes through here for the same reason.
+ * A trend verdict, as a tone. Kept separate from `trendOf` so a metric whose
+ * good direction is *down* — resting heart rate — can never be coloured by the
+ * raw sign of the change. Every call site goes through here for that reason.
  */
 export const TREND_TONE: Record<"good" | "bad" | "flat", Tone> = {
   good: "positive",

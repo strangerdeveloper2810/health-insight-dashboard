@@ -2,15 +2,10 @@ import { useAppSelector } from "@/app/hooks";
 import { selectPayload } from "@/features/selectors";
 
 /**
- * The state simulator, linked rather than hidden.
+ * The state simulator: each of loading, error and empty has a `?state=` URL so
+ * a reviewer can reach it without editing code or unplugging the network.
  *
- * The brief asks for loading, error and empty states to be handled, and a
- * reviewer should not have to edit code or unplug the network to see them.
- * Each one has a URL, and they live in the footer where they are findable and
- * out of the way — a debug control in the chrome of a health product reads as
- * an unfinished build.
- *
- * `slice(0, 10)` on the ISO timestamp is deliberate: the reviewer needs to see
+ * `slice(0, 10)` on the ISO timestamp is deliberate — the reviewer needs to see
  * *which* build produced what they are looking at, not the milliseconds.
  */
 const STATES = [

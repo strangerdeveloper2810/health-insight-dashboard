@@ -6,18 +6,10 @@ import type { SectionId } from "@/lib/sections";
 /**
  * A top-level block of the page, with its editorial numeral.
  *
- * The numeral is not decoration. A page this long is read in two ways — top to
- * bottom the first time, and by jumping to one part of it every time after —
- * and a numbered heading gives the reader a position they can hold in their
- * head ("I was at four") as well as something for the rail to point at.
- *
- * The title, the number and the note all come from `lib/sections` from the id
- * alone. A section cannot be numbered wrongly or titled differently from the
- * rail item that links to it, because there is only one place either is
- * written down.
- *
- * `stagger` delays this section's entrance by its own index, so the page
- * arrives in reading order rather than all at once.
+ * The label, note and number all come from `lib/sections` keyed by `id`, so a
+ * section cannot be numbered or titled differently from the rail item that
+ * links to it — there is only one place either is written down. The `--i`
+ * custom property is what the `stagger` class reads to delay its entrance.
  */
 export const Section = ({
   id,

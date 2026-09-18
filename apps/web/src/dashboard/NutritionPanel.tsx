@@ -1,15 +1,8 @@
 /**
- * Nutrition — and the one thing a nutrition panel usually gets wrong.
- *
- * Food logging is incomplete. In this dataset roughly seven days in ten carry
- * a record, and the days that are missing are not random: people log on
- * ordinary days and skip the ones that are messy. So the averages here are
- * averages *of what was logged*, which undercounts what was eaten.
- *
- * The completeness figure is therefore not a footnote, it is the headline.
- * A calorie average presented without it invites a decision the data cannot
- * support, and the app would rather say "this is 70% of your days" than imply
- * a precision it does not have.
+ * Nutrition. Food logging is incomplete and the missing days are not random —
+ * people log ordinary days and skip the messy ones — so the averages cover only
+ * what was logged, which is why the completeness figure is the headline rather
+ * than a footnote.
  */
 
 import { METRIC_META } from "@health/core";
@@ -65,9 +58,8 @@ export const NutritionPanel = () => {
 
   const tone: Tone = completeness >= 0.85 ? "positive" : completeness >= 0.6 ? "watch" : "alert";
 
-  // Rough share of energy from each macro, for the split bar. 4/4/9 kcal per
-  // gram — the standard Atwater factors, stated here so the arithmetic is
-  // checkable rather than magic.
+  // Rough share of energy per macro: 4/4/9 kcal per gram, the standard Atwater
+  // factors, stated so the arithmetic is checkable rather than magic.
   const proteinKcal = mean((r) => r.proteinG) * 4;
   const carbKcal = mean((r) => r.carbsG) * 4;
   const fatKcal = mean((r) => r.fatG) * 9;

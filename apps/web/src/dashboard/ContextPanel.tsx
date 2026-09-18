@@ -1,13 +1,10 @@
 /**
- * The context that changes how every other number should be read.
+ * The context that changes how every other number should be read — a resting
+ * heart rate of 58 means different things for a runner and for someone on a beta
+ * blocker.
  *
- * A resting heart rate of 58 is unremarkable for a runner and worth a
- * conversation for someone on a beta blocker. Without this panel the rest of
- * the dashboard is a set of numbers with no interpretation attached, and the
- * assistant is answering questions about a stranger. It is also shown here,
- * not just fed to the model, so the user can see exactly what the assistant
- * has been told about them — a profile the model reads but the user cannot is
- * a profile that will eventually surprise them.
+ * Shown to the user as well as fed to the model: a profile the assistant reads
+ * but the user cannot is one that will eventually surprise them.
  */
 
 import type { DataQualityNote } from "@health/core";

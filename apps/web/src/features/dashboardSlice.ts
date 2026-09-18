@@ -1,11 +1,8 @@
 /**
- * The dashboard's slice.
- *
- * It holds one payload and a request status, and nothing else. No averaging,
- * no aggregation, no derived values — those were computed once on the server
- * and the assistant was given the same numbers. A second implementation of
- * "what is the 30-day average" in the browser is exactly the bug this
- * architecture exists to prevent.
+ * The dashboard's slice: one payload and a request status, nothing else. No
+ * averaging or derived values — those were computed once on the server, and a
+ * second implementation in the browser is the bug this architecture exists to
+ * prevent.
  */
 
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";

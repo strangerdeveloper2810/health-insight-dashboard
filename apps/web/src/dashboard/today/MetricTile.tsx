@@ -10,14 +10,8 @@ import { Sparkline, toneText } from "@/ui/primitives";
 
 /**
  * One number, how it compares with the week before, and the shape of the month.
- *
- * The comparison is the part that makes a number mean something: "7,412 steps"
- * is a fact, "7,412 steps, 12% below your week" is information. A tile that
- * showed only the first would be a watch face.
- *
- * The value counts up from zero on first paint. It is the same motion the
- * readiness dial uses, and it is doing the same job — pointing the eye at the
- * figure rather than at the label above it.
+ * The comparison is the part that makes the figure mean something, so it is never
+ * dropped for space.
  */
 export const MetricTile = ({ metric }: { metric: MetricKey }) => {
   const meta = METRIC_META[metric];
@@ -26,8 +20,8 @@ export const MetricTile = ({ metric }: { metric: MetricKey }) => {
 
   const week = summary?.windows.find((w) => w.window === "7d") ?? null;
 
-  // Called before the early return, because a hook cannot be skipped and the
-  // "not recorded yet" tile is a different render of the same component.
+  // Called before the early return: the "not recorded yet" tile is another render
+  // of this same component, and a hook cannot be skipped.
   const counted = useCountUp(week?.latest ?? 0);
 
   if (!week) {
@@ -71,9 +65,8 @@ export const MetricTile = ({ metric }: { metric: MetricKey }) => {
         <span className="text-faint"> vs previous 7 days</span>
       </p>
 
-      {/* Sample count is not decoration: a 7-day average over 3 recorded days
-          is a different claim from one over 7, and the tile should not hide
-          which it is. */}
+      {/* A 7-day average over 3 recorded days is a different claim from one over
+          7, and the tile should not hide which it is. */}
       {week.sampleCount < week.days ? (
         <p className="mt-1 text-[0.72rem] text-faint">
           from {week.sampleCount} of {week.days} days

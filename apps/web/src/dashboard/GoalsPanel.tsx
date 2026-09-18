@@ -1,18 +1,8 @@
 /**
- * Goals.
- *
- * The interesting thing here is that two goals are not measured the same way,
- * and the UI has to show that rather than flatten it.
- *
- * "Run 10K" is a journey: you are some fraction of the distance from where you
- * started to the target, and a progress bar is the honest picture.
- *
- * "Sleep seven hours" is a threshold: there is no meaningful 42% of the way to
- * sleeping seven hours. What is true is that you did it on eleven of the last
- * thirty nights, and that is what the card shows — a month of days, filled or
- * not. Reporting it as a percentage of a journey produced a card that said 12%
- * next to a person sleeping six and a half hours a night, which is both
- * arithmetically correct and useless.
+ * Goals. Two goals are not measured the same way and the UI shows that rather
+ * than flattening it: a journey goal ("run 10K") gets a progress bar, while a
+ * threshold goal ("sleep seven hours") gets a month of days, because there is no
+ * meaningful 42% of the way to sleeping seven hours.
  */
 
 import { METRIC_META } from "@health/core";
@@ -40,11 +30,9 @@ const STATUS_LABEL: Record<GoalProgress["status"], string> = {
 };
 
 /**
- * The last thirty days as filled or hollow dots.
- *
- * Derived in the browser from the same series the chart draws. That is
- * presentation of a raw series rather than a second analytics implementation —
- * the goal's verdict, pace and projection all come from the server.
+ * The last thirty days as filled or hollow dots. Derived in the browser from the
+ * raw series: presentation, not a second analytics implementation — the verdict,
+ * pace and projection all come from the server.
  */
 const ThresholdGrid = ({
   goal,

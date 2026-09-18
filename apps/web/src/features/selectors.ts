@@ -1,10 +1,8 @@
 /**
- * Memoised reads over the store.
- *
- * `createSelector` here is not ceremony: `selectRefIndex` builds a Map from
- * 258 entries, and `selectTrendPoints` slices a 90-point array. Both would
- * rebuild on every keystroke in the assistant's composer if they were plain
- * functions reading state.
+ * Memoised reads over the store. `createSelector` here is not ceremony:
+ * `selectRefIndex` builds a Map from 258 entries and `selectTrendPoints`
+ * slices a 90-point array, and both would rebuild on every keystroke in the
+ * assistant's composer if they were plain functions reading state.
  */
 
 import { createSelector } from "@reduxjs/toolkit";
@@ -53,12 +51,9 @@ export const selectInsights = createSelector(
 );
 
 /**
- * Insight severity, most urgent first.
- *
- * Declared here rather than inside the feed because two components now rank by
- * it. The hero promotes the top insight out of the feed and into its own card;
- * if the two ranked differently, the same insight would appear twice on one
- * screen — once as today's focus, once as a card below it.
+ * Insight severity, most urgent first. Declared here because two components
+ * rank by it: if the hero and the feed ordered differently, the same insight
+ * would appear twice on one screen — once as today's focus, once below it.
  */
 const SEVERITY_ORDER: readonly InsightSeverity[] = ["alert", "watch", "positive", "info"];
 
@@ -68,15 +63,7 @@ export const selectSortedInsights = createSelector([selectInsights], (insights) 
   ),
 );
 
-/**
- * The single thing the page leads with.
- *
- * The dashboard's whole job on load is to answer "what should I do about
- * today?", and the answer already exists — it is the highest-severity insight's
- * action. Leaving it third in a grid of cards, at the same weight as the three
- * below it, is what makes a reader scroll a page looking for something that was
- * on it the whole time.
- */
+/** The single thing the page leads with. */
 export const selectTopInsight = createSelector(
   [selectSortedInsights],
   (insights) => insights[0] ?? null,
@@ -93,11 +80,9 @@ export const selectDerived = createSelector(
 );
 
 /**
- * The reference index, rebuilt only when the catalogue itself changes.
- *
- * This is the client half of the grounding guarantee: citation tokens in an
- * answer are resolved against exactly these values, which are the same ones
- * the charts read from.
+ * The reference index, rebuilt only when the catalogue changes. This is the
+ * client half of the grounding guarantee: citation tokens resolve against
+ * exactly the values the charts read from.
  */
 export const selectRefIndex = createSelector([selectPayload], (payload) =>
   payload ? indexFromCatalogue(payload.refs ?? [...NO_REFS]) : null,
@@ -150,11 +135,8 @@ const overlaps = (event: DatasetEvent, from: ISODate, to: ISODate): boolean => {
 };
 
 /**
- * Life events that fall inside the visible window.
- *
- * Without these, a chart of a bad week is a mystery. With them, "your resting
- * heart rate climbed eight beats" has a visible cause sitting underneath it —
- * which is the difference between a chart and an explanation.
+ * Life events that fall inside the visible window, so a chart of a bad week
+ * has a visible cause sitting underneath it.
  */
 export const selectAnnotations = createSelector(
   [selectDataset, selectTrendPoints, selectUi],

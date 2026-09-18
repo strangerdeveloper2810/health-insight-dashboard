@@ -1,10 +1,7 @@
 /**
- * The semantic colour vocabulary.
- *
- * Two of these carry meaning and are not interchangeable. `brand` is
- * terracotta: the product's own voice, used for anything it is asking the
- * reader to do. `accent` is petrol teal: a measurement. A progress bar is teal
- * because it reports; a button is terracotta because it asks.
+ * The semantic colour vocabulary. `brand` is terracotta — the product's own
+ * voice, for anything it is asking the reader to do; `accent` is petrol teal —
+ * a measurement.
  *
  * The class strings are written out in full rather than composed from a
  * template, because Tailwind scans source text — `bg-${tone}` would produce a

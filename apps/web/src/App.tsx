@@ -1,24 +1,11 @@
 /**
- * Page composition.
+ * Page composition — readiness and today's numbers first, then what we noticed,
+ * trends, goals, the per-domain detail, and context.
  *
- * The order is the product argument, top to bottom:
- *
- *   1. Readiness, then what produced it      — how am I, and why
- *   2. Today's four numbers                  — the facts underneath it
- *   3. What we noticed                       — what is worth acting on
- *   4. Trends                                — is this changing
- *   5. Goals                                 — am I on track
- *   6. Sleep, activity, nutrition            — the detail, by domain
- *   7. Context and data quality              — what to keep in mind reading any of it
- *
- * Anything that would go above the readiness score had to justify being more
- * important than "how am I today", and nothing did.
- *
- * Sections 3 onwards are wrapped in `<Section>`, which takes its number, its
- * title and its note from `lib/sections` — the same list the masthead rail
- * navigates by. Section 1 is not: a numbered heading above the verdict would
- * push the one thing the reader came for below the fold, so the hero carries
- * the `today` anchor itself and its headline is its heading.
+ * Everything from "noticed" down is wrapped in `<Section>`, which takes its
+ * number and title from `lib/sections` — the same list the masthead rail
+ * navigates by. The hero is not: a numbered heading above the verdict would
+ * push it below the fold, so the hero carries the `today` anchor itself.
  */
 
 import { lazy, Suspense, useEffect } from "react";
@@ -48,10 +35,9 @@ import { Section } from "@/ui/Section";
 import { EmptyState, ErrorState, LoadingState } from "@/ui/states";
 
 /**
- * The assistant carries a markdown renderer that nothing else needs, so it is
- * fetched the first time someone opens the panel rather than on first paint.
- * Mounted only while open — a `lazy` component that is always rendered would
- * download immediately and defeat the point.
+ * The markdown renderer is weight nothing else needs, so this is fetched on
+ * first open rather than first paint — and mounted only while open, since an
+ * always-rendered `lazy` component would download immediately.
  */
 const AssistantPanel = lazy(() =>
   import("@/assistant/AssistantPanel").then((module) => ({ default: module.AssistantPanel })),
@@ -62,9 +48,9 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-10">
-      {/* No heading: the hero's own headline is this section's title, and an
-          `01 Today` above it would push the verdict off the first screen. The
-          rail still links here, which is what the anchor is for. */}
+      {/* No heading: an `01 Today` above the verdict would push it off the
+          first screen. The rail still links here, which is what the anchor is
+          for. */}
       <section id="today" className="scroll-mt-28 space-y-4">
         {readiness && readiness.components.length > 0 ? (
           <ReadinessHero readiness={readiness} />

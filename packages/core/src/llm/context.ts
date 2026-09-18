@@ -1,23 +1,9 @@
 /**
- * Prompt construction.
- *
- * Two artefacts, deliberately separated by how often they change:
- *
- *   buildSystemPrompt(persona)  — stable for the life of the dataset. Role,
- *                                 safety boundaries, the citation contract,
- *                                 and who the user is. Cached.
- *   buildDataSnapshot(...)      — the live numbers. Changes only when the
- *                                 dataset does, so it is cached too, as the
- *                                 second system block.
- *
- * The split is what makes prompt caching worth having here: the snapshot is
- * several thousand tokens of reference catalogue, and without caching every
- * turn of every conversation would pay for it again.
- *
- * The catalogue is also the whole data story. Rather than restating averages
- * in prose and then listing the ids the model may cite, the catalogue *is*
- * the data — one line per citable value, with the id on the left. There is no
- * second copy to drift out of sync.
+ * Prompt construction — two artefacts, split by how often they change.
+ * `buildSystemPrompt` is stable for the life of the dataset and
+ * `buildDataSnapshot` changes only when the data does, so both are cacheable
+ * system blocks; that is what makes the several-thousand-token reference
+ * catalogue affordable on every turn.
  */
 
 import { formatLongDate } from "../dates";
