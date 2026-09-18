@@ -175,21 +175,27 @@ export const streamChat = async (options: StreamChatOptions): Promise<void> => {
   let fullText = "";
 
   try {
-    const runner = client.beta.messages.toolRunner({
-      model: config.model,
-      max_tokens: config.maxTokens,
-      system,
-      messages: withHistoryBreakpoint(sanitiseHistory(history)),
-      tools: [...tools],
-      thinking: { type: "adaptive" },
-      output_config: { effort: config.effort },
-      // A health question that trips a safety classifier should still get an
-      // answer rather than an empty bubble. The API re-runs the request on a
-      // substitute model inside the same call, and reports which model served.
-      betas: ["server-side-fallback-2026-07-01"],
-      fallbacks: "default",
-      stream: true,
-    });
+    const runner = client.beta.messages.toolRunner(
+      {
+        model: config.model,
+        max_tokens: config.maxTokens,
+        system,
+        messages: withHistoryBreakpoint(sanitiseHistory(history)),
+        tools: [...tools],
+        thinking: { type: "adaptive" },
+        output_config: { effort: config.effort },
+        // A health question that trips a safety classifier should still get an
+        // answer rather than an empty bubble. The API re-runs the request on a
+        // substitute model inside the same call, and reports which model served.
+        betas: ["server-side-fallback-2026-07-01"],
+        fallbacks: "default",
+        stream: true,
+      },
+      // `signal` is a request option, not a body field. Passing it is the whole
+      // point of having one: without it, closing the tab leaves the model
+      // generating tokens nobody will ever read.
+      { signal },
+    );
 
     for await (const stream of runner) {
       for await (const event of stream) {

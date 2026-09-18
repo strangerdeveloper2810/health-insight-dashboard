@@ -119,8 +119,14 @@ export const buildServer = async (options: BuildServerOptions = {}): Promise<Fas
 
     // If the user closes the tab mid-answer, stop generating. Continuing would
     // burn tokens for output nobody will ever read.
+    //
+    // Listen on the *response*. `request.raw` also emits 'close', but it does so
+    // the moment the request body has been read — which is before the model is
+    // even called. Aborting there kills every turn before its first token, and
+    // because `streamChat` stays quiet once the signal is aborted, the caller
+    // gets a 200 and an empty stream rather than an error.
     const controller = new AbortController();
-    request.raw.on("close", () => controller.abort());
+    raw.on("close", () => controller.abort());
 
     const history = parsed.data.messages as ChatTurn[];
     request.log.info({ turns: history.length }, "chat request");

@@ -74,15 +74,15 @@ interface FakeOptions {
   iterations: StreamEvent[][];
   final?: Record<string, unknown>;
   /** Capture the params the runner was called with, for prompt assertions. */
-  onCall?: (params: Record<string, unknown>) => void;
+  onCall?: (params: Record<string, unknown>, requestOptions?: Record<string, unknown>) => void;
 }
 
 const fakeClient = (options: FakeOptions): Anthropic => {
   return {
     beta: {
       messages: {
-        toolRunner: (params: Record<string, unknown>) => {
-          options.onCall?.(params);
+        toolRunner: (params: Record<string, unknown>, requestOptions?: Record<string, unknown>) => {
+          options.onCall?.(params, requestOptions);
           return {
             async *[Symbol.asyncIterator]() {
               for (const events of options.iterations) {
@@ -126,6 +126,39 @@ const doneOf = (body: string): DoneEvent => {
     throw new Error(`expected a done event, got: ${last?.event ?? "nothing"}`);
   }
   return last.data;
+};
+
+/**
+ * A client whose model call fails the way a real one does: asynchronously, once
+ * the turn is already under way.
+ *
+ * The delay is the point. A synchronous throw finishes in the same tick as the
+ * route handler, so the request lifecycle never gets to run — which is exactly
+ * why the bug below survived a suite that already had an error-mapping test.
+ */
+const failingClient = (delayMs = 20): Anthropic => {
+  const fail = async (): Promise<never> => {
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
+    throw new Anthropic.RateLimitError(
+      429,
+      { error: { message: "slow down" } },
+      "slow down",
+      new Headers(),
+    );
+  };
+
+  return {
+    beta: {
+      messages: {
+        toolRunner: () => ({
+          // An async iterator written without a generator, because arrows
+          // cannot be generators. `for await` rejects on the first `next()`.
+          [Symbol.asyncIterator]: () => ({ next: () => fail() }),
+          done: () => fail(),
+        }),
+      },
+    },
+  } as unknown as Anthropic;
 };
 
 const chat = async (
@@ -293,23 +326,7 @@ describe("POST /api/chat — streaming", () => {
   });
 
   it("maps an SDK error to something a person can act on", async () => {
-    const app = await buildServer({
-      config: CONFIG,
-      client: {
-        beta: {
-          messages: {
-            toolRunner: () => {
-              throw new Anthropic.RateLimitError(
-                429,
-                { error: { message: "slow down" } },
-                "slow down",
-                new Headers(),
-              );
-            },
-          },
-        },
-      } as unknown as Anthropic,
-    });
+    const app = await buildServer({ config: CONFIG, client: failingClient() });
     await app.ready();
 
     const response = await app.inject({
@@ -325,6 +342,125 @@ describe("POST /api/chat — streaming", () => {
     // The stream still opened with 200 — the failure is an event, not a status,
     // because the headers were already sent by the time the model was called.
     expect(response.statusCode).toBe(200);
+  });
+});
+
+/**
+ * One turn over a real HTTP socket, rather than through `app.inject()`.
+ *
+ * The distinction matters: the request lifecycle only exists on a socket, and
+ * `request.raw` emits 'close' the moment the body has been read — which is
+ * *before* the route handler calls the model. Wiring the abort to that made
+ * `signal.aborted` true on every turn, so `streamChat` swallowed every error
+ * and the caller got a 200 with no events at all. `inject()` never reproduced
+ * it, which is why the whole file above passed while the assistant was broken.
+ */
+const chatOverSocket = async (client: Anthropic): Promise<{ status: number; body: string }> => {
+  const app = await buildServer({ config: CONFIG, client });
+  await app.listen({ port: 0, host: "127.0.0.1" });
+
+  const address = app.server.address();
+  const port = typeof address === "object" && address ? address.port : 0;
+
+  const response = await fetch(`http://127.0.0.1:${port}/api/chat`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ messages: [{ role: "user", content: "hi" }] }),
+  });
+  const body = await response.text();
+  await app.close();
+
+  return { status: response.status, body };
+};
+
+describe("POST /api/chat — over a real socket", () => {
+  it("surfaces an upstream failure instead of an empty stream", async () => {
+    const { status, body } = await chatOverSocket(failingClient());
+    const last = parseSse(body).at(-1);
+
+    // The failure is an event, not a status: the headers went out before the
+    // model was called. What matters is that *something* arrives.
+    expect(status).toBe(200);
+    expect(last?.event).toBe("error");
+    expect(last?.data).toMatchObject({ code: "rate_limited" });
+  });
+
+  it("streams a full answer", async () => {
+    const { body } = await chatOverSocket(
+      fakeClient({
+        iterations: [textEvents("Your resting heart rate is {{restingHeartRate.avg7d}}.")],
+      }),
+    );
+
+    expect(parseSse(body).map((e) => e.event)).toEqual(["delta", "done"]);
+    expect(doneOf(body).grounding).toMatchObject({ grounded: true, unknown: [] });
+  });
+
+  it("aborts generation when the client goes away mid-answer", async () => {
+    let aborted = false;
+
+    // Holds the stream open until the signal fires, so the client can leave
+    // first — and so the suite cannot hang if the abort never arrives.
+    const holdingClient = {
+      beta: {
+        messages: {
+          toolRunner: (_params: unknown, options?: { signal?: AbortSignal }) => ({
+            async *[Symbol.asyncIterator]() {
+              await new Promise<void>((resolve) => {
+                options?.signal?.addEventListener("abort", () => resolve(), { once: true });
+                setTimeout(resolve, 3000);
+              });
+              aborted = options?.signal?.aborted === true;
+            },
+            done: async () => finalMessage(),
+          }),
+        },
+      },
+    } as unknown as Anthropic;
+
+    const app = await buildServer({ config: CONFIG, client: holdingClient });
+    await app.listen({ port: 0, host: "127.0.0.1" });
+    const address = app.server.address();
+    const port = typeof address === "object" && address ? address.port : 0;
+
+    const leaving = new AbortController();
+    const turn = fetch(`http://127.0.0.1:${port}/api/chat`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ messages: [{ role: "user", content: "hi" }] }),
+      signal: leaving.signal,
+    }).catch(() => undefined);
+
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    leaving.abort();
+    await turn;
+
+    // Poll rather than sleep a fixed span: the question is *whether* the abort
+    // lands, and a fixed delay only makes this slower or flakier.
+    const deadline = Date.now() + 2000;
+    while (!aborted && Date.now() < deadline) {
+      await new Promise((resolve) => setTimeout(resolve, 20));
+    }
+    await app.close();
+
+    expect(aborted).toBe(true);
+  });
+
+  it("forwards the abort signal to the model call", async () => {
+    let requestOptions: Record<string, unknown> | undefined;
+    await chat(
+      CONFIG,
+      [{ role: "user", content: "hi" }],
+      fakeClient({
+        iterations: [textEvents("ok")],
+        onCall: (_params, options) => (requestOptions = options),
+      }),
+    );
+
+    // `signal` is a request option, not a body field. Without this the abort
+    // controller is decorative — closing the tab would not stop the model, and
+    // `signal.aborted` would only ever mean "the request body was read".
+    expect(requestOptions?.signal).toBeInstanceOf(AbortSignal);
   });
 });
 

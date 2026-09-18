@@ -315,7 +315,7 @@ than burning tokens on output nobody will read.
 ## Testing
 
 ```bash
-pnpm test        # 82 tests across 3 files
+pnpm test        # 86 tests across 3 files
 pnpm typecheck   # all three packages
 ```
 
@@ -330,6 +330,11 @@ The suite covers the parts where a bug would be silent:
   and that `/api/health` never echoes key material. The Anthropic client is injected, so the
   suite never reaches the network.
 
+One BFF test deliberately does *not* use `app.inject()`. It opens a real socket, because
+`inject()` bypasses the request lifecycle — and the lifecycle is where a bug hid that made every
+chat turn return `200` with an empty stream (see below). A suite that only ever calls `inject()`
+cannot see it, however many assertions it has.
+
 Beyond the unit tests, the UI was verified in a real browser against a real stream: deltas
 arrive, citations resolve to values, an unresolvable token is marked, the gzipped bundle is split
 so the assistant's markdown renderer loads only when the panel opens, and there is no horizontal
@@ -341,6 +346,16 @@ which runs backwards against the calendar, so every multi-day span was written i
 with `date` after `endDate`. Recharts draws that as a zero-width band: no error, no warning, no
 band. Two unit tests now assert the ordering, because the failure is invisible in every other
 way. All five events draw correctly today, at all three ranges.
+
+The same pass caught a worse one on the assistant: every turn returned `200` with an empty
+stream. Two faults compounded. `signal` was destructured in `streamChat` but never passed to the
+tool runner — it is a request option, not a body field — so the abort controller was decorative
+and closing the tab would not have stopped generation at all. And the abort was wired to
+`request.raw`, which emits `'close'` the moment the request body has been read, *before* the
+model is called. So `signal.aborted` was true on every turn, and the catch block read every
+upstream failure as "the user has left" and stayed quiet. `describeError` had been written,
+unit-tested, and never once reached a caller. Both are fixed; the regression test opens a real
+socket, because `app.inject()` is precisely what hid it.
 
 ---
 
